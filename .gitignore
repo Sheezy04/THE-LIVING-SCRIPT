@@ -25,6 +25,13 @@ node_modules/
 # 要复现请用本机完整目录，或按 assets/fonts/README.md 把原件找回来。
 #
 # 绝不能排：*.woff2、charset.txt、OFL-*.txt（运行与授权必需）。
+
+# ── 内部文档（2026-09-18）─────────────────────────────────────────────
+# 这一份是给团队看的交接/待办，含「尚未达到原需求的部分」与
+# 「需要你完成或提供的事项 → 确认本地古文字文件的授权范围」两节。
+# 公开仓库里出现它，等于把未完成清单和「授权待确认」直接递给评委。
+# 本地文件不动；要看就看本机 D:\item2\交付与待办.md。
+/交付与待办.md
 /assets/fonts/NotoSansSC-Variable.ttf
 /assets/fonts/NotoSerifSC-Variable.ttf
 /assets/fonts/LongCang-Regular.ttf
