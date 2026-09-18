@@ -10,3 +10,24 @@ design-previews/
 __pycache__/
 *.pyc
 node_modules/
+
+# ── 字体原件（2026-09-18）──────────────────────────────────────────────
+# 浏览器从不请求这六个：页面 @font-face 指的是 *-Subset.woff2（3.91 MB 三个），
+# 它们是子集的**输入**，不是运行时的输出。排掉后部署集 94 MB → 21 MB，
+# 而**本地文件一个字节没动**，仍在 assets/fonts/ 原地。
+#
+# 实测依据（不是推断）：把只含子集的 21 MB 目录起真 http 服务、Chrome 跑一遍 ——
+# 7 个模块全部挂载、三个字体家族 document.fonts.check 全 true、背景图与子集都 200、
+# 0 异常 0 个 4xx/5xx，55 条本地引用静态核对无一缺失。
+#
+# 代价：从**克隆出来的**仓库无法再生成子集。但这件事本来就已经做不到 ——
+# 生成脚本 verify/build-font-subset.py 在 verify/ 里，而 verify/ 上面就排掉了。
+# 要复现请用本机完整目录，或按 assets/fonts/README.md 把原件找回来。
+#
+# 绝不能排：*.woff2、charset.txt、OFL-*.txt（运行与授权必需）。
+/assets/fonts/NotoSansSC-Variable.ttf
+/assets/fonts/NotoSerifSC-Variable.ttf
+/assets/fonts/LongCang-Regular.ttf
+/assets/fonts/LXGWWenKai-Regular.ttf
+/assets/fonts/JFZSKSealScript_V3.ttf
+/assets/fonts/LXGWSeal-Regular.ttf
