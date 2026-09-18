@@ -168,8 +168,19 @@
         this.eng = global.Evolution.create(svg, {
           width: SIZE, height: SIZE, padding: PAD,
           onStage: function (info) {
-            /* 期名变化才写 data —— 每帧都写会让 Vue 每帧重渲染一次 */
-            if (info.label !== self.stageLabel) self.stageLabel = info.label;
+            /* 期名变化才写 data —— 每帧都写会让 Vue 每帧重渲染一次。
+             * 两拍淡入淡出里，新期从过渡 45% 处（evolution.js 的 IN_FROM）开始显形；
+             * 名称也在这个点切到新期，否则新字形已清晰可见、名称还停在旧期，
+             * 看起来就是「名称跟不上字形」。0.45 与 evolution.js 的手感常量同步。 */
+            var label = info.label;
+            if (info.t != null && info.total > 1) {
+              var frac = info.t - Math.floor(info.t);
+              if (frac >= 0.45 && info.index + 1 < info.total) {
+                var nxt = (info.stages || [])[info.index + 1];
+                if (nxt && nxt.label) label = nxt.label;
+              }
+            }
+            if (label !== self.stageLabel) self.stageLabel = label;
           }
         });
         this.eng.load(this.char, data);
