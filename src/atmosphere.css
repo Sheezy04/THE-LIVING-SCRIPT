@@ -1,0 +1,128 @@
+/* 六幕，同一展览。只调整背景与材料，不改变固定工作台的几何布局。 */
+:root { --home-art-opacity:.22; }
+html { margin:0; padding:0; min-height:100%; background:#f5f4ee; }
+body { margin:0; padding:0; min-height:100dvh; background:#f5f4ee; }
+body::before,body::after {
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-repeat:no-repeat; background-size:cover;
+}
+/* 图像向视口外多铺 4vmax，裁掉馆藏原图纸边，不受居中内容宽度限制。
+ * 只扩大固定伪元素，不用 100vw 或放大正文，避免新增横向滚动。 */
+body::before {
+  inset:-4vmax; width:auto; height:auto; max-width:none; max-height:none;
+  margin:0; padding:0; border:0; border-radius:0;
+  background:var(--scene-background,linear-gradient(145deg,#f6f5ef,#eef0e8)); opacity:1;
+}
+body::after { background:linear-gradient(180deg,rgba(250,249,244,.36),transparent 24%,transparent 76%,rgba(250,249,244,.42)); }
+
+/* 五个工作台各用不同开放馆藏。图像层与半透明主题层分离。 */
+body:has(.is-workbench)::before {
+  background-image:var(--scene-art-image);
+  background-size:cover; background-repeat:no-repeat;
+  background-position:var(--scene-art-position,center);
+  opacity:var(--scene-art-opacity,.42); filter:saturate(1) contrast(1.04);
+}
+body:has(.is-workbench)::after { background:var(--scene-background); }
+
+/* 序幕：开放馆藏的山水，图片独立透明；文字与交互永远保持不透明。 */
+body:has(.zc-page-home)::before {
+  background-image:url("../assets/backgrounds/met-autumn-foliage.jpg");
+  background-size:cover; background-repeat:no-repeat;
+  background-position:center 58%; opacity:var(--home-art-opacity);
+  filter:saturate(1) contrast(1.04);
+}
+body:has(.zc-page-home)::after {
+  background:linear-gradient(180deg,rgba(248,247,241,.16),transparent 22%,transparent 78%,rgba(248,247,241,.16));
+}
+.zc-page-home .zc-home-breath { background:rgba(237,241,228,.88); border-color:rgba(133,151,113,.24); box-shadow:0 16px 50px rgba(66,77,52,.055); }
+.zc-page-home .zc-story-exhibit { background:rgba(255,254,248,.94); }
+.zc-page-home .zc-story-family { background:rgba(241,241,231,.94); }
+.zc-page-home .zc-home-section-head { border-color:rgba(111,133,94,.20); }
+.zc-background-credit { margin-top:20px; color:#929383; font:400 10px/1.8 var(--font-reading); }
+.zc-background-credit a { color:inherit; text-decoration:none; border-bottom:1px solid #c8cebc; }
+.zc-background-credit a:hover { color:#4e6443; }
+
+/* 01：温暖纸页。宽阔留白与极淡的纸纤维，不伪造古文字底纹。 */
+body:has(.zc-page-origin) {
+  --scene-art-image:url("../assets/backgrounds/met-pavilion-willows.jpg");
+  --scene-art-position:38% 45%; --scene-art-opacity:.44;
+  --scene-background:radial-gradient(ellipse at 14% 62%,rgba(175,147,92,.13),transparent 53%),
+    radial-gradient(ellipse at 92% 22%,rgba(151,172,128,.12),transparent 42%),
+    repeating-linear-gradient(0deg,transparent 0 5px,rgba(136,121,91,.018) 5px 6px),
+    linear-gradient(120deg,rgba(247,243,233,.24),rgba(242,244,237,.28));
+}
+/* 02：碑拓的黑底、密集字纹容易干扰正文，用纸色衬层隔开前景。
+ * 保留原图 .40 浓度与取景，不模糊图片，不改其他模块。 */
+body:has(.zc-page-evo) {
+  --scene-art-image:url("../assets/backgrounds/met-mount-yi-rubbing.jpg");
+  --scene-art-position:66% 28%; --scene-art-opacity:.40;
+  --scene-background:radial-gradient(circle at 17% 57%,transparent 0 245px,rgba(105,132,144,.055) 246px 247px,transparent 248px 330px,rgba(105,132,144,.04) 331px 332px,transparent 333px),
+    repeating-linear-gradient(90deg,transparent 0 139px,rgba(88,119,132,.045) 139px 140px),
+    radial-gradient(ellipse at 76% 25%,rgba(134,166,178,.15),transparent 57%),
+    linear-gradient(135deg,rgba(242,245,243,.68),rgba(237,241,239,.72));
+}
+/* 03：淡青构形纸。网格只出现在背景，真正的构件仍在清晰白画布内。 */
+body:has(.zc-page-lab) {
+  --scene-art-image:url("../assets/backgrounds/met-bamboo.jpg");
+  --scene-art-position:34% 68%; --scene-art-opacity:.42;
+  --scene-background:radial-gradient(ellipse at 22% 72%,rgba(146,173,126,.13),transparent 55%),
+    repeating-linear-gradient(0deg,transparent 0 47px,rgba(95,128,94,.038) 47px 48px),
+    repeating-linear-gradient(90deg,transparent 0 47px,rgba(95,128,94,.038) 47px 48px),
+    linear-gradient(145deg,rgba(244,246,237,.24),rgba(238,243,233,.28));
+}
+/* 04：暖砂挑战场。斜向分区带来活力，不使用闪动或高对比游戏背景。 */
+body:has(.zc-page-quiz) {
+  --scene-art-image:url("../assets/backgrounds/met-moonlight-calligraphy.jpg");
+  --scene-art-position:78% 58%; --scene-art-opacity:.44;
+  --scene-background:radial-gradient(circle at 90% 72%,transparent 0 175px,rgba(181,138,93,.065) 176px 177px,transparent 178px 240px,rgba(181,138,93,.035) 241px 242px,transparent 243px),
+    linear-gradient(125deg,transparent 46%,rgba(207,176,135,.08) 46% 72%,transparent 72%),
+    radial-gradient(ellipse at 14% 23%,rgba(192,175,122,.12),transparent 46%),
+    linear-gradient(145deg,rgba(247,244,236,.22),rgba(243,238,228,.26));
+}
+/* 05：雾紫创作室。诗册与轻光晕，留给用户的作品充分视觉空间。 */
+body:has(.zc-page-mine) {
+  --scene-art-image:url("../assets/backgrounds/met-xiao-xiang-album.jpg");
+  --scene-art-position:60% 82%; --scene-art-opacity:.42;
+  --scene-background:radial-gradient(ellipse at 85% 18%,rgba(165,147,183,.16),transparent 47%),
+    radial-gradient(ellipse at 12% 80%,rgba(147,174,155,.15),transparent 50%),
+    radial-gradient(ellipse at 49% 53%,rgba(255,255,255,.24),transparent 56%),
+    linear-gradient(130deg,rgba(245,243,245,.24),rgba(238,242,236,.28));
+}
+/* 06：青花。云龙纹本身就是一圈圈互相勾连的线条，和这一页画的连线同构；
+   蓝白釉色也把这张器物照片与其余六张水墨、拓本、设色拉得开。 */
+body:has(.zc-page-graph) {
+  --scene-art-image:url("../assets/backgrounds/met-dragon-jar.jpg");
+  --scene-art-position:48% 46%; --scene-art-opacity:.42;
+  --scene-background:radial-gradient(ellipse at 18% 22%,rgba(94,131,178,.14),transparent 52%),
+    radial-gradient(ellipse at 84% 74%,rgba(126,152,181,.12),transparent 48%),
+    radial-gradient(ellipse at 52% 50%,rgba(255,255,255,.26),transparent 58%),
+    linear-gradient(140deg,rgba(244,246,249,.26),rgba(238,242,246,.30));
+}
+
+/* 工作面的纸白维持可读性，背景只透过周围留白与轻材质。 */
+.is-workbench .zc-canvas-wrap { background:rgba(255,254,250,.98); border-color:rgba(116,133,100,.22); }
+.is-workbench .zc-panel,.is-workbench .zc-edit-controls,.is-workbench .zc-compose-palette { background:rgba(255,254,249,.95); }
+.zc-page-evo .zc-canvas-wrap { background:linear-gradient(145deg,#fffefb,#f4f7f3); border-color:#d2ddd6; }
+/* 说明侧栏直接融入背景，取消独立纸色底板；全屏衬层保证对比。 */
+.zc-page-evo .zc-evo-tools { background:transparent; box-shadow:none; }
+.zc-page-evo .zc-evo-compare-cell { background:#fafbf7; }
+.zc-page-evo .zc-evo-tools .zc-note,.zc-page-evo .zc-stageinfo-period,.zc-page-evo .zc-stageinfo-src { color:#56645c; }
+.zc-page-evo .zc-stageinfo-note { color:#43524b; }
+.zc-page-lab .zc-canvas-wrap { background:linear-gradient(145deg,#fffefa,#f5f8ed); border-color:#d6dfc8; }
+.zc-page-quiz .zc-quiz-card { background:rgba(255,254,249,.97); border-color:#e1d8c6; }
+.zc-page-mine .zc-canvas-wrap { background:linear-gradient(145deg,#fffefb,#f6f5f8); border-color:#dcdae2; }
+.zc-page-mine .zc-mine-intro { background:rgba(246,246,242,.92); }
+.zc-statusbar { background:rgba(251,251,245,.96); }
+.zc-page-evo .zc-statusbar { border-color:#d2ddd6; }
+.zc-page-lab .zc-statusbar { border-color:#d6dfc8; }
+.zc-page-quiz .zc-statusbar { border-color:#e1d8c6; }
+.zc-page-mine .zc-statusbar { border-color:#dcdae2; }
+
+@media(max-width:780px) {
+  body:has(.zc-page-home)::before { background-position:62% center; opacity:.16; }
+  body:has(.zc-page-home)::after { background:rgba(248,247,241,.24); }
+  body:has(.is-workbench)::before { opacity:.28; }
+}
+@media print {
+  body::before,body::after { display:none; }
+}

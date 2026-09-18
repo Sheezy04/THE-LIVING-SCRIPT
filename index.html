@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f5f3ed" />
+  <meta name="description" content="《字启千年》——可操作、可探索、可创作的汉字文化互动体验。" />
+  <title>字启千年 · 汉字构形与文明演变</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23285640'/%3E%3Cpath d='M16 15h32M32 15v34M19 30h26M18 48h28' stroke='%23eef4e4' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="src/styles.css" />
+  <link rel="stylesheet" href="src/refinements.css" />
+  <link rel="stylesheet" href="src/exhibition.css" />
+  <link rel="stylesheet" href="src/workbench.css" />
+  <link rel="stylesheet" href="src/atmosphere.css" />
+  <link rel="stylesheet" href="src/quiz-experience.css" />
+  <link rel="stylesheet" href="src/finishing.css" />
+  <link rel="stylesheet" href="src/gallery.css" />
+  <!-- 无脚本兜底：styles.css 里 html:not(.zc-ready) 会藏掉整个 .zc-app，而 .zc-ready 是
+       脚本加上的。停用脚本时把它放回来 —— 这站本来就靠 JS，但「一片空白」比「没有交互的
+       静态页」更糟：至少还能读到授权说明和页眉。 -->
+  <noscript><style>.zc-app { visibility: visible !important; }</style></noscript>
+</head>
+<body>
+  <div class="zc-app">
+    <header class="zc-header">
+      <div class="zc-brand"><h1 class="zc-title" aria-label="字启千年"><span>字启</span><span>千年</span></h1><span class="zc-brand-caption">THE LIVING SCRIPT · 字形与时间</span></div>
+      <span class="zc-subtitle">汉字构形与文明演变互动体验</span>
+    </header>
+    <main id="app"></main>
+    <footer class="zc-note zc-footer">现代字形资料：Make Me A Hanzi；古文字演示字体：中央研究院汉字构形资料库及相关字体资料，部分版本授权待确认。出处阅览另收录小学堂 CC0 查询字形图，不是原拓照片。数字造字为个人创作，不等同于创造真实汉字。</footer>
+  </div>
+
+  <!-- 经典脚本加载，双击此文件即可运行，无需安装环境或启动服务。 -->
+  <script src="assets/vendor/vue.global.prod.js"></script>
+  <script src="src/positioner.js"></script>
+  <script src="src/stroke-anim.js"></script>
+  <script src="src/components.js"></script>
+  <script src="src/decompose.js"></script>
+  <script src="src/challenge.js"></script>
+  <script src="src/compose.js"></script>
+  <script src="src/evolution.js"></script>
+  <script src="src/quiz.js"></script>
+  <script src="src/mine.js"></script>
+  <!-- 关系网的数据层：顶层不读 __CHARS__/CharCatalog（函数里才碰），
+       所以放在数据文件之前是安全的 —— 它必须在这里，因为 UI 层要用。 -->
+  <script src="src/graph.js"></script>
+  <script src="data/chars.js"></script>
+  <script src="data/catalog.js"></script>
+  <script src="data/ancient.js"></script>
+  <script src="data/evidence.js"></script>
+  <script src="data/paths.js"></script>
+  <script src="data/themes.js"></script>
+  <script src="data/en.js"></script>
+  <script src="src/ui/store.js"></script>
+  <script src="src/ui/experience.js"></script>
+  <script src="src/ui/i18n.js"></script>
+  <script src="src/ui/keys.js"></script>
+  <script src="src/ui/char-picker.js"></script>
+  <script src="src/ui/home-shell.js"></script>
+  <script src="src/ui/mode-write.js"></script>
+  <script src="src/ui/mode-decompose.js"></script>
+  <script src="src/ui/mode-challenge.js"></script>
+  <script src="src/ui/compose-canvas.js"></script>
+  <script src="src/ui/evo-strip.js"></script>
+  <script src="src/ui/evidence-reader.js"></script>
+  <script src="src/ui/mode-evolution.js"></script>
+  <script src="src/ui/mode-quiz.js"></script>
+  <script src="src/ui/origin-shell.js"></script>
+  <script src="src/ui/lab-shell.js"></script>
+  <script src="src/ui/mine-view.js"></script>
+  <script src="src/ui/graph-view.js"></script>
+  <script src="src/ui/app-shell.js"></script>
+  <script>ZQ.mountApp('#app');</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+/* 小型成品补强：帮助、练习笔记与可选阅读模式；不改底图透明度。 */
+.zc-evidence-entry { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:10px 0; }
+.zc-evidence-entry > span { color:#77816c; font:400 12px/1.7 var(--font-reading); }
+.zc-evidence-dialog { width:min(920px,calc(100% - 32px)); }
+.zc-evidence-charlist,.zc-evidence-categories { display:flex; flex-wrap:wrap; gap:6px; margin:12px 0; }
+.zc-evidence-charlist button,.zc-evidence-categories button { border:1px solid #dbe0d2; border-radius:6px; background:#f7f8f2; color:#627253; padding:6px 13px; font:400 14px/1.6 var(--font-reading); cursor:pointer; }
+.zc-evidence-charlist button { font:500 22px/1.4 var(--font-brand); }
+.zc-evidence-charlist button[aria-pressed="true"],.zc-evidence-categories button[aria-pressed="true"] { background:#334b36; color:#fffef5; border-color:#334b36; }
+.zc-evidence-dialog button:focus-visible,.zc-evidence-dialog a:focus-visible { outline:2px solid #789562; outline-offset:3px; }
+.zc-evidence-record { display:grid; grid-template-columns:minmax(180px,.8fr) minmax(0,1.2fr); gap:24px; padding:18px; border:1px solid #dee3d6; border-radius:10px; background:#f7f8f1; }
+.zc-evidence-record figure { margin:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:12px; border-radius:6px; background:#fff; }
+.zc-evidence-record img { width:auto; height:auto; max-width:100%; max-height:180px; object-fit:contain; }
+.zc-evidence-record figcaption,.zc-evidence-identity,.zc-evidence-stamp { color:#7e8773; font:400 12px/1.8 var(--font-reading); overflow-wrap:anywhere; }
+.zc-evidence-record ul { margin:8px 0; }
+.zc-evidence-links { display:flex; gap:8px 18px; flex-wrap:wrap; margin:10px 0; font:400 13px/1.8 var(--font-reading); }
+.zc-evidence-links a { color:#536e40; text-underline-offset:3px; }
+.zc-evidence-empty { padding:20px; border:1px dashed #d5dccb; border-radius:8px; color:#6d795f; font:400 14px/1.8 var(--font-reading); }
+.zc-evidence-boundary { margin:14px 0; font:400 13px/1.8 var(--font-reading); }
+.zc-evidence-boundary summary { cursor:pointer; color:#526b42; }
+.zc-evidence-boundary p { margin-top:10px; }
+.zc-evidence-comparison-tools { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin:12px 0; font:400 13px/1.8 var(--font-reading); }
+.zc-evidence-comparison-tools select { font:inherit; padding:6px; background:#fffef9; border:1px solid #dbe0d2; border-radius:4px; color:#536c41; }
+.zc-evidence-compare { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.zc-evidence-compare article { padding:16px; border:1px solid #dce2d3; border-radius:8px; background:#f7f8f1; font:400 13px/1.8 var(--font-reading); }
+.zc-evidence-compare figure { margin:12px 0; padding:12px; background:white; border-radius:6px; text-align:center; }
+.zc-evidence-compare img { max-width:100%; max-height:180px; width:auto; height:auto; }
+.zc-evidence-compare figcaption { font-size:11px; color:#7e8773; }
+.zc-evidence-compare a { color:#536e40; text-underline-offset:3px; }
+.zc-evidence-citation { width:100%; margin-top:10px; padding:12px; resize:vertical; font:400 13px/1.8 var(--font-reading); border:1px solid #dce2d3; border-radius:6px; color:#55684a; background:#fbfcf7; }
+@media(max-width:620px) { .zc-evidence-record { grid-template-columns:1fr; gap:12px; padding:12px; } }
+.zc-help-trigger { flex-shrink:0; border:1px solid #d8dfce; border-radius:6px; padding:6px 10px; background:#f8f9f1; color:#647657; font:400 12px/1.5 var(--font-reading); cursor:pointer; }
+.zc-help-trigger:focus-visible { outline:2px solid #789562; outline-offset:3px; }
+.zc-lab-create-link { display:grid; gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid #dce3d2; }
+.zc-lab-create-link > span { font:400 14px/1.8 var(--font-reading); color:#64705c; }
+.zc-lab-create-link > button { justify-self:start; }
+.zc-lab-create-link > small { font:400 12px/1.8 var(--font-reading); color:#78846b; }
+.zc-incoming-dialog p { margin:12px 0; }
+@media(min-width:1050px) and (min-height:600px) {
+  .zc-page-lab .zc-lab { grid-template-rows:auto auto auto; }
+}
+.zc-help-dialog { position:fixed; inset:0; width:min(680px,calc(100% - 32px)); max-height:82dvh; margin:auto; padding:24px; overflow:auto; border:1px solid #d6dfcb; border-radius:14px; background:#fffef9; color:var(--text); box-shadow:0 24px 100px #27332138; font:400 15px/1.9 var(--font-reading); }
+.zc-help-dialog::backdrop { background:#24321f66; }
+.zc-help-dialog > header { display:flex; gap:20px; align-items:center; justify-content:space-between; border-bottom:1px solid #dde3d2; padding-bottom:14px; margin-bottom:18px; }
+.zc-help-dialog h2 { font:400 24px/1.5 var(--font-brand); margin-top:6px; }
+.zc-help-dialog h3 { font:400 17px/1.7 var(--font-brand); margin-bottom:10px; }
+.zc-help-dialog ol,.zc-help-dialog ul { padding-left:22px; margin:12px 0; }
+.zc-help-dialog li { padding:5px 0; }
+.zc-help-settings { margin:18px 0; padding:16px; border:1px solid #dce4d0; border-radius:9px; background:#f4f7ee; }
+.zc-help-health summary { color:#566d44; cursor:pointer; }
+.zc-help-health > p { margin-top:12px; font-size:13px; }
+.zc-notebook { flex-basis:100%; padding:18px; border:1px solid #d6dfc9; border-radius:10px; background:#fafbf5; }
+.zc-notebook h3 { font:400 20px/1.6 var(--font-brand); }
+.zc-notebook article { display:flex; gap:18px; align-items:start; justify-content:space-between; border-top:1px solid #e1e7d8; padding:16px 0; margin-top:12px; }
+.zc-notebook article > div:first-child { min-width:0; flex:1; }
+.zc-notebook article > div:last-child { flex-shrink:0; max-width:180px; }
+.zc-notebook article span,.zc-notebook > small { color:#839077; font:400 11px/1.7 var(--font-reading); }
+.zc-notebook h4 { margin:7px 0; font:400 16px/1.7 var(--font-brand); }
+.zc-notebook article p { font:400 13px/1.8 var(--font-reading); margin:5px 0; overflow-wrap:anywhere; }
+.zc-notebook details summary { font:400 12px/1.8 var(--font-reading); color:#697f55; cursor:pointer; }
+.is-reading-large .zc-btn,.is-reading-large .zc-panel label,.is-reading-large .zc-edit-controls label,.is-reading-large .zc-note,.is-reading-large .zc-character-detail > p,.is-reading-large .zc-stageinfo-note,.is-reading-large .zc-origin-note { font-size:16px; line-height:1.8; }
+.is-reading-large .zc-seg button { font-size:15px; }
+.is-reading-large .zc-panel-title,.is-reading-large .zc-quiz-opt-text { font-size:16px; }
+.is-reading-large .zc-panel p,.is-reading-large .zc-verdict-relation { font-size:15px; line-height:1.85; }
+.is-reading-large .zc-statusbar .zc-btn { font-size:13px; }
+@media(max-width:1200px) {
+  .zc-module-indicator { display:none; }
+  .zc-modbar { gap:10px; }
+  .zc-modtabs { gap:2px; }
+  .zc-modtabs button { padding-left:10px; padding-right:10px; }
+  .zc-help-trigger { flex-shrink:0; white-space:nowrap; }
+}
+@media(max-width:620px) {
+  .zc-help-dialog { padding:18px; }
+  .zc-notebook article { flex-direction:column; }
+  .zc-notebook article > div:last-child { max-width:none; }
+  .zc-modbar { flex-wrap:wrap; }
+}

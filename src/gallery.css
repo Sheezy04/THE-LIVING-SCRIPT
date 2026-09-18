@@ -1,0 +1,228 @@
+/* 方案 A 的开放展廊布局；品牌标题用龙藏体，其他界面保留 Noto 系列。
+ * 不使用生成效果图作为古文字素材，保留六张真实馆藏背景与原图浓度。
+ */
+/* 子集字体，理由同 src/workbench.css 顶部那两条。原件 LongCang-Regular.ttf
+   也原封不动留在 assets/fonts/。 */
+@font-face {
+  font-family:"ZQ Long Cang"; src:url("../assets/fonts/LongCang-Subset.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+}
+:root {
+  --font-title:"ZQ Long Cang","ZQ Display","Songti SC",serif;
+  --font-reading:"ZQ Sans","PingFang SC","Microsoft YaHei",sans-serif;
+  --font-brand:"ZQ Display","Noto Serif SC","Songti SC",serif;
+  --text:#202d28; --text-muted:#40534a; --text-faint:#52645a;
+  --glyph-ink:#253a30; --gallery-line:rgba(44,70,55,.24);
+}
+body { font-synthesis:none; }
+/* 连续的全屏光场，不给说明区加矩形底板；字纹主要留在两侧。 */
+body:has(.is-workbench)::after {
+  background:linear-gradient(180deg,rgba(248,249,246,.55),transparent 22%,transparent 76%,rgba(248,249,246,.55)),
+    linear-gradient(90deg,rgba(248,249,246,.52),rgba(248,249,246,.90) 19%,rgba(248,249,246,.92) 68%,rgba(248,249,246,.75) 87%,rgba(248,249,246,.48));
+}
+.zc-brand { border:0; padding-left:0; gap:5px; }
+.zc-title { font:400 clamp(42px,3.6vw,52px)/1.2 var(--font-title); letter-spacing:.02em; gap:0; color:#21382e; }
+.zc-title span { font-weight:400; }
+.zc-brand-caption { font:400 10px/1.5 "ZQ Sans",sans-serif; color:#52665a; letter-spacing:.15em; }
+.zc-subtitle { color:#40584a; font:400 14px/1.6 var(--font-reading); letter-spacing:.04em; }
+.zc-modbar { border-color:var(--gallery-line); }
+.zc-modtabs button { font:400 17px/1.5 var(--font-reading); color:#374c40; padding:8px 12px; border:0; border-bottom:2px solid transparent; border-radius:0; gap:6px; }
+.zc-modtabs button.is-active { background:transparent; color:#224d37; border:0; border-bottom:2px solid #315d43; box-shadow:none; }
+.zc-module-number { font:400 12px/1.5 "ZQ Sans",sans-serif; opacity:1; color:inherit; }
+.zc-module-indicator { color:#52665a; }
+.zc-help-trigger { background:transparent; border-color:var(--gallery-line); font:400 14px/1.5 var(--font-reading); color:#395442; }
+.is-workbench .zc-btn,.is-workbench .zc-seg button { font-family:var(--font-reading); font-weight:400; font-size:16px; line-height:1.4; letter-spacing:0; }
+.is-workbench .zc-btn { min-height:36px; padding:6px 12px; border-radius:5px; background:rgba(255,255,255,.14); color:#294b38; border-color:rgba(43,75,52,.36); }
+.is-workbench .zc-btn.is-primary { color:#fffef7; background:#2b503b; border-color:#2b503b; }
+.is-workbench .zc-btn.is-primary:hover:not(:disabled) { color:#fffef7; background:#1d3b2a; }
+.is-workbench .zc-btn[aria-pressed="true"]:not(.is-primary) { background:#e0eadd; border-color:#4a7053; }
+.is-workbench .zc-controls { gap:7px; }
+.is-workbench .zc-seg:not(.zc-modtabs) { background:transparent; border-radius:0; gap:6px; border-bottom:1px solid var(--gallery-line); }
+.is-workbench .zc-seg:not(.zc-modtabs) button { color:#3f5848; border-radius:0; border-bottom:2px solid transparent; background:transparent; padding:7px 9px; box-shadow:none; }
+.is-workbench .zc-seg:not(.zc-modtabs) button.is-active { color:#214a32; border-bottom-color:#416c4b; background:transparent; }
+.is-workbench .zc-panel,.is-workbench .zc-character-detail,.is-workbench .zc-edit-controls,
+.is-workbench .zc-compose-palette,.is-workbench .zc-mine-intro,.is-workbench .zc-evo-tools {
+  background:transparent; border:0; border-radius:0; box-shadow:none;
+}
+.is-workbench .zc-panel { padding:14px 0; border-top:1px solid var(--gallery-line); }
+.is-workbench .zc-panel-title { font:400 16px/1.6 var(--font-reading); color:#345642; letter-spacing:.03em; }
+.is-workbench .zc-canvas-wrap { background:rgba(255,255,255,.22); border:1px solid rgba(63,89,68,.22); border-radius:0; box-shadow:none; }
+.zc-gallery-heading { margin-bottom:16px; }
+.zc-gallery-heading > span { display:block; margin-bottom:9px; padding-bottom:8px; border-bottom:1px solid var(--gallery-line); color:#375e48; font:400 11px/1.5 "ZQ Sans",sans-serif; letter-spacing:.13em; }
+.zc-gallery-heading h2 { margin:0; font:400 clamp(28px,2.7vw,40px)/1.3 var(--font-brand); letter-spacing:.025em; color:#243c2e; }
+.is-workbench .zc-note,.is-workbench .zc-character-detail > p,.is-workbench .zc-stageinfo-note,
+.is-workbench .zc-origin-note,.is-workbench .zc-lab-hint,.is-workbench .zc-compose-hint,
+.is-workbench .zc-quiz-guide,.is-workbench .zc-quiz-explain,.is-workbench .zc-review-explain {
+  font:400 16px/1.8 var(--font-reading); color:#344e40;
+}
+.is-workbench .zc-detail-facts { padding:12px 0; margin:12px 0; border-top:1px solid var(--gallery-line); border-bottom:1px solid var(--gallery-line); gap:6px 16px; }
+.is-workbench .zc-detail-facts span { background:none; padding:0; color:#405947; font:400 15px/1.7 var(--font-reading); }
+.is-workbench .zc-detail-title strong { font-family:var(--font-brand); font-weight:400; color:#283f30; }
+.is-workbench .zc-detail-title p { color:#496750; font-size:20px; }
+.is-workbench .zc-detail-title h2 { font:400 23px/1.5 var(--font-reading); color:#233c2d; }
+.is-workbench .zc-stageinfo-period,.is-workbench .zc-stageinfo-src,.is-workbench .zc-origin-cap,.is-workbench .zc-origin-credit { color:#4d6155; font:400 14px/1.8 var(--font-reading); }
+.is-workbench .zc-stageinfo-name { font:400 30px/1.4 var(--font-brand); }
+.is-workbench .zc-text-btn,.is-workbench .zc-picker-more summary,.is-workbench .zc-edit-controls label,.is-workbench .zc-mine-form label,.is-workbench .zc-mine-summary { font:400 16px/1.6 var(--font-reading); color:#365240; }
+.is-workbench .zc-picker { padding:12px 0; }
+.is-workbench .zc-picker-label { font:400 16px/1.5 var(--font-reading); }
+.is-workbench .zc-search-input,.is-workbench .zc-picker-select,.is-workbench .zc-mine-form input { font:400 16px/1.5 var(--font-reading); background:rgba(255,255,255,.45); color:#273e30; border-color:var(--gallery-line); }
+.is-workbench .zc-evidence-entry { padding:12px 0; margin:0; border-bottom:1px solid var(--gallery-line); }
+.is-workbench .zc-compinfo { background:transparent; border:0; border-top:1px solid var(--gallery-line); padding:12px 0; }
+.is-workbench .zc-compose-palette { padding:8px 0; }
+.is-workbench .zc-compbtn { background:transparent; border-color:var(--gallery-line); }
+.is-workbench .zc-quiz-card { background:transparent; border:0; border-top:1px solid var(--gallery-line); box-shadow:none; padding:20px 0; }
+.is-workbench .zc-quiz-modes p { color:#34503e; font:400 16px/1.8 var(--font-reading); }
+.is-workbench .zc-quiz-modes > small,.is-workbench .zc-quiz-hints > small { color:#4e6253; font-size:13px; }
+.is-workbench .zc-quiz-ask { font:400 23px/1.5 var(--font-brand); color:#253c2d; }
+.is-workbench .zc-quiz-opt-text { font:400 16px/1.7 var(--font-reading); }
+.is-workbench .zc-quiz-guide { background:transparent; padding:8px 0; border:0; }
+.is-workbench .zc-quiz-hints > p { font-size:16px; }
+.is-workbench .zc-statusbar { background:transparent; border:0; border-top:1px solid var(--gallery-line); border-radius:0; box-shadow:none; }
+.is-workbench .zc-status-story p,.is-workbench .zc-status-metrics { font:400 14px/1.5 var(--font-reading); color:#36503e; }
+.is-workbench .zc-status-eyebrow { color:#4e6253; }
+.is-workbench .zc-statusbar > .zc-btn { font-size:14px; }
+.zc-evo-playback { display:grid; gap:5px; padding-top:10px; }
+.zc-page-evo .zc-evo-playback .zc-timeline { width:100%; height:18px; margin:0; }
+.zc-page-evo .zc-evo-playback .zc-evostrip { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:3px; margin:0; }
+.zc-page-evo .zc-evo-playback .zc-evostage { padding:2px 0; border:0; border-bottom:2px solid transparent; border-radius:0; background:transparent; }
+/* 跳转仍由真实资料阶段驱动，缩略图藏起而非伪造缺失的隶书。 */
+.zc-page-evo .zc-evo-playback .zc-evostage svg { display:none; }
+.zc-page-evo .zc-evo-playback .zc-evostage-name { display:block; font:400 14px/1.5 var(--font-reading); color:#3c5845; }
+.zc-page-evo .zc-evo-playback .zc-evostage.is-active { border-bottom-color:#315e42; }
+.zc-page-evo .zc-evo-playback .zc-evostage.is-next { border-bottom:2px dashed #986d4b; }
+.zc-page-evo .zc-evo-playback .zc-evostage.is-absent { opacity:1; }
+.zc-page-evo .zc-evo-playback .zc-evostage.is-absent .zc-evostage-name { color:#68746a; }
+.zc-page-evo .zc-evo-playback .zc-controls { flex-wrap:wrap; margin:0; gap:5px; }
+.zc-page-evo .zc-evo-playback .zc-btn { font-size:14px; padding:5px 8px; min-height:32px; }
+.is-reading-large .zc-note,.is-reading-large .zc-panel p,.is-reading-large .zc-character-detail > p,.is-reading-large .zc-stageinfo-note { font-size:18px; }
+.is-reading-large .zc-btn,.is-reading-large .zc-seg button { font-size:17px; }
+/* 左侧展台自成一列，画布下方的内容不再等待右侧长展签的行高。 */
+.zc-origin-exhibit { min-width:0; }
+.zc-origin-exhibit > .zc-stage { display:block; min-height:0; }
+.zc-origin-exhibit .zc-writing-tools { margin-top:14px; }
+.zc-exhibit-caption { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px 16px; padding:13px 0; border-bottom:1px solid var(--gallery-line); color:#48624e; font:400 14px/1.6 var(--font-reading); }
+.zc-origin-exhibit .zc-origin-picker { margin:0; padding:14px 0 0; border:0; }
+.zc-lab-exhibit { min-width:0; }
+.zc-lab-exhibit > .zc-lab-hint { margin:0; padding:0; }
+.zc-lab-exhibit .zc-lab-hint > p { margin:12px 0; }
+.zc-lab-exhibit .zc-lab-create-link { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:8px 12px; border-top:1px solid var(--gallery-line); padding:12px 0; }
+.zc-lab-exhibit .zc-lab-create-link > span { font:400 14px/1.6 var(--font-reading); color:#4e6654; }
+.zc-lab-exhibit .zc-lab-create-link small { grid-column:1/-1; font:400 13px/1.6 var(--font-reading); color:#526956; }
+
+@media(min-width:1050px) and (min-height:600px) {
+  body:has(.is-workbench) .zc-title { font-size:48px; }
+  .is-workbench .zc-modtabs button { font-size:17px; padding:8px 12px; }
+  .zc-page-origin .zc-origin-view { grid-template-rows:auto auto; gap:16px 32px; align-content:start; }
+  .zc-page-origin .zc-origin-exhibit { grid-column:1; grid-row:1/3; }
+  .zc-page-origin .zc-origin-exhibit > .zc-stage { display:block; min-height:0; }
+  .zc-page-origin .zc-origin-exhibit .zc-origin-picker { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:12px; }
+  .zc-page-origin .zc-origin-exhibit .zc-picker-more { margin-bottom:10px; font-size:14px; white-space:nowrap; }
+  .zc-page-origin .zc-origin-exhibit .zc-writing-tools { grid-column:auto; grid-row:auto; }
+  .zc-page-origin .zc-character-detail { padding:0; }
+  .zc-page-lab .zc-lab { grid-template-rows:auto auto; gap:16px 32px; align-content:start; }
+  .zc-page-lab .zc-lab-exhibit { grid-column:1; grid-row:1/3; }
+  .zc-page-lab .zc-lab > .zc-stage > aside { grid-column:2; grid-row:2; }
+  .zc-page-lab .zc-lab-hint { font-size:16px; }
+  .zc-page-lab .zc-lab-create-link { gap:8px; padding:12px 0; }
+  /* 01 / 02 / 03 使用同一个尺寸预算，包含 02 下方播放工具的空间。 */
+  .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab) { --canvas-edge:min(560px,calc(100dvh - 365px),calc(100vw - 505px)); }
+  .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab) .zc-canvas-wrap { width:var(--canvas-edge); height:var(--canvas-edge); }
+  /* 01 / 03 / 04 / 06 回到正常页面流，不用 fixed / sticky 吸附。
+     06 是**唯一一个 fixed 真正在起作用、而且是帮倒忙**的页面：02 和 05 的文档高
+     （751 / 744）根本没超过视口，那条 fixed 在它们身上只是把底栏钉在屏幕底部；
+     06 的文档高是 2437（超屏 1693），钉住的底栏于是浮在正文中间横切过侧栏。
+     所以只把 06 加进来，不动 02 / 05 —— 它们的页面填不满视口，改成流式底下会空一截。 */
+  /* 06 不在这一条里：它的 .zc-canvas-wrap 要 relative（空态那句话得压在图上），
+     而这里的选择器和 workbench.css 里那条**特异性打平**（都是 0,3,0），
+     本文件在后就会把 relative 覆盖成 static，空态于是跑到画布外面去。 */
+  .is-workbench:is(.zc-page-origin,.zc-page-lab,.zc-page-quiz) .zc-canvas-wrap {
+    position:static; inset:auto; transform:none; z-index:auto; align-self:start;
+  }
+  .is-workbench:is(.zc-page-origin,.zc-page-lab,.zc-page-quiz,.zc-page-graph) .zc-journey-next {
+    position:static; inset:auto; transform:none; width:auto; margin:24px 0 0;
+  }
+  .is-workbench:is(.zc-page-origin,.zc-page-lab,.zc-page-quiz,.zc-page-graph) .zc-module-content { min-height:0; padding-bottom:0; }
+  .zc-page-origin .zc-origin-view,.zc-page-lab .zc-lab { min-height:var(--canvas-edge); }
+  .zc-page-quiz .zc-quiz { min-height:0; }
+  body:has(.zc-page-origin,.zc-page-lab,.zc-page-quiz,.zc-page-graph) .zc-footer {
+    position:static; inset:auto; margin:18px 0 0; padding:0;
+  }
+  .zc-page-evo .zc-evo-main {
+    position:fixed; top:calc(147px + (100dvh - 229px - var(--canvas-edge) - 112px)/2);
+    left:calc((100vw - var(--canvas-edge) - 392px)/2); width:var(--canvas-edge); height:auto; z-index:2;
+    display:grid; grid-template-rows:var(--canvas-edge) auto; align-content:start;
+  }
+  .zc-page-evo .zc-evo-main .zc-canvas-wrap { position:static; width:100%; height:var(--canvas-edge); }
+  .zc-page-evo .zc-evo-tools { grid-column:2; }
+  .zc-page-evo .zc-evo-compare { position:static; width:100%; height:var(--canvas-edge); }
+  .zc-page-evo .zc-evo-compare-cell { background:transparent; border-radius:0; padding:10px; }
+  .zc-page-evo .zc-evo-compare-cell .zc-note { font-size:14px; }
+  .zc-page-evo .zc-evo-tools > .zc-panel { margin-top:18px; }
+  .zc-page-evo .zc-evo-tools .zc-note { color:#344e40; }
+  .zc-page-quiz .zc-quiz { grid-template-rows:auto auto auto 4px auto; }
+  .zc-page-quiz .zc-gallery-heading { margin-bottom:0; }
+  .zc-page-quiz .zc-quiz-feedback p { font-size:16px; line-height:1.8; }
+  .zc-page-mine .zc-mine-intro { padding:0 0 12px; border-bottom:1px solid var(--gallery-line); }
+  .zc-page-mine .zc-mine-intro h2 { font:400 30px/1.4 var(--font-brand); }
+  .zc-page-mine .zc-mine-form { padding:12px 0; }
+  .zc-page-mine .zc-mine-summary,.zc-page-mine .zc-mine-form label { font-size:16px; }
+  .zc-page-mine .zc-compose-palette { padding:10px 0; }
+}
+/* 宽屏把品牌与导航合成一行；较窄屏继续自然换行，避免挤小字号。 */
+@media(min-width:1280px) and (min-height:700px) {
+  body:has(.is-workbench) .zc-app { position:relative; }
+  body:has(.is-workbench) .zc-header { min-height:98px; padding:0; margin:0; align-items:flex-start; padding-top:12px; }
+  body:has(.is-workbench) .zc-subtitle { display:none; }
+  .is-workbench .zc-modbar { position:absolute; left:280px; right:28px; top:28px; padding-bottom:12px; gap:12px; }
+  .is-workbench .zc-module-indicator { display:none; }
+}
+@media(max-width:1049px),(max-height:599px) {
+  /* 小屏三个模块都使用同宽单列，避免被不同的侧栏宽度挤出不同尺寸。 */
+  .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab) .zc-stage,
+  .zc-page-origin .zc-origin { grid-template-columns:minmax(0,1fr); }
+  .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab) .zc-canvas-wrap {
+    width:min(520px,100%); height:auto; aspect-ratio:1 / 1; padding:12px; margin-inline:auto;
+  }
+  .zc-gallery-heading { margin-top:16px; }
+  /* 06 在窄屏/矮屏回到单列：画布跟着栏宽走，侧栏落到图纸下面。 */
+  .zc-page-graph .zc-graph-stage { grid-template-columns:minmax(0,1fr); }
+  .zc-page-graph .zc-graph-main .zc-canvas-wrap { width:min(520px,100%); height:auto; aspect-ratio:1 / 1; padding:12px; margin-inline:auto; }
+  .zc-page-evo .zc-evo-main { position:static; width:100%; height:auto; }
+  .zc-page-evo .zc-evo-playback { max-width:560px; margin:0 auto 22px; }
+  .zc-page-evo .zc-evo-playback .zc-controls { justify-content:center; }
+}
+@media(min-width:1050px) and (min-height:600px) and (max-height:729px) {
+  .zc-page-evo .zc-evo-playback .zc-btn { padding:5px; font-size:13px; }
+  .zc-page-evo .zc-evo-playback .zc-btn[aria-label="上一期"] span,
+  .zc-page-evo .zc-evo-playback .zc-btn[aria-label="下一期"] span { display:none; }
+}
+@media(max-width:620px) {
+  .zc-title { font-size:40px; }
+  .zc-modtabs button,.is-workbench .zc-modtabs button { font-size:16px; padding:8px; }
+  .zc-gallery-heading h2 { font-size:30px; }
+  .zc-page-evo .zc-evo-playback .zc-evostage-name { font-size:12px; }
+  .is-workbench .zc-status-story p,.is-workbench .zc-status-metrics { font-size:13px; }
+}
+
+/* ── 主题字包（首页）：与字形故事同源的展览风格 ───────────── */
+.zc-home-themes { margin-top:var(--sp-5); }
+.zc-theme-selector { display:flex; flex-wrap:wrap; gap:10px; margin:16px 0 18px; }
+.zc-theme-selector button { display:flex; align-items:center; gap:8px; padding:8px 15px; border:1px solid transparent; border-radius:8px; background:transparent; color:#6a7b69; cursor:pointer; font:400 14px/1.2 var(--font-reading); }
+.zc-theme-selector button small { font-size:10px; color:var(--text-faint); }
+.zc-theme-selector button:hover,.zc-theme-selector button.is-active { background:#e4ebdc; color:#285640; border-color:#d0dcc8; }
+.zc-theme-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:10px; }
+.zc-theme-char { display:flex; flex-direction:column; align-items:center; gap:2px; padding:10px 6px; background:#fffefa; border:1px solid var(--border); border-radius:10px; cursor:pointer; font-family:var(--font-reading); }
+.zc-theme-char b { font:400 22px/1.3 var(--font-serif); color:#285640; }
+.zc-theme-char span { font-size:11px; color:#7b857a; }
+.zc-theme-char:hover,.zc-theme-char.is-active { border-color:#c4d2b8; background:#eff4ea; }
+
+/* ── 作品墙：卡片改海报缩略 + 操作行 ────────────────────── */
+.zc-mine-card { grid-template-columns:84px minmax(0,1fr); }
+.zc-mine-card-thumb { width:84px; height:118px; object-fit:cover; border-radius:6px; border:1px solid var(--border); background:#faf8f0; }
+.zc-mine-card-glyph { width:100%; max-width:180px; height:auto; }
+.zc-mine-card-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.zc-mine-card-actions .zc-btn { padding:4px 9px; font-size:12px; }
+
+/* ── 语言切换（顶部导航内的小开关） ────────────────────── */
+.zc-lang-toggle { padding:4px 10px; border:1px solid var(--border); border-radius:999px; background:transparent; color:var(--text-muted); font:400 12px/1.4 var(--font-reading); cursor:pointer; }
+.zc-lang-toggle:hover,.zc-lang-toggle[aria-pressed="true"] { color:#285640; border-color:#c4d2b8; background:#eff4ea; }

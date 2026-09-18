@@ -1,0 +1,73 @@
+/* 互动工作面的统一视觉与响应式收口。 */
+:root {
+  --ink-900:#090f15; --ink-800:#10191f; --ink-700:#17252b; --ink-600:#21323a; --ink-500:#30414a;
+  --paper-300:#b6b9b5; --paper-400:#929c9c;
+  --fs-xs:.75rem; --fs-sm:.875rem; --fs-base:1rem;
+}
+html, body { font-size:16px; }
+.zc-app { max-width:1240px; }
+button, input, select, textarea { font:inherit; }
+button:focus-visible, summary:focus-visible { outline:2px solid #83d7cc; outline-offset:3px; }
+.zc-header { align-items:center; justify-content:space-between; }
+.zc-title { letter-spacing:.16em; }
+.zc-modbar { min-width:0; }
+.zc-modtabs { flex:1; overflow-x:auto; }
+.zc-modtabs button { white-space:nowrap; font-size:.875rem; padding:12px 16px; }
+.zc-search-input { display:block; width:100%; padding:9px 11px; margin:10px 0; border:1px solid var(--border-strong); border-radius:var(--r-md); color:var(--text); background:var(--ink-700); font-size:.875rem; }
+.zc-search-input:focus { outline:2px solid #83d7cc; outline-offset:1px; }
+.zc-character-detail { margin-bottom:24px; padding:24px; border:1px solid var(--border); border-radius:var(--r-lg); background:linear-gradient(115deg,#172b31,#10191f); }
+.zc-detail-title { display:flex; gap:24px; align-items:center; }
+.zc-detail-title strong { color:var(--accent-bright); font:400 4.5rem var(--font-serif); line-height:1.3; }
+.zc-detail-title p { color:#83d7cc; font-size:1.125rem; }
+.zc-detail-title h2 { margin-top:4px; font-size:1.375rem; font-weight:400; line-height:1.5; }
+.zc-detail-facts { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+.zc-detail-facts span { padding:4px 10px; border:1px solid var(--border-strong); border-radius:3px; font-size:.875rem; color:var(--text-muted); }
+.zc-character-detail > p { color:var(--text-muted); max-width:860px; }
+.zc-journey-next { display:flex; justify-content:space-between; gap:18px; align-items:center; padding:24px 0; margin-top:24px; border-top:1px solid var(--border); }
+.zc-mine-composer .zc-compose-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.zc-mine-composer .zc-compbtn { min-width:0; font-size:1.5rem; }
+.zc-compbtn:disabled { cursor:not-allowed; color:var(--text-faint); opacity:.35; }
+.zc-edit-controls { display:grid; gap:14px; margin-top:16px; padding:16px; border:1px solid var(--border); border-radius:var(--r-md); background:var(--surface); }
+.zc-edit-controls label { display:grid; grid-template-columns:110px minmax(0,1fr); gap:12px; align-items:center; font-size:.875rem; color:var(--text-muted); }
+.zc-edit-controls select { max-width:100%; padding:6px; color:var(--text); border:1px solid var(--border-strong); background:var(--ink-700); }
+.zc-edit-controls input[type=range] { width:100%; accent-color:#83d7cc; }
+.zc-mine-card-glyph { width:68px; height:68px; display:block; }
+.zc-mine-card .zc-btn { margin-top:8px; padding:5px 10px; font-size:.75rem; }
+.zc-mine-backup { padding:20px; border:1px solid var(--border); border-radius:var(--r-md); }
+.zc-mine-backup summary { cursor:pointer; color:var(--text-muted); }
+.zc-mine-backup textarea { width:100%; min-height:120px; margin-top:16px; padding:12px; color:var(--text); background:var(--ink-800); border:1px solid var(--border-strong); resize:vertical; font-size:.875rem; }
+.zc-mine-backup p { margin-top:14px; }
+.zc-mine-notice { margin:0; }
+.zc-mine-card { min-width:0; }
+.zc-mine-card > div { overflow-wrap:anywhere; }
+.zc-quiz-tile[draggable=true] { cursor:grab; }
+.zc-quiz-tile[draggable=true]:active { cursor:grabbing; }
+.zc-evo-compare { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+.zc-evo-compare-cell { min-width:0; padding:16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); }
+.zc-evo-compare-cell svg { display:block; width:100%; height:auto; max-height:220px; color:var(--accent-bright); }
+.zc-evo-compare-cell select { max-width:100%; padding:8px; color:var(--text); background:var(--ink-700); border:1px solid var(--border-strong); }
+.zc-evo-compare-cell p { color:var(--text-muted); font-size:.875rem; }
+.zc-quiz-card .zc-stage { grid-template-columns:minmax(0,1fr) 230px; }
+@media(max-width:900px) {
+  .zc-mine-work { grid-template-columns:1fr; }
+  .zc-mine-form { position:static; }
+  .zc-origin .zc-stage { grid-template-columns:minmax(0,1fr) 280px; }
+}
+@media(max-width:600px) {
+  .zc-app { padding:18px 14px; }
+  .zc-header { gap:8px; align-items:start; flex-direction:column; }
+  .zc-subtitle { font-size:.75rem; }
+  .zc-modbar > .zc-note { display:none; }
+  .zc-modtabs button { padding:10px 12px; }
+  .zc-character-detail { padding:18px; }
+  .zc-detail-title { gap:16px; }
+  .zc-detail-title strong { font-size:3.25rem; }
+  .zc-detail-title h2 { font-size:1.125rem; }
+  .zc-origin .zc-stage { grid-template-columns:1fr; }
+  .zc-journey-next { align-items:start; flex-direction:column; }
+  .zc-mine-composer .zc-compose { grid-template-columns:1fr; }
+  .zc-mine-composer .zc-compose-grid { grid-template-columns:repeat(6,minmax(0,1fr)); }
+  .zc-edit-controls label { grid-template-columns:1fr; gap:4px; }
+  .zc-quiz-card .zc-stage { grid-template-columns:1fr; }
+}
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }

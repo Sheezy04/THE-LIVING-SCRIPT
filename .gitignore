@@ -1,0 +1,12 @@
+# Gitee 部署最小集：只维持可部署文件（index.html + assets/ + data/ + src/）
+# 其余为开发/测试/素材临时物，不进仓库，也不会上传到 Pages。
+verify/
+archive/
+design-previews/
+参赛准备/
+.trae/
+*.pdf
+*.log
+__pycache__/
+*.pyc
+node_modules/
