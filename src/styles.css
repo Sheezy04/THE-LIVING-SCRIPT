@@ -43,6 +43,10 @@
   --accent: var(--bronze-500);
   --accent-bright: var(--bronze-600);
 
+  /* ── 06 关系网专用（浅色画布上不能用半透明青铜，会读成灰）── */
+  --graph-edge-component: #2f5d43;   /* 实线：构形关系（墨绿） */
+  --graph-edge-related: #b8935a;     /* 虚线：相关字（青铜） */
+
   /* ── 字形专用 ───────────────────────── */
   --glyph-ink: var(--paper-100);          /* 已写出的墨 */
   --glyph-ghost: rgba(242, 236, 224, 0.07); /* 未写出的底纹 */
@@ -742,37 +746,50 @@ body::before {
    相关字。这是 data/catalog.js 文件头 [8] 那一节早就定下的约定。
    这一页的主画布也是浅色（workbench.css 把 --glyph-ink 改成了深墨），
    所以下面直接用那几个变量，不另造一套颜色。 */
-.zc-graph-edge { stroke: var(--border-strong); stroke-width: 1.4; }
-.zc-graph-edge.is-component { stroke-width: 2.2; }
-.zc-graph-edge.is-related { stroke-dasharray: 5 5; }
+.zc-graph-edge { stroke: var(--graph-edge-component); stroke-width: 1.8; }
+.zc-graph-edge.is-component { stroke-width: 2.4; }
+.zc-graph-edge.is-related { stroke: var(--graph-edge-related); stroke-width: 1.6; stroke-dasharray: 5 5; }
 /* 选中推荐路径时加粗换色，但**不取消虚线** —— 一取消就分不出这条边
    到底是构形还是语义了，那正是这张图要讲的事。 */
-.zc-graph-edge.is-path { stroke: var(--bronze-500); stroke-width: 3.2; }
+.zc-graph-edge.is-path { stroke: var(--gold); stroke-width: 3.2; }
 
-/* 画布下方的图例。色块刻意与上面两条**同宽同色**（实线 2px、虚线 dashed），
-   不另画一套 —— 图例长得跟图上不一样，比没有图例更糟。 */
-.zc-graph-key { display:flex; align-items:flex-start; gap:9px; margin:0 0 7px; font:400 13px/1.65 var(--font-reading); color:#4d6155; }
+/* 画布下方的图例。色块刻意与上面两条**同宽同色**（实线、虚线 dashed），
+   不另画一套 —— 图例长得跟图上不一样，比没有图例更糟。
+   色值来自 --graph-edge-*，与画布边同源：verify/test-graph-ui.mjs ⑦
+   直接比两处**算出来的**颜色。 */
+.zc-graph-key { display:flex; align-items:flex-start; gap:9px; margin:0 0 9px; font:400 13px/1.65 var(--font-reading); color:#4d6155; }
 .zc-graph-key b { color:#283f30; font-weight:600; }
-.zc-graph-key-line { flex:none; width:26px; height:2px; margin-top:9px; background:var(--border-strong); }
-.zc-graph-key-line.is-related { height:0; border-top:2px dashed var(--border-strong); }
+.zc-graph-key-line { flex:none; width:28px; height:3px; margin-top:9px; background:var(--graph-edge-component); border-radius:2px; }
+.zc-graph-key-line.is-related { height:0; background:var(--graph-edge-related); border-top:3px dashed var(--graph-edge-related); border-radius:0; }
+.zc-graph-key-example { font-style:normal; font-family:var(--font-brand); font-size:14px; letter-spacing:.02em; color:#3a5a45; margin-left:2px; }
 
-.zc-graph-node circle { fill: #fffefa; stroke: var(--border-strong); stroke-width: 1.6; }
+/* 节点：宣纸圆章。圆圈保持不透明（线从字底下穿过时会被挡住，
+   verify/test-graph-ui.mjs ② 按算出来的 fill 断言）。 */
+.zc-graph-node { filter: drop-shadow(0 1px 2px rgba(35,60,45,.14)); }
+.zc-graph-node circle { fill: #fffefa; stroke: #5c6f62; stroke-width: 1.6; }
 .zc-graph-node[role="button"] { cursor: pointer; }
-.zc-graph-node[role="button"]:hover circle { stroke: var(--bronze-500); }
+.zc-graph-node[role="button"]:hover { filter: drop-shadow(0 3px 6px rgba(35,60,45,.22)); }
+.zc-graph-node[role="button"]:hover circle { stroke: var(--gold); stroke-width: 2.4; }
 .zc-graph-glyph { fill: var(--glyph-ink); font-family: var(--font-brand); font-weight: 500; }
 .zc-graph-node.is-core .zc-graph-glyph { font-size: 26px; }
 .zc-graph-node.is-extended .zc-graph-glyph { font-size: 23px; }
 .zc-graph-node.is-related .zc-graph-glyph { font-size: 21px; }
 .zc-graph-node.is-unknown .zc-graph-glyph { font-size: 19px; }
-/* 关联字（以及 宀 这种表外构件）没有楷书字形，圈线跟着虚一格 —— 与
-   「虚线是语义关系」同一个读法：它不是一个能当选中字的字。 */
-.zc-graph-node.is-related circle { stroke-dasharray: 4 3; fill: #fbfaf4; }
-.zc-graph-node.is-unknown circle { stroke-dasharray: 2 3; fill: #fbfaf4; }
+/* 分层浓度：核心字深墨圈、扩展字淡一档、关联字/表外构件再淡且虚一格 ——
+   与「虚线是语义关系」同一个读法：它不是一个能当选中字的字。 */
+.zc-graph-node.is-core circle { stroke: var(--graph-edge-component); stroke-width: 2.2; }
+.zc-graph-node.is-extended circle { stroke: #5c6f62; stroke-width: 1.8; }
+.zc-graph-node.is-related circle { stroke: #8a9b8e; stroke-width: 1.5; stroke-dasharray: 4 3; fill: #fbfaf4; }
+.zc-graph-node.is-unknown circle { stroke: #aab8ad; stroke-width: 1.4; stroke-dasharray: 2 3; fill: #fbfaf4; }
 .zc-graph-node.is-locked .zc-graph-glyph { fill: var(--glyph-dim); }
 .zc-graph-node.is-center circle { fill: var(--glyph-ink); stroke: var(--glyph-ink); }
 .zc-graph-node.is-center .zc-graph-glyph { fill: #fffefa; font-size: 30px; }
-.zc-graph-node.is-path circle { stroke: var(--bronze-500); stroke-width: 2.6; }
-.zc-graph-anchor { fill: var(--text-faint); font: 400 11px var(--font-reading); }
+/* 中心节点的外圈（r+6，由 render() 加在墨圈**之后**，保证墨圈是第一个 circle） */
+.zc-graph-center-ring { fill: rgba(255,254,250,0); stroke: var(--graph-edge-component); stroke-width: 1.5; }
+.zc-graph-node.is-path circle { stroke: var(--gold); stroke-width: 2.8; }
+/* 关联字的「点它其实去的是这个字」：用纸色描边做光晕，读成一个小标签。
+   不另画矩形 —— 矩形要量字宽，越界断言按真实渲染框量，会多出风险。 */
+.zc-graph-anchor { fill: #6b7d70; stroke: #fffefa; stroke-width: 4; paint-order: stroke; font: 400 11px var(--font-reading); }
 
 /* ── 构形实验室外壳（02 的三模式页签）────────── */
 

@@ -60,19 +60,33 @@
       '      <p v-if="graph.empty" class="zc-graph-empty">此字暂无关联，换个字看看。</p>',
       '    </div>',
       '    <div class="zc-controls zc-graph-controls">',
-      '      <button class="zc-btn" :disabled="!history.length" @click="back">← <span>{{ tr(\'graph_back\') }}</span></button>',
+      '      <div class="zc-graph-bar">',
+      '        <button class="zc-btn zc-graph-back" :disabled="!history.length" @click="back">',
+      '          <svg class="zc-graph-back-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 5.5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      '          <span>{{ tr(\'graph_back\') }}</span>',
+      '        </button>',
       '      <div class="zc-seg zc-graph-hops" role="group" aria-label="展开层数">',
       '        <button v-for="h in [1, 2]" :key="h" :aria-pressed="hops === h" :class="{ \'is-active\': hops === h }"',
-      '          @click="setHops(h)">{{ h }} 层</button>',
+      '          @click="setHops(h)">{{ h }} 层<small class="zc-hop-count">{{ hopCounts[h] }} 字</small></button>',
       '      </div>',
-      '      <p class="zc-note">点图上任意一个字，以它为中心重新展开；按 Esc 返回上一个字。</p>',
+      '      </div>',
+      '      <p class="zc-note zc-graph-tip">',
+      '        <svg class="zc-graph-tip-ico" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="5.2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/></svg>',
+      '        <span>点图上任意一个字，以它为中心重新展开；按 Esc 返回上一个字。</span>',
+      '      </p>',
       '    </div>',
       '',
       '    <section class="zc-panel zc-graph-paths">',
       '      <div class="zc-panel-title">推荐探索路径</div>',
       '      <button v-for="p in paths" :key="p.id" class="zc-graph-path" :class="{ \'is-active\': p.id === pathId }"',
       '        :aria-pressed="p.id === pathId" @click="choosePath(p)">',
-      '        <b>{{ p.title }}</b><small>{{ p.note }}</small>',
+      '        <span class="zc-graph-path-chain" aria-hidden="true">',
+      '          <template v-for="(item, i) in pathChain[p.id]">',
+      '            <b v-if="item.ch" :key="\'g\' + i" class="zc-graph-path-glyph">{{ item.ch }}</b>',
+      '            <i v-else :key="\'s\' + i" class="zc-graph-path-sep" :class="item.sep === \'→\' ? \'is-arrow\' : \'is-plus\'">{{ item.sep }}</i>',
+      '          </template>',
+      '        </span>',
+      '        <b class="zc-graph-path-title">{{ p.title }}</b><small>{{ p.note }}</small>',
       '      </button>',
       '      <p class="zc-note">这些路径不是新造的关系，只是把图上已经存在的边按造字思路排出来：路径里的每一步在邻域图上都能连起来。</p>',
       '    </section>',
@@ -86,11 +100,11 @@
       '      <div class="zc-panel-title">关于这张图</div>',
       '      <p class="zc-graph-key">',
       '        <span class="zc-graph-key-line is-component" aria-hidden="true"></span>',
-      '        <span><b>实线</b>是构形关系：一个字由另一个字拼出来，「休」就是「人」加「木」。</span>',
+      '        <span><b>实线</b>是构形关系：一个字由另一个字拼出来。<em class="zc-graph-key-example">木 — 林</em></span>',
       '      </p>',
       '      <p class="zc-graph-key">',
       '        <span class="zc-graph-key-line is-related" aria-hidden="true"></span>',
-      '        <span><b>虚线</b>是相关字：字义或字源上有关联，比如「水」与「川」。</span>',
+      '        <span><b>虚线</b>是相关字：字义或字源上有关联。<em class="zc-graph-key-example">水 — 川</em></span>',
       '      </p>',
       '      <p class="zc-note">',
       '        本字这一圈有 {{ neighborTotal }} 个字（{{ hops }} 层）。',
@@ -183,6 +197,22 @@
         return out;
       },
       neighborTotal: function () { return Math.max(0, this.graph.nodes.length - 1); },
+      /* 每个展开层数的实时邻域字数 —— 喂给页签徽标（数字是活的，别写死） */
+      hopCounts: function () {
+        var out = {}, h, n;
+        for (h = 1; h <= 2; h++) {
+          n = global.ZQ.Graph.neighborhood(this.center, h).nodes.length - 1;
+          out[h] = Math.max(0, n);
+        }
+        return out;
+      },
+      /* 推荐路径的字形链：把 hops 渲染成「木 → 林 → 森」或「人 · 木 → 休」。
+       * 纯展示（aria-hidden），跟 choosePath 用的 p.chars 互不影响。 */
+      pathChain: function () {
+        var list = this.paths, out = {}, i;
+        for (i = 0; i < list.length; i++) out[list[i].id] = this.chainOf(list[i]);
+        return out;
+      },
       componentNeighbors: function () { return this.withReason('component'); },
       relatedNeighbors: function () { return this.withReason('related'); },
       /* 高亮集合：选中一条推荐路径后，属于它的点与边 */
@@ -230,6 +260,28 @@
       },
 
       setHops: function (h) { this.hops = h; },
+
+      /* 字形链生成：多 hop 汇到同一个字（人+木→休）渲染成「人 · 木 → 休」，
+       * 首尾相接的链（木→林→森）渲染成「木 → 林 → 森」。 */
+      chainOf: function (p) {
+        var hops = p.hops, i, items = [],
+            allSameTarget = hops.length > 1, target = hops[0][1];
+        for (i = 1; i < hops.length; i++) if (hops[i][1] !== target) { allSameTarget = false; break; }
+        if (allSameTarget) {
+          for (i = 0; i < hops.length; i++) {
+            if (i) items.push({ sep: '·' });
+            items.push({ ch: hops[i][0] });
+          }
+          items.push({ sep: '→' }, { ch: target });
+          return items;
+        }
+        for (i = 0; i < hops.length; i++) {
+          if (i) items.push({ sep: '→' });
+          items.push({ ch: hops[i][0] });
+        }
+        items.push({ sep: '→' }, { ch: hops[hops.length - 1][1] });
+        return items;
+      },
 
       choosePath: function (p) {
         if (this.pathId === p.id) { this.pathId = null; return; }
@@ -309,6 +361,9 @@
           if (n.ring > 0) g.setAttribute('role', 'button');
           g.setAttribute('aria-label', n.ch + (n.inCatalog ? '' : '（暂未收录）'));
           g.appendChild(svgEl('circle', { r: n.r }));
+          /* 外圈加在墨圈**之后**：verify/test-graph-ui.mjs ② 用 querySelector
+           * 取第一个 circle 量 fill，墨圈必须排在第一位。 */
+          if (n.ring === 0) g.appendChild(svgEl('circle', { 'class': 'zc-graph-center-ring', r: n.r + 6 }));
           g.appendChild(svgText('zc-graph-glyph', n.ch));
           if (n.ring > 0 && !n.selectable && n.anchor) {
             /* 「点它其实去的是这个字」—— 不写出来的话，点在关联字上突然换到

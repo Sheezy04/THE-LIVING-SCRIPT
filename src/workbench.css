@@ -325,6 +325,10 @@ button,input,select,textarea { font-family:inherit; }
   .zc-page-graph .zc-graph-canvas { width:100%; height:100%; display:block; }
   .zc-page-graph .zc-graph-controls { flex-wrap:wrap; align-items:center; }
   .zc-page-graph .zc-graph-controls .zc-note { flex-basis:100%; margin:0; }
+  .zc-page-graph .zc-graph-back { display:inline-flex; align-items:center; gap:6px; }
+  .zc-page-graph .zc-graph-back-ico { width:14px; height:14px; flex:none; }
+  /* 提示条图标是改版后加给窄屏的：桌面端继续用原来的纯文字 `.zc-note` 样式。 */
+  .zc-page-graph .zc-graph-tip svg { display:none; }
   .zc-page-graph .zc-graph-hops button { min-width:64px; }
 
   .zc-page-graph .zc-graph-tools { display:grid; gap:10px; align-content:start; min-width:0; }
@@ -391,4 +395,33 @@ button,input,select,textarea { font-family:inherit; }
 }
 @media(prefers-reduced-motion:reduce) {
   .zc-btn,.zc-seg button,.zc-module-content,.zc-statusbar { transition:none; }
+}
+
+/* ═══════════════════════════════════════════
+   06 关系网 · 窄屏/矮屏改版（仅保留工具条收纳与提示冒泡）
+   卡片/页签/路径链/图例的统一造型由 gallery.css 末尾的「06 打磨」块
+   负责（桌面与手机同一套），这里只做手机端工具条的收纳 —— 不画第二套
+   卡片，避免两套样式互相覆盖。
+   ⚠️ 图例色块的**颜色**不许动：verify/test-graph-ui.mjs ⑦ 钉着
+   「图例 = 画布上的线」这条诚实约定。
+   ═══════════════════════════════════════════ */
+@media(max-width:1049px),(max-height:599px) {
+  .zc-page-graph .zc-graph-main { display:grid; gap:12px; margin-top:4px; min-width:0; }
+
+  /* 顶部工具条：返回 + 层数合成一行卡片，提示条为带图标的冒泡 */
+  .zc-page-graph .zc-graph-controls {
+    display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center;
+    gap:8px; width:100%; margin:0; padding:10px 12px;
+    background:#fffefa; border:1px solid #e3e5db; border-radius:12px;
+    box-shadow:0 2px 8px rgba(41,49,36,.05);
+  }
+  .zc-page-graph .zc-graph-bar { display:inline-flex; align-items:center; gap:10px; }
+  .zc-page-graph .zc-graph-back { display:inline-flex; align-items:center; gap:6px; padding:8px 12px; min-height:36px; }
+  .zc-page-graph .zc-graph-back-ico { width:14px; height:14px; flex:none; }
+  .zc-page-graph .zc-graph-tip {
+    display:flex; align-items:flex-start; gap:8px; flex-basis:100%;
+    margin:2px 0 0; padding:10px 12px;
+    background:#f4f3ee; border:0; border-left:3px solid #8a6746; border-radius:10px;
+  }
+  .zc-page-graph .zc-graph-tip-ico { flex:none; width:15px; height:15px; margin-top:1px; color:#8a6746; }
 }
