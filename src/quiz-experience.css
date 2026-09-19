@@ -4,7 +4,7 @@
 .zc-quiz-build-bank p { margin:12px 0; color:#53634b; font:400 15px/1.8 var(--font-reading); }
 .zc-quiz-bank-options { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:18px 0; }
 .zc-quiz-bank-options .zc-btn { font:400 34px/1.5 var(--font-brand); padding:10px; }
-.zc-quiz-build-bank small { display:block; margin-top:12px; color:#748368; font:400 12px/1.7 var(--font-reading); }
+.zc-quiz-build-bank small { display:block; margin-top:12px; color:#5c6a4e; font:400 12px/1.7 var(--font-reading); }
 .zc-quiz-modes { display:flex; align-items:center; flex-wrap:wrap; gap:12px 20px; }
 .zc-quiz-modes > div:first-child { flex:1; min-width:240px; }
 .zc-quiz-modes p { margin:5px 0 0; font:400 15px/1.7 var(--font-brand); color:#52624c; }
@@ -15,15 +15,16 @@
 .zc-quiz-exhibits { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; align-self:center; }
 .zc-quiz-exhibits figure { margin:0; text-align:center; background:#f3f5ed; border:1px solid #dce3d0; border-radius:12px; padding:12px; }
 .zc-quiz-exhibits svg { display:block; width:100%; height:auto; }
-.zc-quiz-exhibits figcaption { color:#6f7e61; font:400 13px/1.6 var(--font-reading); }
-.zc-quiz-exhibits > p { grid-column:1/-1; margin:0; font:400 12px/1.6 var(--font-reading); color:#77836c; text-align:center; }
+.zc-quiz-exhibits figcaption { color:#5c6a4e; font:400 13px/1.6 var(--font-reading); }
+/* 同 finishing.css 那条：小字压到 #5c6a4e。#77836c 在纸色上只有 3.8:1。 */
+.zc-quiz-exhibits > p { grid-column:1/-1; margin:0; font:400 12px/1.6 var(--font-reading); color:#5c6a4e; text-align:center; }
 .zc-quiz-opt-text { font:400 15px/1.7 var(--font-reading); }
 .zc-quiz-card.is-evidence .zc-quiz-options { grid-template-columns:1fr; }
 .zc-quiz-card.is-evidence .zc-quiz-opt { text-align:left; justify-content:flex-start; gap:12px; }
 .zc-quiz-card.is-evidence .zc-quiz-opt::before { content:""; width:16px; height:16px; flex-shrink:0; border:1px solid #adba9e; border-radius:4px; }
 .zc-quiz-card.is-evidence .zc-quiz-opt.is-picked::before { content:"✓"; color:#fffefa; background:#526e43; border-color:#526e43; font:500 12px/16px var(--font-reading); text-align:center; }
 .zc-quiz-card .zc-quiz-opt.is-picked { border-color:#7f9a66; background:#edf3e4; }
-.zc-quiz-layout-intro { color:#78846d; font:400 13px/1.7 var(--font-reading); }
+.zc-quiz-layout-intro { color:#5c6a4e; font:400 13px/1.7 var(--font-reading); }
 .zc-quiz-card.is-layout .zc-quiz-options { grid-template-columns:repeat(2,minmax(0,1fr)); }
 .zc-quiz-card.is-layout .zc-quiz-opt { display:flex; flex-direction:column; padding:12px; gap:8px; background:#f6f7f0; }
 .zc-quiz-card.is-layout .zc-quiz-opt svg { display:block; width:100%; max-width:210px; height:auto; }

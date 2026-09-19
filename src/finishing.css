@@ -1,6 +1,10 @@
 /* 小型成品补强：帮助、练习笔记与可选阅读模式；不改底图透明度。 */
 .zc-evidence-entry { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:10px 0; }
-.zc-evidence-entry > span { color:#77816c; font:400 12px/1.7 var(--font-reading); }
+/* 小字说明这一族原来都偏淡。在 01/02 的纸色衬层上实测合成像素：「字形、著录与
+ * 使用许可」12px 的 #77816c 只有 3.75:1，面板里的 #7e8773 更低到 3.5:1，都够不到
+ * 正文 4.5:1 的下限。统一压到 #5c6a4e（纸上 ≈4.8:1、白卡片上 ≈5.4:1），仍明显浅于
+ * 正文墨绿 #3c5845，主次层级不变。底色浓度与取景未动。 */
+.zc-evidence-entry > span { color:#5c6a4e; font:400 12px/1.7 var(--font-reading); }
 .zc-evidence-dialog { width:min(920px,calc(100% - 32px)); }
 .zc-evidence-charlist,.zc-evidence-categories { display:flex; flex-wrap:wrap; gap:6px; margin:12px 0; }
 .zc-evidence-charlist button,.zc-evidence-categories button { border:1px solid #dbe0d2; border-radius:6px; background:#f7f8f2; color:#627253; padding:6px 13px; font:400 14px/1.6 var(--font-reading); cursor:pointer; }
@@ -10,7 +14,7 @@
 .zc-evidence-record { display:grid; grid-template-columns:minmax(180px,.8fr) minmax(0,1.2fr); gap:24px; padding:18px; border:1px solid #dee3d6; border-radius:10px; background:#f7f8f1; }
 .zc-evidence-record figure { margin:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:12px; border-radius:6px; background:#fff; }
 .zc-evidence-record img { width:auto; height:auto; max-width:100%; max-height:180px; object-fit:contain; }
-.zc-evidence-record figcaption,.zc-evidence-identity,.zc-evidence-stamp { color:#7e8773; font:400 12px/1.8 var(--font-reading); overflow-wrap:anywhere; }
+.zc-evidence-record figcaption,.zc-evidence-identity,.zc-evidence-stamp { color:#5c6a4e; font:400 12px/1.8 var(--font-reading); overflow-wrap:anywhere; }
 .zc-evidence-record ul { margin:8px 0; }
 .zc-evidence-links { display:flex; gap:8px 18px; flex-wrap:wrap; margin:10px 0; font:400 13px/1.8 var(--font-reading); }
 .zc-evidence-links a { color:#536e40; text-underline-offset:3px; }
@@ -24,7 +28,7 @@
 .zc-evidence-compare article { padding:16px; border:1px solid #dce2d3; border-radius:8px; background:#f7f8f1; font:400 13px/1.8 var(--font-reading); }
 .zc-evidence-compare figure { margin:12px 0; padding:12px; background:white; border-radius:6px; text-align:center; }
 .zc-evidence-compare img { max-width:100%; max-height:180px; width:auto; height:auto; }
-.zc-evidence-compare figcaption { font-size:11px; color:#7e8773; }
+.zc-evidence-compare figcaption { font-size:11px; color:#5c6a4e; }
 .zc-evidence-compare a { color:#536e40; text-underline-offset:3px; }
 .zc-evidence-citation { width:100%; margin-top:10px; padding:12px; resize:vertical; font:400 13px/1.8 var(--font-reading); border:1px solid #dce2d3; border-radius:6px; color:#55684a; background:#fbfcf7; }
 @media(max-width:620px) { .zc-evidence-record { grid-template-columns:1fr; gap:12px; padding:12px; } }
@@ -33,7 +37,7 @@
 .zc-lab-create-link { display:grid; gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid #dce3d2; }
 .zc-lab-create-link > span { font:400 14px/1.8 var(--font-reading); color:#64705c; }
 .zc-lab-create-link > button { justify-self:start; }
-.zc-lab-create-link > small { font:400 12px/1.8 var(--font-reading); color:#78846b; }
+.zc-lab-create-link > small { font:400 12px/1.8 var(--font-reading); color:#5c6a4e; }
 .zc-incoming-dialog p { margin:12px 0; }
 /* 03 的行高不在这里：整块只有一行，由 gallery.css 末尾那段（媒体查询相同、后加载）
    与 lab-shell 的 #side-head 插槽共同决定。这里原先写着 auto auto auto —— 页签还在

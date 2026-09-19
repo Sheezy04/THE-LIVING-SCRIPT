@@ -91,7 +91,7 @@ body:has(.is-workbench)::after {
 .zc-page-evo .zc-evo-playback .zc-evostage.is-active { border-bottom-color:#315e42; }
 .zc-page-evo .zc-evo-playback .zc-evostage.is-next { border-bottom:2px dashed #986d4b; }
 .zc-page-evo .zc-evo-playback .zc-evostage.is-absent { opacity:1; }
-.zc-page-evo .zc-evo-playback .zc-evostage.is-absent .zc-evostage-name { color:#68746a; }
+.zc-page-evo .zc-evo-playback .zc-evostage.is-absent .zc-evostage-name { color:#5c6a4e; }
 .zc-page-evo .zc-evo-playback .zc-controls { flex-wrap:wrap; margin:0; gap:5px; }
 .zc-page-evo .zc-evo-playback .zc-btn { font-size:14px; padding:5px 8px; min-height:32px; }
 .is-reading-large .zc-note,.is-reading-large .zc-panel p,.is-reading-large .zc-character-detail > p,.is-reading-large .zc-stageinfo-note { font-size:18px; }
@@ -270,7 +270,7 @@ body:has(.is-workbench)::after {
   background:rgba(255,255,255,.55); color:#3f5848;
   font:400 15px/1.4 var(--font-reading); box-shadow:none;
 }
-.zc-page-graph .zc-graph-hops button .zc-hop-count { font:400 12px/1.4 var(--font-reading); color:#7a8b7c; }
+.zc-page-graph .zc-graph-hops button .zc-hop-count { font:400 12px/1.4 var(--font-reading); color:#5c6a4e; }
 .zc-page-graph .zc-graph-hops button:hover { background:#eef3e9; border-color:#4a7053; }
 /* 选中态要盖过早前那条 `.is-workbench .zc-seg:not(.zc-modtabs) button.is-active`
    （下划线方案，特异性 0,4,1）：多加一层类 + aria-pressed 属性，特异性压它一头。 */
@@ -291,8 +291,12 @@ body:has(.is-workbench)::after {
 .zc-page-graph .zc-graph-path.is-active { background:#eaf1e4; border-color:#4a7053; box-shadow:inset 3px 0 0 var(--bronze-500); }
 .zc-page-graph .zc-graph-path-chain { display:flex; align-items:center; flex-wrap:wrap; gap:0 6px; }
 .zc-page-graph .zc-graph-path-glyph { font:400 24px/1.2 var(--font-brand); color:#283f30; }
-.zc-page-graph .zc-graph-path-sep { font:400 14px/1.2 var(--font-reading); color:#b8935a; font-style:normal; }
-.zc-page-graph .zc-graph-path-sep.is-plus { color:#8a9b8e; }
+/* 路径链里的分隔号：原来的 #b8935a 在白卡上只有 2.83:1，箭头虽小，但它是「谁接谁」
+   的唯一提示。这里**不能**用 var(--bronze-400) —— 工作台那套令牌把它是浅茶色
+   #c8b49b，只会更淡；所以写深一档的青铜字面量 #7f6540（≈5.4:1）。is-plus 那支同理，
+   回到与其余小字同一个灰绿。 */
+.zc-page-graph .zc-graph-path-sep { font:400 14px/1.2 var(--font-reading); color:#7f6540; font-style:normal; }
+.zc-page-graph .zc-graph-path-sep.is-plus { color:#5c6a4e; }
 .zc-page-graph .zc-graph-path-title { display:block; font:400 16px/1.5 var(--font-brand); color:#2b4634; letter-spacing:.03em; }
 .zc-page-graph .zc-graph-path small { display:block; font:400 13px/1.6 var(--font-reading); color:#4e6253; }
 .zc-page-graph .zc-graph-path.is-active .zc-graph-path-title { color:#1d3b2a; }
