@@ -124,14 +124,17 @@
     template: [
       '<div class="zc-compose">',
       '  <div class="zc-compose-palette">',
-      '    <div class="zc-panel-title">构件',
-      '      <span class="zc-compose-hint">点一下放进画布</span></div>',
+      '    <div class="zc-panel-title">构件</div>',
+      /* 提示单独一行，不跟在「构件」后面挤：构件盘这一列只有 160px 宽，
+       * 挤在一起就会在「虚线」中间断行。虚线是**未解锁**的形状标记（触屏没有
+       * hover，title 里的「完成挑战解锁」看不到，所以这条得写在脸上）。 */
+      '    <p class="zc-compose-hint">点一下放进画布<template v-if="lockedCount"><br>虚线待解锁</template></p>',
       '    <div class="zc-compose-grid">',
       '      <button v-for="p in palette" :key="p.glyph"',
       '              class="zc-compbtn"',
-      '              :class="{ \'is-derived\': p.derived }"',
-      '              :disabled="items.length >= 8 || (unlocked && !unlocked.includes(p.glyph))"',
-      '              :title="unlocked && !unlocked.includes(p.glyph) ? (p.glyph + \' · 完成挑战解锁\') : p.derived ? (p.glyph + \'（偏旁，单独不成字）\') : p.glyph"',
+      '              :class="{ \'is-derived\': p.derived, \'is-locked\': isLocked(p) }"',
+      '              :disabled="items.length >= 8 || isLocked(p)"',
+      '              :title="isLocked(p) ? (p.glyph + \' · 完成挑战解锁\') : p.derived ? (p.glyph + \'（偏旁，单独不成字）\') : p.glyph"',
       '              @click="add(p.glyph)">{{ p.glyph }}</button>',
       '    </div>',
       '  </div>',
@@ -154,7 +157,15 @@
       '          </g>',
       '        </g>',
       '      </svg>',
-      '      <div v-if="!items.length" class="zc-compose-empty">点左边的构件，放进来拼一个字</div>',
+      /* 空画布要像个**待用的画布**，不是加载失败的空白。空的近白方块配一行小字，
+       * 一眼看过去和「没渲染出来」没有区别 —— 所以补一个虚线落位框把它说成一个
+       * 「往这儿放」的区域，并补第二行说明下一步。.zc-compose-empty 还在（03 拿它
+       * 显示引擎报错），所以另起一个 .zc-compose-blank 只管空态，不动那个共用的类。 */
+      '      <div v-if="!items.length" class="zc-compose-empty zc-compose-blank">',
+      '        <span class="zc-compose-blank-frame" aria-hidden="true"></span>',
+      '        <p class="zc-compose-blank-lead">点左边的构件，放进来拼一个字</p>',
+      '        <small>放两个以上，可以再用横向、纵向或环形编排</small>',
+      '      </div>',
       '    </div>',
       '',
       '    <div v-if="editable" v-show="toolsVisible" class="zc-seg zc-compose-tabs"><button :class="{ \'is-active\': panel === \'edit\' }" @click="panel = \'edit\'">编辑工具</button><button :class="{ \'is-active\': panel === \'feedback\' }" @click="panel = \'feedback\'">构形反馈</button></div>',
@@ -248,6 +259,13 @@
       },
       posTransform: function () { return this.pos.transform; },
       palette: function () { return global.Compose.palette(); },
+      /* 未解锁的格子数，给构件盘那行提示用（「虚线 N 个待解锁」）。
+       * unlocked 为 null = 不做解锁门槛（03 的学习画布），此时一个都不算锁着。 */
+      lockedCount: function () {
+        var unlocked = this.unlocked;
+        if (!unlocked) return 0;
+        return this.palette.filter(function (p) { return unlocked.indexOf(p.glyph) < 0; }).length;
+      },
 
       /* ⚠️ 结构名要从 verdict.detail 里取，不是 verdict.structure。
        *    evaluate 在 kind='none' 时返回的是 {kind, code, detail} —— 结构在 detail 里。
@@ -395,6 +413,13 @@
           x: (vx - p.xOffset) / p.scale,
           y: ((SIZE - p.yOffset) - vy) / p.scale
         };
+      },
+
+      /* 「没解锁」与「画布满了」都会让格子变成 :disabled，但它们是两件事 ——
+       * 前者要去 04 挑战赢回来，后者这一轮放不下而已。长相必须分得开，
+       * 否则用户会把「还没到手」读成「这个功能坏了」。 */
+      isLocked: function (p) {
+        return !!(this.unlocked && !this.unlocked.includes(p.glyph));
       },
 
       mk: function (glyph, moved) {

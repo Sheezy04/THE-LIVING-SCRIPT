@@ -72,7 +72,7 @@
       <section class="zc-mine">
         <header class="zc-mine-intro">
           <div><p class="zc-home-kicker">05 / CREATION · 数字汉字创作</p><h2>我的造字</h2><p>摆放构件，赋予含义，让一次汉字探索成为你的作品。</p></div>
-          <div class="zc-mine-nav"><div class="zc-seg" role="tablist" aria-label="创作工作台"><button role="tab" :aria-selected="view === 'create'" :class="{ 'is-active': view === 'create' }" @click="view = 'create'">{{ tr('mine_tab_create') }}</button><button role="tab" :aria-selected="view === 'poster'" :disabled="!posterReady" :class="{ 'is-active': view === 'poster' }" @click="view = 'poster'">{{ tr('mine_tab_poster') }}</button><button role="tab" :aria-selected="view === 'library'" :class="{ 'is-active': view === 'library' }" @click="view = 'library'">{{ tr('mine_tab_library') }} · {{ library.length }}</button><button role="tab" :aria-selected="view === 'backup'" :class="{ 'is-active': view === 'backup' }" @click="view = 'backup'">{{ tr('mine_tab_backup') }}</button></div><span class="zc-note">{{ unlocked.length }} / 24 {{ tr('mine_unlocked') }}</span></div>
+          <div class="zc-mine-nav"><div class="zc-seg" role="tablist" aria-label="创作工作台"><button role="tab" :aria-selected="view === 'create'" :class="{ 'is-active': view === 'create' }" @click="view = 'create'">{{ tr('mine_tab_create') }}</button><button role="tab" :aria-selected="view === 'poster'" :disabled="!posterReady" :class="{ 'is-active': view === 'poster' }" @click="view = 'poster'">{{ tr('mine_tab_poster') }}</button><button role="tab" :aria-selected="view === 'library'" :class="{ 'is-active': view === 'library' }" @click="view = 'library'">{{ tr('mine_tab_library') }} · {{ library.length }}</button><button role="tab" :aria-selected="view === 'backup'" :class="{ 'is-active': view === 'backup' }" @click="view = 'backup'">{{ tr('mine_tab_backup') }}</button></div><span class="zc-note">{{ unlocked.length }} / {{ paletteCount }} {{ tr('mine_unlocked') }}</span></div>
         </header>
         <div v-show="view === 'create'" class="zc-mine-work">
           <div class="zc-seg zc-mine-tool-tabs"><button :class="{ 'is-active': toolTab === 'edit' }" @click="toolTab = 'edit'">{{ tr('mine_tab_edit') }}</button><button :class="{ 'is-active': toolTab === 'meaning' }" @click="toolTab = 'meaning'">{{ tr('mine_tab_meaning') }}</button><button :class="{ 'is-active': toolTab === 'style' }" @click="toolTab = 'style'">{{ tr('mine_tab_style') }}</button></div>
@@ -158,6 +158,11 @@
       canReceiveIncoming: function () { return !!this.incoming && this.design.length+this.incoming.glyphs.length<=8; },
       store: function () { return global.ZQ.store; },
       unlocked: function () { return this.store.state.unlocked; },
+      /* 分母是**构件盘的全部格子**（26 = 24 独体 + 2 派生偏旁），不是一个写死的 24。
+       * 派生的亻/宀 真的会被解锁 —— 04 答对后没有新构件可给时，就从盘里挑一个还没
+       * 解锁的补上（mode-quiz.js）。写死 24 的话这一栏永远差两格到不了头，而同一屏
+       * 底部的状态栏按 palette 算出来是 26：两个数并排就是互相打脸。 */
+      paletteCount: function () { return global.Compose.palette().length; },
       library: function () { return this.store.state.library; },
       libraryPages: function () { return Math.max(1, Math.ceil(this.library.length / 4)); },
       pagedLibrary: function () { return this.library.slice(this.libraryPage * 4, this.libraryPage * 4 + 4); },

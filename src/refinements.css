@@ -26,7 +26,16 @@ button:focus-visible, summary:focus-visible { outline:2px solid #83d7cc; outline
 .zc-journey-next { display:flex; justify-content:space-between; gap:18px; align-items:center; padding:24px 0; margin-top:24px; border-top:1px solid var(--border); }
 .zc-mine-composer .zc-compose-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
 .zc-mine-composer .zc-compbtn { min-width:0; font-size:1.5rem; }
-.zc-compbtn:disabled { cursor:not-allowed; color:var(--text-faint); opacity:.35; }
+/* 两种「不能点」是两件事，长得一样就会被读成同一个毛病：
+ *   .is-locked    —— 还没解锁，去 04 挑战赢回来。字形必须**看得清**：它在说
+ *                    「这个以后能用」，看不清就变成「这里好像坏了」。原来的
+ *                    opacity:.35 叠在近白面板上只有约 1.7:1 对比度，字几乎消失。
+ *    其余 :disabled —— 画布已经放了 8 个构件，这一轮放不下；构件本身是解锁的，
+ *                    不需要虚线，也不必读得那么仔细。
+ * 虚线是「未解锁」的形状标记（title 里也写着「完成挑战解锁」），不靠颜色单独表达。 */
+.zc-compbtn:disabled { cursor:not-allowed; color:var(--text-faint); }
+.zc-compbtn.is-locked { opacity:.7; border-style:dashed; }
+.zc-compbtn:disabled:not(.is-locked) { opacity:.45; }
 .zc-edit-controls { display:grid; gap:14px; margin-top:16px; padding:16px; border:1px solid var(--border); border-radius:var(--r-md); background:var(--surface); }
 .zc-edit-controls label { display:grid; grid-template-columns:110px minmax(0,1fr); gap:12px; align-items:center; font-size:.875rem; color:var(--text-muted); }
 .zc-edit-controls select { max-width:100%; padding:6px; color:var(--text); border:1px solid var(--border-strong); background:var(--ink-700); }

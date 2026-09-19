@@ -848,7 +848,8 @@ body::before {
 }
 
 .zc-compose-hint {
-  margin-left: var(--sp-2);
+  display: block;
+  margin-top: var(--sp-1);
   font-size: var(--fs-xs);
   color: var(--text-faint);
   letter-spacing: 0;
@@ -900,6 +901,29 @@ body::before {
   font-size: var(--fs-sm);
   color: var(--text-faint);
 }
+
+/* 空画布要像个**待用的画布**。空的近白方块加一行小字，一眼看过去和「没渲染出来」
+   没有区别，所以补一个虚线落位框把它说成「往这儿放」的区域，再补第二行讲下一步。
+   只管空态：03 拿 .zc-compose-empty 显示引擎报错，那个类不动。 */
+.zc-compose-blank {
+  flex-direction: column;
+  gap: var(--sp-3);
+  text-align: center;
+}
+
+.zc-compose-blank-frame {
+  width: 108px;
+  height: 108px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-md);
+}
+
+.zc-compose-blank-lead {
+  font-size: var(--fs-base);
+  color: var(--text-muted);
+}
+
+.zc-compose-blank small { font-size: var(--fs-xs); color: var(--text-faint); }
 
 .zc-compose-struct { margin-left: auto; }
 

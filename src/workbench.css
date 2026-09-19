@@ -227,7 +227,8 @@ button,input,select,textarea { font-family:inherit; }
   .is-workbench .zc-compose-palette { grid-column:1; grid-row:1/6; padding:10px; max-height:none; overflow:visible; }
   .is-workbench .zc-compose-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; margin-top:10px; }
   .is-workbench .zc-compbtn { min-height:29px; font-size:23px; padding:2px; }
-  .is-workbench .zc-compose-hint { display:block; margin:4px 0 0; font-size:12px; }
+  /* 提示本来就是块级一行了（styles.css 的基础层），这里只管窄屏的字号 */
+  .is-workbench .zc-compose-hint { font-size:12px; }
   .is-workbench .zc-compose-main > .zc-canvas-wrap { grid-column:2; grid-row:1/6; }
   .is-workbench .zc-compose-tabs { grid-column:3; grid-row:1; }
   .is-workbench .zc-compose-main > .zc-edit-controls,.is-workbench .zc-compose-main > .zc-verdict { grid-column:3; grid-row:2; margin:0; padding:12px; gap:8px; }
