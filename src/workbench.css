@@ -145,7 +145,9 @@ button,input,select,textarea { font-family:inherit; }
   .is-workbench .zc-journey-next .zc-btn { min-height:32px; padding:6px 12px; font-size:12px; }
   .is-workbench .zc-stage { display:grid; grid-template-columns:minmax(0,var(--canvas-edge)) 360px; gap:32px; height:100%; align-items:start; justify-content:center; }
   .is-workbench .zc-canvas-wrap { position:static; width:var(--canvas-edge); height:var(--canvas-edge); padding:12px; margin:0; max-width:100%; align-self:center; box-shadow:0 10px 32px rgba(47,67,36,.04); }
-  .is-workbench .zc-stage > aside { max-height:none; overflow:visible; }
+  /* 03 的侧栏多包了一层 .zc-lab-side（标题与 aside 同列），所以要两条都写；
+     01 / 02 / 04 / 05 / 06 的 aside 仍是 .zc-stage 的直接子元素。 */
+  .is-workbench .zc-stage > aside,.is-workbench .zc-lab-side > aside { max-height:none; overflow:visible; }
   .is-workbench .zc-panel { padding:12px; }
   .is-workbench .zc-panel + .zc-panel { margin-top:8px; }
   .is-workbench .zc-panel-title { margin-bottom:6px; }
@@ -201,13 +203,16 @@ button,input,select,textarea { font-family:inherit; }
   .zc-page-evo .zc-evo-compare-cell svg { height:calc(var(--canvas-edge) - 130px); }
   .zc-page-evo .zc-evo-compare-cell .zc-note { font-size:12px; }
 
-  /* 04：模式、说明与工具均在右侧，画布的位置与尺寸不变。 */
-  .zc-page-lab .zc-lab { height:100%; display:grid; grid-template-columns:minmax(0,var(--canvas-edge)) 360px; grid-template-rows:34px 42px minmax(0,1fr); gap:8px 32px; justify-content:center; align-items:start; }
+  /* 04：模式、说明与工具均在右侧，画布的位置与尺寸不变。
+     行高、行距与两列的落位交给 gallery.css 末尾那段（媒体查询相同、后加载），
+     这里只留列宽、高度与对齐 —— 一个属性只有一个来源。
+     原先这里还写着 34px/42px/minmax(0,1fr) 三行、.zc-canvas-wrap 与 .zc-lab-hint
+     各自的 grid-row，以及 .zc-lab-tabs 的行列定位；那是页签还留在 .zc-lab 网格里、
+     展台还没包 .zc-lab-exhibit 一层时的写法。现在页签整块并进右栏（lab-shell 的
+      #side-head），那三条选择器一条都匹配不到，行高也早被 gallery.css 压掉，
+     只让人以为 03 的纵向节奏是这里定的。 */
+  .zc-page-lab .zc-lab { height:100%; display:grid; grid-template-columns:minmax(0,var(--canvas-edge)) 360px; justify-content:center; align-items:start; }
   .zc-page-lab .zc-lab > .zc-stage { display:contents; }
-  .zc-page-lab .zc-lab > .zc-stage > .zc-canvas-wrap { grid-column:1; grid-row:1/4; }
-  .zc-page-lab .zc-lab > .zc-stage > aside { grid-column:2; grid-row:3; }
-  .zc-page-lab .zc-lab-tabs { grid-column:2; grid-row:1; margin:0; }
-  .zc-page-lab .zc-lab-hint { grid-column:2; grid-row:2; margin:0; font:400 13px/1.6 var(--font-brand); }
   .zc-page-lab .zc-compinfo { margin-top:8px; padding:8px; min-height:0; }
   .zc-page-lab .zc-compinfo .glyph { font-size:32px; }
   .zc-page-lab .zc-relation { font:400 13px/1.65 var(--font-brand); margin-top:8px; }
@@ -353,7 +358,11 @@ button,input,select,textarea { font-family:inherit; }
   .is-workbench .zc-module-content { position:relative; top:auto; bottom:auto; left:auto; right:auto; min-height:calc(100dvh - 229px); padding-bottom:100px; }
   .is-workbench .zc-stage { height:auto; min-height:calc(100dvh - 229px); }
   .zc-page-origin .zc-origin-view { height:auto; min-height:calc(100dvh - 229px); grid-template-rows:34px minmax(240px,1fr) 94px; }
-  .zc-page-lab .zc-lab { height:auto; min-height:calc(100dvh - 229px); grid-template-rows:34px 42px minmax(240px,1fr); }
+  /* 行数不在这里：.zc-lab 只有一行（左列展台 + 右栏 .zc-lab-side），
+     由后加载的 gallery.css 末尾那段给定。原先这里写着 34px 42px minmax(240px,1fr)，
+     是页签还作为 .zc-lab 直接子元素时的写法 —— 页签并进右栏之后 .zc-lab 只剩
+     .zc-stage 一个子元素（桌面 display:contents），这三条轨道早就配不上任何东西。 */
+  .zc-page-lab .zc-lab { height:auto; min-height:calc(100dvh - 229px); }
   .is-workbench .zc-compose,.zc-page-mine .zc-mine-work { height:auto; min-height:calc(100dvh - 291px); }
   .zc-page-mine .zc-mine { height:auto; min-height:calc(100dvh - 229px); grid-template-rows:50px auto; }
   .zc-page-quiz .zc-quiz { height:auto; min-height:calc(100dvh - 229px); grid-template-rows:26px 4px auto; }

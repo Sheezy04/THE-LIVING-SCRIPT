@@ -109,6 +109,17 @@ body:has(.is-workbench)::after {
 .zc-lab-exhibit .zc-lab-create-link > span { font:400 14px/1.6 var(--font-reading); color:#4e6654; }
 .zc-lab-exhibit .zc-lab-create-link small { grid-column:1/-1; font:400 13px/1.6 var(--font-reading); color:#526956; }
 
+/* 03 右栏的包装层：桌面上它是 .zc-lab 网格的第 2 列，标题与 aside 同属这一列
+   （落位见下面那个 ≥1050×600 的媒体块）。窄屏 .zc-stage 收成一列时要整层拆掉 ——
+   不拆的话「构形实验室 / ① 认识构形 / ② 目标拼合」会跟着 aside 一起掉到画布下面，
+   模块标题埋在页面中部。拆成 display:contents 之后标题用 order 拎回最前面，
+   画布与展签仍是紧接其后的第二块。 */
+.zc-lab-side { min-width:0; }
+@media(max-width:780px) {
+  .zc-page-lab .zc-lab > .zc-stage > .zc-lab-side { display:contents; }
+  .zc-page-lab .zc-lab-tabs { order:-1; }
+}
+
 @media(min-width:1050px) and (min-height:600px) {
   body:has(.is-workbench) .zc-title { font-size:48px; }
   .is-workbench .zc-modtabs button { font-size:17px; padding:8px 12px; }
@@ -119,37 +130,52 @@ body:has(.is-workbench)::after {
   .zc-page-origin .zc-origin-exhibit .zc-picker-more { margin-bottom:10px; font-size:14px; white-space:nowrap; }
   .zc-page-origin .zc-origin-exhibit .zc-writing-tools { grid-column:auto; grid-row:auto; }
   .zc-page-origin .zc-character-detail { padding:0; }
-  .zc-page-lab .zc-lab { grid-template-rows:auto auto; gap:16px 32px; align-content:start; }
-  .zc-page-lab .zc-lab-exhibit { grid-column:1; grid-row:1/3; }
-  .zc-page-lab .zc-lab > .zc-stage > aside { grid-column:2; grid-row:2; }
+  /* 03：左栏是画布与展签，右栏是**一条竖列** —— 标题、玩法页签、操作面板依次
+     往下排，两列都从同一个顶端开始。整块只有一行，没有任何跨行项。
+     这一行是必须的：以前页签与右栏面板各占一行、展台跨这两行，跨行项的高度
+     按网格规范只能**平分**给两条自动轨道（auto/1fr、max-content、min-content
+     三种写法实测逐位相同，硬调轨道治不了），展台 656px 于是把页签那行从
+     138px 撑到 240.7px —— 页签下面白出 119px 空洞。画布顶到 560px 上限时
+     更糟：另一条只把画布与展签拆成两个网格项、仍让画布跨两行的写法，在
+     1174×1244 下实测还剩 63px。
+     所以页签由 lab-shell 从 #side-head 整块并进右栏，展台只占一行 ——
+     洞在任何窗口尺寸下都出不来（verify/test-lab-shell.mjs ⑦ 量真几何）。
+
+     右栏这一列是 .zc-lab-side（title + aside 一层包装），不是 aside 本身：
+     窄屏 .zc-stage 收成一列时，没有这层就没办法把标题拎回画布前面，
+     它只能跟着 aside 沉到页面中部。包装层的窄屏写法见本文件上面那段
+     `@media(max-width:780px)`。
+     workbench.css 里 .zc-lab-hint 与 .zc-canvas-wrap 的 grid-row 原本是照
+     「展台不再多包一层」写的，包上之后那两条一直匹配不到，已删。 */
+  .zc-page-lab .zc-lab { grid-template-rows:auto; gap:16px 32px; align-content:start; }
+  .zc-page-lab .zc-lab-exhibit { grid-column:1; }
+  .zc-page-lab .zc-lab > .zc-stage > .zc-lab-side { grid-column:2; min-width:0; }
   .zc-page-lab .zc-lab-hint { font-size:16px; }
   .zc-page-lab .zc-lab-create-link { gap:8px; padding:12px 0; }
   /* 01 / 02 / 03 使用同一个尺寸预算，包含 02 下方播放工具的空间。 */
   .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab) { --canvas-edge:min(560px,calc(100dvh - 365px),calc(100vw - 505px)); }
   .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab) .zc-canvas-wrap { width:var(--canvas-edge); height:var(--canvas-edge); }
-  /* 01 / 03 / 04 / 06 回到正常页面流，不用 fixed / sticky 吸附。
-     06 是**唯一一个 fixed 真正在起作用、而且是帮倒忙**的页面：02 和 05 的文档高
-     （751 / 744）根本没超过视口，那条 fixed 在它们身上只是把底栏钉在屏幕底部；
-     06 的文档高是 2437（超屏 1693），钉住的底栏于是浮在正文中间横切过侧栏。
-     所以只把 06 加进来，不动 02 / 05 —— 它们的页面填不满视口，改成流式底下会空一截。 */
-  /* 06 不在这一条里：它的 .zc-canvas-wrap 要 relative（空态那句话得压在图上），
-     而这里的选择器和 workbench.css 里那条**特异性打平**（都是 0,3,0），
-     本文件在后就会把 relative 覆盖成 static，空态于是跑到画布外面去。 */
-  .is-workbench:is(.zc-page-origin,.zc-page-lab,.zc-page-quiz) .zc-canvas-wrap {
+  /* 01 / 02 / 03 / 04 / 06 回到正常页面流，不用 fixed / sticky 吸附。
+     02 在桌面媒体查询里原本是 position:fixed（把整块演示钉在屏幕上）；
+     2026-09 改为随文档滚动，理由是画布与底部栏在投影/矮视口下会被
+     fixed 截断或挡在正文上方，改成流式更稳。 */
+  /* 06 不在下面 canvas-wrap 这一条里：它的 .zc-canvas-wrap 要 relative
+     （空态那句话得压在图上），而这里的选择器和 workbench.css 里那条特异性打平
+     （都是 0,3,0），本文件在后就会把 relative 覆盖成 static，空态于是跑到画布外面去。 */
+  .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab,.zc-page-quiz) .zc-canvas-wrap {
     position:static; inset:auto; transform:none; z-index:auto; align-self:start;
   }
-  .is-workbench:is(.zc-page-origin,.zc-page-lab,.zc-page-quiz,.zc-page-graph) .zc-journey-next {
+  .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab,.zc-page-quiz,.zc-page-graph) .zc-journey-next {
     position:static; inset:auto; transform:none; width:auto; margin:24px 0 0;
   }
-  .is-workbench:is(.zc-page-origin,.zc-page-lab,.zc-page-quiz,.zc-page-graph) .zc-module-content { min-height:0; padding-bottom:0; }
+  .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab,.zc-page-quiz,.zc-page-graph) .zc-module-content { min-height:0; padding-bottom:0; }
   .zc-page-origin .zc-origin-view,.zc-page-lab .zc-lab { min-height:var(--canvas-edge); }
   .zc-page-quiz .zc-quiz { min-height:0; }
-  body:has(.zc-page-origin,.zc-page-lab,.zc-page-quiz,.zc-page-graph) .zc-footer {
+  body:has(.zc-page-origin,.zc-page-evo,.zc-page-lab,.zc-page-quiz,.zc-page-graph) .zc-footer {
     position:static; inset:auto; margin:18px 0 0; padding:0;
   }
   .zc-page-evo .zc-evo-main {
-    position:fixed; top:calc(147px + (100dvh - 229px - var(--canvas-edge) - 112px)/2);
-    left:calc((100vw - var(--canvas-edge) - 392px)/2); width:var(--canvas-edge); height:auto; z-index:2;
+    position:static; inset:auto; transform:none; width:auto; height:auto; z-index:auto;
     display:grid; grid-template-rows:var(--canvas-edge) auto; align-content:start;
   }
   .zc-page-evo .zc-evo-main .zc-canvas-wrap { position:static; width:100%; height:var(--canvas-edge); }

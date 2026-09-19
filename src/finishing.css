@@ -35,9 +35,9 @@
 .zc-lab-create-link > button { justify-self:start; }
 .zc-lab-create-link > small { font:400 12px/1.8 var(--font-reading); color:#78846b; }
 .zc-incoming-dialog p { margin:12px 0; }
-@media(min-width:1050px) and (min-height:600px) {
-  .zc-page-lab .zc-lab { grid-template-rows:auto auto auto; }
-}
+/* 03 的行高不在这里：整块只有一行，由 gallery.css 末尾那段（媒体查询相同、后加载）
+   与 lab-shell 的 #side-head 插槽共同决定。这里原先写着 auto auto auto —— 页签还在
+   .zc-lab 网格里时的遗留，早被 gallery.css 压掉，留着只会让人以为行数在这儿定。 */
 .zc-help-dialog { position:fixed; inset:0; width:min(680px,calc(100% - 32px)); max-height:82dvh; margin:auto; padding:24px; overflow:auto; border:1px solid #d6dfcb; border-radius:14px; background:#fffef9; color:var(--text); box-shadow:0 24px 100px #27332138; font:400 15px/1.9 var(--font-reading); }
 .zc-help-dialog::backdrop { background:#24321f66; }
 .zc-help-dialog > header { display:flex; gap:20px; align-items:center; justify-content:space-between; border-bottom:1px solid #dde3d2; padding-bottom:14px; margin-bottom:18px; }
