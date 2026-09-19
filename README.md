@@ -99,8 +99,8 @@ index.html#mod=quiz&level=classic&q=7          # 04 轻松探索 · 固定种子
 
 ```
 index.html              页面
-data/chars.js           100 字楷书字形数据（打包为经典 script）
-data/catalog.js         128 字教学目录（唯一手改的注册表，勿由脚本覆盖）
+data/chars.js           106 字楷书字形数据（打包为经典 script）
+data/catalog.js         134 字教学目录（唯一手改的注册表，勿由脚本覆盖）
 data/ancient.js         古文字五期字形数据 ← 生成物，勿手改
 data/paths.js           06 的推荐探索路径（手工写的跳转，只引用已经存在的边）
 src/
@@ -419,7 +419,7 @@ transform = translate(xOffset, height - yOffset) scale(scale, -scale)
 |---|---|
 | 数据 | `hanzi-writer-data` v2.0.1（源自 Make Me A Hanzi） |
 | **授权** | **Arphic Public License** |
-| 范围 | 100 字，164 KB |
+| 范围 | `data/chars.js` 收录 106 字，181 KB |
 
 ⚠️ **注意：库是 MIT，数据是 Arphic Public License，两者分开授权。**
 
@@ -444,9 +444,9 @@ Arphic 许可允许再分发与修改，但**必须随附许可文件并署名**
 
 `radStrokes` 恰好覆盖这 8 个会意字（象形字本就不需要拆解）。
 
-字表后来扩到 **100 字**（`data/chars.js`），其中 33 字带 `radStrokes`。
+字表后来扩到 **106 字**（`data/chars.js`），其中 38 字带 `radStrokes`。
 上面这份 30 字是**扩容的起点**，不是当前规模；当前规模见 `verify/roster.json`
-（128 条教学目录 = 36 核心 + 64 扩展 + 28 关联，关联字只进目录、不做字形）。
+（134 条教学目录 = 36 核心 + 70 扩展 + 28 关联，关联字只进目录、不做字形）。
 
 ### 实测统计（当时的 30 字）
 
@@ -455,20 +455,20 @@ Arphic 许可允许再分发与修改，但**必须随附许可文件并署名**
 | 笔画数 | 2（人） | 12（森） | 5.0 |
 | 路径锚点数 | 48（人） | 244（森） | 126 |
 
-100 字下的笔画数：最少 1（一），最多 12（森），平均 5.6。
+106 字下的笔画数：最少 1（一），最多 12（森），平均 5.84。
 
 ---
 
 ## 验证状态
 
-下表**全部由 `node verify/run-all.mjs` 自动跑**（34 项 = 21 项 Node 层 + 8 项浏览器层
+下表**全部由 `node verify/run-all.mjs` 自动跑**（36 项 = 23 项 Node 层 + 8 项浏览器层
 + 5 项静态自检页，约 2 分钟，大头是开无头浏览器）。
 以前标着「无头截图」「浏览器直接打开」的那几项，现在也挂进了同一条命令 ——
 「手动看一眼」不算验证：没人会每次改完都点开八个页面，点开了也只会看最后一行。
 
 | 项 | 方法 | 结果 |
 |---|---|---|
-| 字形落画布内 | `verify/test-geometry.mjs` | 100/100 ✓ |
+| 字形落画布内 | `verify/test-geometry.mjs` | 106/106 ✓ |
 | 重心居中 | 同上 | 水平 227–283 / 垂直 238–275（中心 260）✓ |
 | 进度单调性 | 同上 | ✓ |
 | p=0 全隐 / p=1 全显 | 同上 | ✓ |
@@ -483,7 +483,7 @@ Arphic 许可允许再分发与修改，但**必须随附许可文件并署名**
 | 拖拽→吸附→判定→成功 全链路 | `verify/test-challenge-flow.html` | 6/6 字通过 ✓ |
 | 真页面上把构件拖回原位 → 拼成功 | `verify/drive-challenge.mjs`（CDP） | 明 2/2 归位、成功面板带字理 ✓ |
 | 象形字 / 拼成功后立刻重开 / 提示开关 | 同上 | 象形字不给挑战控件；重开后 rAF 待触发归零 ✓ |
-| 古文字五期 × 全字表归一化撑满 | `verify/test-ancient.html` | 484/484 字形撑满；最紧的一格 962.6 ✓ |
+| 古文字五期 × 全字表归一化撑满 | `verify/test-ancient.html` | 499/499 字形撑满；最紧的一格 962.6 ✓ |
 | 演进节奏停—走—停—走 + 面板不丢 | `verify/test-evolution-pace.html`（iframe） | 6 期全到 + 周期中位 2850ms ✓ |
 | 04 出题与判分（四型 / 扫 400 轮） | `verify/test-quiz.mjs` | 8000 道题全过；构形题 800/800 与 `DECOMPOSITION` 一致 ✓ |
 | 04 UI（挂载 / 答题 / 计分 / 换轮） | `verify/test-quiz-ui.html` | 全通过，渲染期零异常 ✓ |
@@ -512,8 +512,8 @@ Arphic 许可允许再分发与修改，但**必须随附许可文件并署名**
 跑验证 —— 一条命令：
 
 ```bash
-node verify/run-all.mjs          # 全部 34 项，约 2 分钟（大头是开无头浏览器）
-node verify/run-all.mjs --fast   # 只跑 Node 层 21 项，约 5 秒，不需要 Chrome
+node verify/run-all.mjs          # 全部 36 项，约 2 分钟（大头是开无头浏览器）
+node verify/run-all.mjs --fast   # 只跑 Node 层 23 项，约 5 秒，不需要 Chrome
 ```
 
 也可以单独跑（要 Chrome 的那几个会自己开无头浏览器）：
@@ -671,8 +671,9 @@ AncientGlyphs.paths('日').forEach(d => { /* <path d={d} fill-rule="evenodd"> */
   所以参数在 build 时算好写进 `AncientGlyphs.kaiFit(ch)`，由 `evolution.js` 和 `mode-evolution.js` 各套一次。
   不补的话「小篆→楷书」那一幕会突然胀大或缩小。
   实测楷书 `日` 需要 ×1.333、`从` 需要 ×1.008。
-- **自检**：`verify/test-ancient.html` 断言 143 个古文字字形的**最长边恰好等于 962.6**
-  （= 1024 × 0.94）。哪一格明显偏小，就是归一化漏了。当前 143/143 通过。
+- **自检**：`verify/test-ancient.html` 断言 **499 个**古文字字形的**最长边恰好等于 962.6**
+  （= 1024 × 0.94）。哪一格明显偏小，就是归一化漏了。当前 499/499 通过
+  （五期 × 106 字 = 530 格，缺 31 格 —— 史料所限，页面自己会说「本素材集未收录」）。
 
 **宽高比仍然是各期自己的样子** —— 中山王篆的字形修长（`木` 高宽比 3.2），这是风格，不是 bug。
 
@@ -686,7 +687,7 @@ chrome --headless=new --virtual-time-budget=6000 --dump-dom \
   "file:///D:/item2/verify/test-ancient.html" | grep -o '<title>[^<]*'
 ```
 
-当前结果：**143 个古文字字形全部撑满、无出框、无过窄，PASS。**
+当前结果：**499 个古文字字形全部撑满、无出框、无过窄，PASS。**
 段数 51–270，与楷书数据（48–244 锚点）同一量级。
 
 ### ⚠️ 古文字层不能直接复用书写动画
@@ -703,9 +704,9 @@ chrome --headless=new --virtual-time-budget=6000 --dump-dom \
 ### 可接入：中研院漢字構形資料庫 2.4 · 四体（已解包验证）
 
 `verify/cdp-outlines.json` — 由 `verify/build-cdp.py` 生成，含四个书体 × 30 字的全部 path。
-⚠️ 这份 dump 停在扩容前的 30 字（212 KB），**没有跟着字表扩到 100** —— 下表描述的
+⚠️ 这份 dump 停在扩容前的 30 字（212 KB），**没有跟着字表扩到 106** —— 下表描述的
 是它，所以下表的「N/30」分母都是 30。`data/ancient.js` 走的是同几个 TTF，但覆盖面
-是 100 字（五期分别 95/97/94/99/99），两者不是同一份数据，别拿下表当 100 字的结论。
+是 106 字（五期分别 96/99/96/103/105），两者不是同一份数据，别拿下表当 106 字的结论。
 
 | 文件 | 字体真名 | 本项目覆盖 |
 |---|---|---|
@@ -715,7 +716,7 @@ chrome --headless=new --virtual-time-budget=6000 --dump-dom \
 | `bnucdp.ttf` | 北師大說文小篆 | **30/30** |
 
 **四体齐全 25/30**，且这 30 字已逐字目视核对通过（`verify/cdp-focus.png` / `cdp-b.png` / `cdp-c.png`）。
-扩容进来的 70 字**没有做过这道目视核对**，只有 `test-ancient.html` 的自动撑满断言。
+扩容进来的 76 字**没有做过这道目视核对**，只有 `test-ancient.html` 的自动撑满断言。
 
 #### ⚠️ 三个坑（不用 opentype.js）
 

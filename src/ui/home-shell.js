@@ -1,7 +1,8 @@
 /* 字启千年 — 01 首页
  *
  * 方案文档要的第一屏：作品名 + 一句话简介 + **会呼吸的古文字** +
- * 「开始探索」主按钮 + 字形故事展览 + 「已探索 N / 30」与细进度条。
+ * 「开始探索」主按钮 + 字形故事展览 + 「已探索 N / 总数」与细进度条
+ * （分母是当前有楷书字形的字数，加字后自动跟着变，不写死）。
  *
  * 「会呼吸」是**复用 evolution.js**，不新写动画 —— 那一层已经解决了
  * 「字形从一期过渡到另一期」（两拍淡入淡出、旧期先走新期后到），
@@ -75,7 +76,7 @@
             <p class="zc-story-disclaimer">以上为代表字形选览，省略了部分阶段，并非完整或唯一的线性演变链；古文字素材的版本授权仍待核对。</p>
           </article>
           <article class="zc-story-family"><div><p class="zc-story-label">构形的另一种可能</p><h4>一个木，是树；重复组合，写出繁茂。</h4><p>「林」表示成片的树木，「森」描述树木繁密。同一个构件，通过数量与位置的变化，可以参与构成不同的字。</p><a href="https://dict.variants.moe.edu.tw/dictView.jsp?ID=20787&la=1" target="_blank" rel="noopener noreferrer">参考：林</a><a href="https://dict.variants.moe.edu.tw/dictView.jsp?ID=21425&la=1" target="_blank" rel="noopener noreferrer">参考：森 ↗</a></div><div class="zc-family-glyphs"><figure v-for="(c, i) in ['木','林','森']" :key="c"><b>{{ c }}</b><figcaption>{{ ['树木','成片的树木','树木繁密'][i] }}</figcaption></figure></div><p class="zc-family-note">这是构形联系，不是「木」逐渐变成「森」的历史演变。</p></article>
-          <div class="zc-home-collection"><p><b>{{ total }} 个精选汉字</b><span>第一辑 · 从自然形象到构件组合</span></p><p><b>15 个拆解样例</b><span>不只认识，更能亲手操作</span></p><p><b>26 个创作构件</b><span>让学习成为你的数字作品</span></p></div>
+          <div class="zc-home-collection"><p><b>{{ total }} 个精选汉字</b><span>第一辑全目录 {{ catalogTotal }} 字 · 这些有楷书字形可写可拆</span></p><p><b>15 个拆解样例</b><span>不只认识，更能亲手操作</span></p><p><b>26 个创作构件</b><span>让学习成为你的数字作品</span></p></div>
           <p class="zc-background-credit">全站背景：<a href="https://www.metmuseum.org/art/collection/search/51858" target="_blank" rel="noopener noreferrer">Landscape with Autumn Foliage · 传沈周 · 大都会艺术博物馆馆藏 69.131.9 ↗</a> · Public Domain / CC0 开放图像；仅作氛围展示。</p>
         </section>
         <section class="zc-home-themes" aria-labelledby="theme-title">
@@ -106,6 +107,13 @@
         var map = (global.ZQ && global.ZQ.Themes) || {};
         return Object.keys(map).map(function (id) { return { id: id, label: map[id].label || id, note: map[id].note || '', chars: map[id].chars || [] }; });
       },
+      /* 首页那排数字里有两个「多少个字」，别让它们对不上：
+       *   total（外壳传下来的 store.total()）= chars.js 的条数 = 106，
+       *     也就是**有楷书字形、点得开**的那些 —— 进度条的分母也是它。
+       *   catalogTotal = 教学目录条数 = 134，06 关系网说的是这个数。
+       * 差的 28 个是关联字：只进目录与关系网，没有楷书字形，不能当全站选字。
+       * 所以两个数都写出来、各自标明是什么 —— 只写一个，读者跨模块一比就以为错。 */
+      catalogTotal: function () { return Object.keys(global.CharCatalog || {}).length; },
       themeNote: function () {
         return this.tr('home_themes_partial')
           .replace('{{label}}', this.theme.label)

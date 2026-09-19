@@ -4,9 +4,10 @@
   var ZQ = global.ZQ = global.ZQ || {}, key = 'zq-favorites-v1', saved = [];
   try { saved = JSON.parse(global.localStorage.getItem(key) || '[]'); } catch (e) {}
   /* 收藏去重、按教学目录白名单过滤。**不设条数上限** —— 白名单本身就把结果钉在
-   * 目录大小以内（每条是一个汉字字符串，128 条也就几百字节），再叠一个 30 只是
+   * 目录大小以内（每条是一个汉字字符串，134 条也就几百字节），再叠一个 30 只是
    * 让第 31 个收藏在下次打开时安静消失。原来那个 slice(0,30) 是字表还只有 30 字
-   * 时写的，字表长到 128 之后它就从「上限」变成了「静默丢数据」。 */
+   * 时写的，字表**越过 30 个字**之后它就从「上限」变成了「静默丢数据」——
+   * 触发条件是「目录比上限大」，不是一个具体的字数。 */
   function normalize(items) { return Array.isArray(items) ? Array.from(new Set(items)).filter(function (c) { return typeof c === 'string' && Object.prototype.hasOwnProperty.call(global.CharCatalog || {}, c); }) : []; }
   ZQ.preferences = global.Vue.reactive({ favorites:normalize(saved), savedLocally:true });
   var notebookKey='zq-practice-notebook-v1', viewKey='zq-workspace-view-v1';
@@ -14,7 +15,7 @@
 
   /* ── 笔记容量：三个数必须一起动 ─────────────────────────────────────────
    * 条数上限、单条体积上界、读入守卫。原来它们是 30 / （没写）/ 200000 三个
-   * 各写各的数 —— 字表只有 30 字时看不出问题，字表到 128 之后 30 条就成了
+   * 各写各的数 —— 字表只有 30 字时看不出问题，字表一变大，30 条就成了
    * 静默丢数据，而**更糟的是**：一旦自己写出去的那份超过读入守卫，readLocal
    * 会连整本笔记一起丢掉，紧接着 persistNotebook 再把空数组写回去，
    * 用户的笔记就在一次打开里没了。所以守卫这里改成**从上限推导**，
