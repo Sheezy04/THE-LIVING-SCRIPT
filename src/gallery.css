@@ -271,6 +271,32 @@ body:has(.is-workbench)::after {
 .zc-page-graph .zc-graph-path small { display:block; font:400 13px/1.6 var(--font-reading); color:#4e6253; }
 .zc-page-graph .zc-graph-path.is-active .zc-graph-path-title { color:#1d3b2a; }
 
+/* ── 5 右栏：中心字卡 / 本字的关系清单 / 空态 ──────────────────────────
+   原先这几条写在 workbench.css 的 `≥1050×600` 桌面块里，等于只发给大窗口：
+   ≤1049 宽或 ≤599 高时右栏一条规则都没有 —— 清单退回浏览器默认按钮、
+   组标题「构形关系 · 实线」不换行地挤在第一个字上。而 01–05 的侧栏造型都在
+   基础层（.zc-panel 见 styles.css:340），任何宽度下都自带外观，06 是唯一的例外。
+
+   造型只有一份，桌面与手机共用，所以放在这个**没有媒体查询**的层里；
+   断点差异由各自的 media 负责（手机端的工具条收纳在 workbench.css:408 那块）。
+   放 gallery.css 末尾是因为它最后加载、同特异性时它说了算 —— 谁要是把其中
+   一条抄回 workbench 的桌面块，两端就会静默分歧，verify/test-gallery.mjs
+   有静态守卫专门钉这件事。 */
+.zc-page-graph .zc-graph-tools { display:grid; gap:10px; align-content:start; min-width:0; }
+.zc-page-graph .zc-graph-center-head { display:grid; grid-template-columns:auto minmax(0,1fr); align-items:center; gap:14px; }
+.zc-page-graph .zc-graph-center-char { font:400 62px/1 var(--font-brand); color:#283f30; }
+.zc-page-graph .zc-graph-center-head b { display:block; font:400 20px/1.4 var(--font-reading); color:#3a5a45; }
+.zc-page-graph .zc-graph-center-head small { display:block; margin-top:2px; font:400 14px/1.7 var(--font-reading); color:#4d6155; }
+.zc-page-graph .zc-graph-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.zc-page-graph .zc-chip { padding:3px 9px; border:1px solid var(--gallery-line); border-radius:999px; color:#40604c; font:400 12px/1.6 var(--font-reading); }
+.zc-page-graph .zc-graph-group + .zc-graph-group { margin-top:12px; }
+.zc-page-graph .zc-graph-group-label { display:block; padding-bottom:4px; border-bottom:1px solid var(--gallery-line); font:400 12px/1.6 var(--font-reading); color:#4e6253; letter-spacing:.06em; }
+.zc-page-graph .zc-graph-link { display:flex; align-items:baseline; gap:10px; width:100%; padding:6px 0; text-align:left; border:0; border-bottom:1px solid var(--gallery-line); background:transparent; cursor:pointer; }
+.zc-page-graph .zc-graph-link b { flex:none; font:400 26px/1.2 var(--font-brand); color:#283f30; }
+.zc-page-graph .zc-graph-link small { font:400 13px/1.6 var(--font-reading); color:#4d6155; }
+.zc-page-graph .zc-graph-link:hover b { color:#8a6746; }
+.zc-page-graph .zc-graph-empty { position:absolute; left:0; right:0; bottom:16px; margin:0; text-align:center; font:400 16px/1.8 var(--font-reading); color:#4d6155; }
+
 @media(max-width:620px) {
   .zc-page-graph .zc-graph-path { padding:10px 12px; }
   .zc-page-graph .zc-graph-path-glyph { font-size:20px; }

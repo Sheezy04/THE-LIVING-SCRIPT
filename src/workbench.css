@@ -331,27 +331,22 @@ button,input,select,textarea { font-family:inherit; }
   .zc-page-graph .zc-graph-tip svg { display:none; }
   .zc-page-graph .zc-graph-hops button { min-width:64px; }
 
-  .zc-page-graph .zc-graph-tools { display:grid; gap:10px; align-content:start; min-width:0; }
-  .zc-page-graph .zc-graph-center-head { display:grid; grid-template-columns:auto minmax(0,1fr); align-items:center; gap:14px; }
-  .zc-page-graph .zc-graph-center-char { font:400 62px/1 var(--font-brand); color:#283f30; }
-  .zc-page-graph .zc-graph-center-head b { display:block; font:400 20px/1.4 var(--font-reading); color:#3a5a45; }
-  .zc-page-graph .zc-graph-center-head small { display:block; margin-top:2px; font:400 14px/1.7 var(--font-reading); color:#4d6155; }
-  .zc-page-graph .zc-graph-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-  .zc-page-graph .zc-chip { padding:3px 9px; border:1px solid var(--gallery-line); border-radius:999px; color:#40604c; font:400 12px/1.6 var(--font-reading); }
-  .zc-page-graph .zc-graph-locked { color:#8a6746; }
+  /* 右栏（中心字卡 / 本字的关系清单 / 空态）的**造型不写在这里** —— 它在
+     gallery.css 末尾「06 打磨」第 5 段，桌面与手机共用同一个来源。
 
+     原先这几条写在这个块里，等于只发给 ≥1050×600 的窗口：手机（≤1049 或 ≤599）
+     下右栏一条规则都没有，清单退回浏览器默认按钮、组标题不换行。而 01–05 的侧栏
+     造型都在基础层（.zc-panel 见 styles.css:340），任何宽度下都自带外观 ——
+     06 是唯一破了这条约定的一页。哪一端要改，去 gallery.css 改，别在这里加第二套。
+
+     已删的 .zc-graph-locked { color:#8a6746 }：它与后加载的
+     gallery.css:53 `.is-workbench .zc-note { color:#344e40 }` 特异性打平（都 0,2,0），
+     从来就没生效过。删掉后两端一致走 .zc-note 的深绿；搬进 gallery.css 反而会让它
+     生效、把桌面这一行的颜色也改掉。 */
   .zc-page-graph .zc-graph-path { display:grid; gap:3px; width:100%; margin-top:8px; padding:9px 12px; text-align:left; border:1px solid var(--gallery-line); border-radius:0; background:transparent; cursor:pointer; }
   .zc-page-graph .zc-graph-path b { font:400 17px/1.5 var(--font-brand); color:#2b4634; letter-spacing:.04em; }
   .zc-page-graph .zc-graph-path small { font:400 13px/1.6 var(--font-reading); color:#4e6253; }
   .zc-page-graph .zc-graph-path.is-active { background:#e0eadd; border-color:#4a7053; }
-
-  .zc-page-graph .zc-graph-group + .zc-graph-group { margin-top:12px; }
-  .zc-page-graph .zc-graph-group-label { display:block; padding-bottom:4px; border-bottom:1px solid var(--gallery-line); font:400 12px/1.6 var(--font-reading); color:#4e6253; letter-spacing:.06em; }
-  .zc-page-graph .zc-graph-link { display:flex; align-items:baseline; gap:10px; width:100%; padding:6px 0; text-align:left; border:0; border-bottom:1px solid var(--gallery-line); background:transparent; cursor:pointer; }
-  .zc-page-graph .zc-graph-link b { flex:none; font:400 26px/1.2 var(--font-brand); color:#283f30; }
-  .zc-page-graph .zc-graph-link small { font:400 13px/1.6 var(--font-reading); color:#4d6155; }
-  .zc-page-graph .zc-graph-link:hover b { color:#8a6746; }
-  .zc-page-graph .zc-graph-empty { position:absolute; left:0; right:0; bottom:16px; margin:0; text-align:center; font:400 16px/1.8 var(--font-reading); color:#4d6155; }
 }
 @media(min-width:1050px) and (min-height:600px) {
   /* 页面自然滚动，无嵌套侧栏滚动条；为固定状态栏留出底部空间。 */
@@ -399,7 +394,7 @@ button,input,select,textarea { font-family:inherit; }
 
 /* ═══════════════════════════════════════════
    06 关系网 · 窄屏/矮屏改版（仅保留工具条收纳与提示冒泡）
-   卡片/页签/路径链/图例的统一造型由 gallery.css 末尾的「06 打磨」块
+   卡片/页签/路径链/图例/右栏的统一造型由 gallery.css 末尾的「06 打磨」块
    负责（桌面与手机同一套），这里只做手机端工具条的收纳 —— 不画第二套
    卡片，避免两套样式互相覆盖。
    ⚠️ 图例色块的**颜色**不许动：verify/test-graph-ui.mjs ⑦ 钉着
@@ -407,6 +402,11 @@ button,input,select,textarea { font-family:inherit; }
    ═══════════════════════════════════════════ */
 @media(max-width:1049px),(max-height:599px) {
   .zc-page-graph .zc-graph-main { display:grid; gap:12px; margin-top:4px; min-width:0; }
+  /* 右栏两张卡片的间距对齐桌面：桌面靠 `.is-workbench .zc-panel + .zc-panel { margin-top:8px }`
+     （在本文件 150 行的桌面块里）+ `.zc-graph-tools` 的 gap:10px = 18px；窄屏回落到基础层
+     `styles.css:347` 的 16px，再加同一个 gap 就成了 26px。这里把基础层的 margin 收掉，
+     两端都是 10px。**不能**放进 gallery.css 那段共享造型里 —— 那会把桌面也改成 10px。 */
+  .zc-page-graph .zc-graph-tools > .zc-panel + .zc-panel { margin-top:0; }
 
   /* 顶部工具条：返回 + 层数合成一行卡片，提示条为带图标的冒泡 */
   .zc-page-graph .zc-graph-controls {
