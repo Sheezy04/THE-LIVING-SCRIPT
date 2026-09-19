@@ -811,8 +811,13 @@ body::before {
 .zc-graph-center-ring { fill: rgba(255,254,250,0); stroke: var(--graph-edge-component); stroke-width: 1.5; }
 .zc-graph-node.is-path circle { stroke: var(--gold); stroke-width: 2.8; }
 /* 关联字的「点它其实去的是这个字」：用纸色描边做光晕，读成一个小标签。
-   不另画矩形 —— 矩形要量字宽，越界断言按真实渲染框量，会多出风险。 */
-.zc-graph-anchor { fill: #6b7d70; stroke: #fffefa; stroke-width: 4; paint-order: stroke; font: 400 11px var(--font-reading); }
+   不另画矩形 —— 矩形要量字宽，越界断言按真实渲染框量，会多出风险。
+   光晕顺带把底色变成一块平的白（实测底色众数恒为 rgb(255,254,250)，
+   与光晕同色），所以这里的对比度只由字色决定。原来的 #6b7d70 在这个底色上
+   实测 4.34:1（见 verify/test-graph-ui.mjs 里那段合成像素实测）—— 够不到小字 4.5:1 的下限，
+   而它是全页最小的一行字（11px 画在 560 单位的画布里）。压到与其余小字同一个
+   #5c6a4e 后 ≈5.7:1。字形尺寸、光晕宽度、坐标一律未动。 */
+.zc-graph-anchor { fill: #5c6a4e; stroke: #fffefa; stroke-width: 4; paint-order: stroke; font: 400 11px var(--font-reading); }
 
 /* ── 构形实验室外壳（02 的三模式页签）────────── */
 
