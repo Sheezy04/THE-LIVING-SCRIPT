@@ -63,7 +63,7 @@
       '  <aside class="zc-evo-tools">',
       '    <div class="zc-gallery-heading"><span>02 / EVOLUTION</span><h2>千年演变</h2></div>',
       '    <div class="zc-seg zc-evo-tabs" role="group" aria-label="演变内容"><button :aria-pressed="panel === \'stage\'" :class="{ \'is-active\': panel === \'stage\' }" @click="panel = \'stage\'">{{ tr(\'evo_tab_stage\') }}</button><button :aria-pressed="panel === \'pick\'" :class="{ \'is-active\': panel === \'pick\' }" @click="panel = \'pick\'">{{ tr(\'evo_tab_pick\') }}</button></div>',
-      '    <evidence-reader :char="char" :stage-key="stage.key" @open="pauseForEvidence" />',
+      '    <evidence-reader ref="evidence" :char="char" :stage-key="stage.key" @open="pauseForEvidence" />',
       '    <div v-show="panel === \'stage\'" class="zc-panel">',
       '      <div class="zc-panel-title">阶段</div>',
       '      <div class="zc-stageinfo-head">',
@@ -72,23 +72,47 @@
       '      </div>',
       '      <p class="zc-stageinfo-note">{{ stage.note }}</p>',
       '      <div class="zc-stageinfo-src">',
-      '        <template v-if="isKai">',
-      '          字形源 <b>hanzi-writer-data</b>（Make Me A Hanzi）<br>',
-      '          授权 <b>Arphic Public License</b>',
-      '        </template>',
-      '        <template v-else-if="stage.source">',
-      '          字形源 <b>{{ stage.source.name }}</b><br>',
-      '          <b v-if="stage.source.license_ok">授权 {{ stage.source.license }}</b>',
-      '          <span v-else class="warn">授权 {{ stage.source.license }}</span>',
-      '        </template>',
-      '      </div>',
+'        <template v-if="isKai">',
+'          字形源 <b>hanzi-writer-data</b>（Make Me A Hanzi）<br>',
+'          授权 <b>Arphic Public License</b>',
+'        </template>',
+'        <template v-else-if="stage.source && !stage.missingHere">',
+'          字形源 <b>{{ stage.source.name }}</b><br>',
+'          <template v-if="stage.source.license_ok">',
+'            授权 <b>{{ stage.source.license }}</b>',
+'          </template>',
+'          <template v-else>',
+'            <span class="warn">本地许可标记：待确认</span><br>',
+'            <span>许可核对状态：尚未完成</span><br>',
+'            <span>说明：本地 {{ stage.source.name }} 文件与中研院现行声明之间仍须核对发布版本、文件身份、许可涵盖范围及字体转 SVG 的条件。</span>',
+'          </template>',
+'        </template>',
+'        <template v-else-if="stage.missingHere">',
+'          字形源 <b>{{ stage.source ? stage.source.name : \'\' }}</b> · 本素材集未收录此期字形',
+'        </template>',
+'      </div>',
       '      <div class="zc-stagecov">',
       '        <span v-for="(s, i) in stages" :key="s.key" class="zc-covchip"',
       '              :class="[s.available ? \'has\' : \'no\', i === stage.index ? \'is-now\' : \'\']"',
       '              :title="s.period + (s.available ? \' · 有字形\' : \' · 本素材集未收录此期字形\')"',
       '        >{{ s.label }}</span>',
       '      </div>',
-      '      <p class="zc-note">主时间轴仍为字体演示，尚无隶书；部分代表字的汉代隶变与著录可在「出处与实证」中查看。</p>',
+      /* 隶变节点。时间轴上**没有**这一期（本地素材集没有隶书字形，不拿小篆或楷书
+       * 冒充），但它的资料其实另有 CC0 采集 —— 所以它落在这里，作为「时间轴之外」
+       * 的一段叙事，而不是往六期里塞一个空期：那样每个字都会多出一格永远画不出
+       * 东西的缩略图，`ERAS` 是六期这件事也是 data/ancient.js 与覆盖统计的基准。
+       * 列出的九个字与当前选中的字无关（那批资料是按字采集的），所以点字走
+       * openAt 直接点名，见 evidence-reader.js。 */
+      '      <div class="zc-li-node">',
+      '        <div class="zc-panel-title">时间轴之外 · 隶变</div>',
+      '        <p class="zc-stageinfo-note">小篆到楷书之间隔着约四百年。字形在这一段从「用线条描画物象」转向「用笔画记录语素」：圆转的弧线拉直、折出方角，象形意味进一步脱落，今天通行的笔画结构基本在这时定型。本地素材集没有这一期的字形，时间轴便直接从「小篆」跳到「楷书」，不拿相邻阶段顶替。</p>',
+      '        <p class="zc-note">下列 {{ liChars.length }} 个代表字的汉代隶变字样与著录已单独采集（CC0），点字可直接查看该字的隶变资料：</p>',
+      '        <div class="zc-li-chars">',
+      '          <button v-for="ch in liChars" :key="ch" class="zc-li-chip"',
+      '                  :class="{ \'is-active\': ch === char }" :aria-pressed="ch === char"',
+      '                  :title="\'查看「\' + ch + \'」的汉代隶变资料\'" @click="openLi(ch)">{{ ch }}</button>',
+      '        </div>',
+      '      </div>',
       '    </div>',
       '',
       '',
@@ -126,6 +150,17 @@
         return this.t - this.floorT > 0.001 ? this.floorT + 1 : -1;
       },
       maxT: function () { return Math.max(0, (this.stages.length - 1) * 1000); },
+      /** 资料集里有汉代隶变字样的代表字（九个）。**从数据里数**，不写死 ——
+       *  这批资料是按字采集的，将来补采一个字，这里跟着变。 */
+      liChars: function () {
+        var d = global.XiaoxueEvidence;
+        if (!d || !Array.isArray(d.records) || !Array.isArray(d.characters)) return [];
+        var seen = {}, out = [];
+        d.records.forEach(function (r) {
+          if (r && r.category === 'lishu' && !seen[r.char] && d.characters.indexOf(r.char) >= 0) { seen[r.char] = true; out.push(r.char); }
+        });
+        return out;
+      },
       isKai: function () {
         return this.stage.key === (global.Evolution && global.Evolution.KAI_KEY);
       }
@@ -152,6 +187,14 @@
 
     methods: {
       pauseForEvidence: function () { if(this.eng) this.eng.stop(); this.playing=false; },
+      /* 隶变节点点字：把阅览面板**直接定位**到那个字的汉代隶变上。
+       * 播放的暂停交给 @open（它本来就是干这个的）—— 这里自己再停一次，
+       * 万一将来 @open 那条线断了，两处都停也没坏处，但重复停会让「谁负责」
+       * 变得看不出来，所以只留一条路。 */
+      openLi: function (ch) {
+        var reader = this.$refs.evidence;
+        if (reader && typeof reader.openAt === 'function') reader.openAt(ch, 'lishu');
+      },
       toggleCompare: function () { this.compare = !this.compare; if (this.compare && this.eng) { this.eng.stop(); this.playing = false; } },
       setCompare: function (side, event) {
         var i = Number(event.target.value);

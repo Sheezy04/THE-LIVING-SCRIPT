@@ -35,10 +35,26 @@
     beforeUnmount:function () { this.close(); },
     methods:{
       open:function () {
-        this.selectedChar=this.char; this.category=Object.prototype.hasOwnProperty.call(categoryMap,this.stageKey)?categoryMap[this.stageKey]:'jiaguwen'; this.resetImages(); this.message=''; this.compare=false; this.compareCategory=this.category==='lishu'?'jiaguwen':'lishu';
+        this.selectedChar=this.char; this.category=Object.prototype.hasOwnProperty.call(categoryMap,this.stageKey)?categoryMap[this.stageKey]:'jiaguwen';
+        this.openDialog();
+      },
+      /* 外部点名要看的**某一个字 + 某一类**（02 的隶变节点就这样用：那里列出的
+       * 九个字与当前选中的字无关）。字不在资料集里就**一个字都不动**、返回 false，
+       * 让调用方自己决定要不要提示 —— 悄悄换掉用户正在看的资料比不打开更糟。 */
+      openAt:function (char,category) {
+        if (!dataset().characters.includes(char)) return false;
+        this.selectedChar=char;
+        if (dataset().categories.some(function (c) { return c.key===category; })) this.category=category;
+        this.openDialog();
+        return true;
+      },
+      openDialog:function () {
+        this.resetImages(); this.message=''; this.compare=false;
+        this.compareCategory=this.category==='lishu'?'jiaguwen':'lishu';
         var dialog=this.$refs.dialog;
-        if (!dialog || typeof dialog.showModal!=='function') { this.message='当前浏览器不支持资料阅览面板，请使用现代桌面浏览器。'; return; }
+        if (!dialog || typeof dialog.showModal!=='function') { this.message='当前浏览器不支持资料阅览面板，请使用现代桌面浏览器。'; return false; }
         if (!dialog.open) { dialog.showModal(); this.$emit('open'); }
+        return true;
       },
       close:function () { var dialog=this.$refs && this.$refs.dialog; if(dialog && dialog.open && typeof dialog.close==='function') dialog.close(); },
       resetImages:function () { this.imageFailed=false; this.failedCompare=[false,false]; },

@@ -728,6 +728,29 @@ body::before {
 .zc-covchip.is-now { border-color: var(--gold); color: var(--gold); }
 .zc-covchip.no { opacity: 0.45; }
 
+/* 隶变节点：这一期**不在**时间轴上（本地无隶书字形，不拿小篆或楷书顶替），
+   所以它紧跟在「此字各期覆盖一览」之后，明说自己属于「时间轴之外」。
+   按钮长得像 covchip，但它是**能点的** —— 形状相近、行为不同，所以用
+   :hover/:focus-visible 把可点这件事显出来。 */
+.zc-li-node { margin-top: var(--sp-4); padding-top: var(--sp-3); border-top: 1px solid var(--border); }
+.zc-li-chars { display: flex; flex-wrap: wrap; gap: var(--sp-1); margin-top: var(--sp-2); }
+
+.zc-li-chip {
+  font-family: var(--font-serif);
+  font-size: var(--fs-lg);
+  line-height: 1;
+  padding: 5px var(--sp-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.zc-li-chip:hover,
+.zc-li-chip.is-active { border-color: var(--gold); color: var(--gold); }
+.zc-li-chip:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
 /* 并览模式下画布是六宫格，不需要外部留白感 */
 .zc-canvas.is-overview { background: var(--ink-800); }
 
