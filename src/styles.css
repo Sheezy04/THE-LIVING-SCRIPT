@@ -760,6 +760,9 @@ body::before {
 
 .zc-evo-cell { fill: none; stroke: var(--border); }
 .zc-evo-miss { fill: var(--text-faint); }
+/* 缺格依据那行。刻意与 .zc-evo-miss 同色 —— 它不是新的一档灰，
+   只是正文下面的一行小字；对比度由读合成像素那组用例量，不在这里另立一套。 */
+.zc-evo-note { fill: var(--text-faint); }
 .zc-evo-label { fill: var(--text-faint); }
 .zc-evo-label.is-current { fill: var(--gold); }
 

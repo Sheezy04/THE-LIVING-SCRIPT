@@ -128,6 +128,15 @@
                                  'class': 'zc-evo-miss', 'font-size': 14 });
     emptyText.textContent = '本素材集未收录此期字形';
     gEmpty.appendChild(emptyText);
+
+    // 第二行：这个字这一期**为什么**缺 —— 依据在 data/gap-notes.js。
+    // 530 格里缺 31 格，读的人多半会以为是我们没找到；这一行给出查证结果。
+    // 排在正文下方 26px —— **正文一个坐标都没动**，所以没有说明的那些期
+    // （GapNotes.of 返回空串，空 <text> 不占位）版面与从前逐像素一致。
+    var emptyNote = el('text', { x: width / 2, y: height / 2 + 26,
+                                 'text-anchor': 'middle', 'dominant-baseline': 'middle',
+                                 'class': 'zc-evo-note', 'font-size': 12 });
+    gEmpty.appendChild(emptyNote);
     gEmpty.setAttribute('display', 'none');
 
     svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
@@ -236,6 +245,8 @@
       gEmpty.setAttribute('display', showEmpty ? '' : 'none');
       if (showEmpty) {
         emptyText.textContent = cur.label + ' · 本素材集未收录';
+        var GN = global.ZQ && global.ZQ.GapNotes;
+        emptyNote.textContent = GN ? GN.of(char, cur.key) : '';
       }
     }
 
@@ -275,7 +286,9 @@
             x: cw / 2, y: ch / 2, 'text-anchor': 'middle',
             'dominant-baseline': 'middle', 'class': 'zc-evo-miss', 'font-size': 12
           });
-          tx.textContent = '缺素材';
+          // 与舞台信息、缩略图条统一用「本素材集未收录」——
+          // 这个口径把缺失归给**我们的收藏**，不替史料下「该期无此字」的断言。
+          tx.textContent = '本素材集未收录';
           cell.appendChild(tx);
         }
 

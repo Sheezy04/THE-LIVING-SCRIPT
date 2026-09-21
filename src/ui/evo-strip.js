@@ -1,7 +1,8 @@
 /* 字启千年 — 03 千年演变 · 阶段缩略图条
  *
  * 六格（甲骨文 → 楷书），点哪格跳哪期。没有字形的期压暗、名字加删除线，
- * 但仍然可点 —— 点进去画布会显示「此期未见此字」，那本身就是信息。
+ * 但仍然可点 —— 点进去画布会显示「本素材集未收录此期字形」，并在第二行给出
+ * 查证依据（data/gap-notes.js），那本身就是信息。
  *
  * 单独拆成组件，是因为它和主画布的**刷新频率差着两个数量级**：
  * 主画布那边拖时间轴时每帧都要更新（滑块要跟手、「下一期」的虚线要高亮），
@@ -33,8 +34,8 @@
       '  <button type="button" v-for="(s, i) in items" :key="s.key" class="zc-evostage" :aria-pressed="i === active"',
       '       :class="{ \'is-absent\': !s.available, \'is-active\': i === active,',
       '                 \'is-next\': i === next }"',
-      '       :title="s.label + \' · \' + s.period + (s.available ? \'\' : \' · 本素材集未收录\')"',
-      '       :aria-label="s.label + (s.available ? \'\' : \'，本素材集未收录\')"',
+      '       :title="s.label + \' · \' + s.period + (s.available ? \'\' : \' · 本素材集未收录\') + (s.gapNote ? \' · \' + s.gapNote : \'\')"',
+      '       :aria-label="s.label + (s.available ? \'\' : \'，本素材集未收录\' + (s.gapNote ? \'；\' + s.gapNote : \'\'))"',
       '       @click="$emit(\'pick\', i)">',
       '    <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">',
       '      <g :transform="s.transform">',
@@ -44,7 +45,10 @@
       '              :opacity="s.available ? null : 0.25" />',
       '      </g>',
       '    </svg>',
-      '    <span class="zc-evostage-name">{{ s.available ? s.label : s.label + \'·缺素材\' }}</span>',
+      // 格名是短的（这一列窄，CSS 是 nowrap + ellipsis，写长了会被截掉半句，
+      // 反而比短标签更难读）。所以这里用「未收录」—— 与 title / 舞台信息那句
+      // 「本素材集未收录」同一个口径，只是缩写；完整依据在 title 里。
+      '    <span class="zc-evostage-name">{{ s.available ? s.label : s.label + \'·未收录\' }}</span>',
       '  </button>',
       '</div>'
     ].join('\n')

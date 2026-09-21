@@ -234,6 +234,10 @@
         var pos = global.Positioner.create(THUMB, THUMB, THUMB_PAD);
         var kf = (global.AncientGlyphs && global.AncientGlyphs.kaiFit)
           ? global.AncientGlyphs.kaiFit(this.char) : null;
+        // 缺格的查证依据（data/gap-notes.js）。挂在这里而不是 evo-strip 里，
+        // 是因为 evo-strip 只负责画 —— 它的文件头写着「不该知道 AncientGlyphs
+        // 的存在」，同理它也不该知道 GapNotes。父组件查好再传进去。
+        var GN = global.ZQ && global.ZQ.GapNotes;
         this.items = list.map(function (s, i) {
           // 楷书那格没被 build-ancient-data.py 归一化过（它的字形是直接从
           // chars.js 读的），得在这里补上，否则和古文字那几格大小对不上
@@ -243,7 +247,9 @@
           }
           return { key: s.key, label: s.label, period: s.period,
                    available: s.available, paths: self.eng.pathsOf(i),
-                   transform: tf };
+                   transform: tf,
+                   // 只给缺格；有字形的期一律空串（模板里当它不存在）
+                   gapNote: (!s.available && GN) ? GN.of(self.char, s.key) : '' };
         });
 
         this.t = this.eng.getT();
