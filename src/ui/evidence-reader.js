@@ -25,7 +25,7 @@
       '   <div><span class="zc-status-eyebrow">{{ current.label }}</span><h3>著录信息</h3><ul><li v-for="ref in current.refs" :key="ref">{{ ref }}</li></ul><p class="zc-evidence-identity">数据库字形编号 {{ current.glyphId }}</p><div class="zc-evidence-links"><a :href="current.pageUrl" target="_blank" rel="noopener noreferrer">查看数据库条目 ↗</a><a :href="licenseUrl" target="_blank" rel="noopener noreferrer">CC0 使用声明 ↗</a></div><p class="zc-note">外部链接需要联网；本页图片和著录可离线阅读。</p></div>',
       '  </section>',
       '  <section v-else class="zc-evidence-empty"><h3>此字此类资料尚未采集</h3><p>{{ emptyNote }}</p><p>可从上方选择已采集的代表字；本地缺资料不等于历史上没有这个字。</p></section>',
-      '  <details class="zc-evidence-boundary"><summary>这些资料能证明什么？</summary><p>字形图来自小学堂查询结果，是资料库整理的字样，不是器物、简牍或拓片的原始照片。著录文字按结果页保留，简称需对照数据库引书表；“说文小篆”不是秦代原件，“汉代隶变”保留具体年代。各类字形不构成唯一、必然的线性演变链。</p><p>本批查询图及字形属性依据小学堂 CC0 声明使用；旧 CDP 2.4 字体文件的授权状态没有因此改变。网页字头、著录和下载一致性已核对，专业释读尚未复核。</p></details>',
+      '  <details class="zc-evidence-boundary"><summary>这些资料能证明什么？</summary><p>字形图来自小学堂查询结果，是资料库整理的字样，不是器物、简牍或拓片的原始照片。著录文字按结果页保留，简称需对照数据库引书表；“说文小篆”不是秦代原件，“汉代隶变”保留具体年代。各类字形不构成唯一、必然的线性演变链。</p><p>本批查询图及字形属性依据小学堂 CC0 声明使用；CDP 2.4 字形的使用依据另见各字展签，不从小学堂 CC0 推导。网页字头、著录和下载一致性已核对，专业释读尚未复核。</p></details>',
       '  <details v-if="citation" class="zc-evidence-boundary"><summary>引用记录（可选中复制）</summary><textarea class="zc-evidence-citation" readonly :value="citation" aria-label="所选字形引用记录" rows="5"></textarea></details>',
       '  <p class="zc-evidence-stamp">来源：小学堂文字学资料库 · 采集日期 {{ collectedDate }} · 图像未重新绘制</p>',
       ' </dialog>',

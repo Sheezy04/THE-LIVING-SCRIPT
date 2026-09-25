@@ -78,12 +78,24 @@
     /* 分母只数**非关联字** —— 就是 data/chars.js 的那一集（verify/test-roster.mjs 的 A）。
      * tier=related 的字按设计不产古文字（只做图鉴、关系网与题池），算进来会凭空多出
      * 一批「本来就该缺」的缺口，把健康读数变成噪声。 */
+    /* 逐格统计许可，不把汉典补入的甲骨文/楚简字形误算到本期主来源 CDP。
+     * licenseDeclared 仅表示来源公开了适用条款，非第三方权利或释读审核结论。 */
     var chars=Object.keys(global.CharCatalog || {}).filter(function (ch) {
       var entry=global.CharCatalog[ch]; return !entry || entry.tier!=='related';
-    }), A=global.AncientGlyphs, eras=A?A.ERAS:[], available=0, unresolved=0;
-    chars.forEach(function(ch) { eras.forEach(function(era) { if(A.has(ch,era.key)) { available++; var source=A.eraSource(era.key); if(!source || source.license_ok!==true) unresolved++; } }); });
+    }), A=global.AncientGlyphs, eras=A?A.ERAS:[], available=0, pending=0, declared=0, unstated=0;
+    chars.forEach(function(ch) { eras.forEach(function(era) {
+      if(!A.has(ch,era.key)) return;
+      available++;
+      /* 必须按**格**取来源，不能按**期**。甲骨文那一期的主来源是 CDP，但其中 3 格
+       * 是汉典补进来的 —— 用 A.eraSource(era.key) 会把那 3 格报成中研院的。
+       * （汉典那 9 格全在甲骨文与楚簡两期内，所以这不是理论上的差别。） */
+      var source=A.glyphSource(ch,era.key);
+      if(source && source.license_ok===true) declared++;
+      else if(source && source.license_stated===false) unstated++;
+      else pending++;
+    }); });
     var evidence=global.XiaoxueEvidence, records=evidence && Array.isArray(evidence.records)?evidence.records:[];
-    return {chars:chars.length,ancientSlots:chars.length*eras.length,ancientAvailable:available,ancientMissing:chars.length*eras.length-available,licensePending:unresolved,liAvailable:!!(A && chars.some(function(ch) { return A.has(ch,'隶书'); })),
+    return {chars:chars.length,ancientSlots:chars.length*eras.length,ancientAvailable:available,ancientMissing:chars.length*eras.length-available,licensePending:pending,licenseDeclared:declared,licenseUnstated:unstated,liAvailable:!!(A && chars.some(function(ch) { return A.has(ch,'隶书'); })),
       evidenceRecords:records.length,evidenceChars:new Set(records.map(function(r) { return r.char; })).size,evidenceLiChars:new Set(records.filter(function(r) { return r.category==='lishu'; }).map(function(r) { return r.char; })).size,
       storage:!!(ZQ.store && ZQ.store.status.available),svg:!!global.Positioner && !!global.StrokeRenderer,canvas:typeof global.Path2D==='function',pointer:typeof global.PointerEvent==='function'};
   };

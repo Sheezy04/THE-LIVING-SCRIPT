@@ -357,7 +357,9 @@
       return stages.map(function (s, i) {
         return { index: i, key: s.key, label: s.label, period: s.period,
                  note: s.note, cov: s.cov, available: hasStage(s),
-                 source: s.key === KAI.key ? null : A.eraSource(s.key) };
+                 /* 按**格**取来源，不是按**期** —— 甲骨文那期主来源是 CDP，
+                  * 但 3 格来自汉典，eraSource 会把它们说成中研院的。 */
+                 source: s.key === KAI.key ? null : A.glyphSource(char, s.key) };
       });
     }
 
@@ -378,7 +380,7 @@
         available: stages.map(function (s) { return hasStage(s); }),
         missingHere: !hasStage(st),
         next: nxt ? nxt.key : null,
-        source: st.key === KAI.key ? null : A.eraSource(st.key),
+        source: st.key === KAI.key ? null : A.glyphSource(char, st.key),
         total: stages.length
       };
     }

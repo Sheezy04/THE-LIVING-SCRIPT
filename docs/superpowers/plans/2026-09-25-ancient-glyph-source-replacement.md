@@ -1,3 +1,5 @@
+> Superseded by the user's later 2026-09-25 decision. The glyph-replacement tasks below are no longer the active plan. Current delivery retains authentic CDP 2.4 glyphs and version labels with an entrant-confirmed public-use basis. See README.md and assets/vendor/LICENSES.md for current status.
+
 # 古文字字形来源替换 Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

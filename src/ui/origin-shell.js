@@ -66,6 +66,7 @@
       '        <p class="zc-origin-cap">{{ tr(\'origin_note_glyph\') }}</p>',
       '        <details class="zc-origin-source-details"><summary>来源与授权{{ srcWarn ? \' · 待确认\' : \'\' }}</summary><p class="zc-origin-cap">{{ caption }}</p><p class="zc-origin-credit">',
       '          来源：{{ srcName }}',
+      '          <br><span v-if="srcLicense">{{ srcLicenseKind }}：{{ srcLicense }} <a v-if="srcLicenseUrl" :href="srcLicenseUrl" target="_blank" rel="noopener noreferrer">查看原文</a></span>',
       // 授权文案自己带 ⚠️，这里不再补一个，否则会出现「⚠️ ⚠️ 待确认」
       '          <br><span v-if="srcWarn" class="warn">{{ srcWarn }}</span>',
       '        </p></details>',
@@ -135,19 +136,41 @@
           : '本素材集未收录该字的甲骨文，此处展示已收录的较早字形。';
       },
 
+      /* 按**格**取来源，不是按**期**：甲骨文那期主来源是 CDP，但 鸡/从/坐 三格
+       * 是汉典补的，用 eraSource 会把它们署成中研院。this.char 在这里可用。 */
       srcName: function () {
         var A = this.A;
         if (!A || !this.era) return '';
-        var s = A.eraSource(this.era.key);
+        var s = A.glyphSource(this.char, this.era.key);
         return (s && s.name) || this.era.src || '';
       },
 
-      /** 授权没落实的，明说 —— 这几个字形的来源本来就还在核实中 */
+      srcLicense: function () {
+        var A = this.A;
+        if (!A || !this.era) return '';
+        var s = A.glyphSource(this.char, this.era.key);
+        return s && s.license_ok === true ? s.license : '';
+      },
+      srcLicenseKind: function () {
+        var A = this.A;
+        if (!A || !this.era) return '许可';
+        var s = A.glyphSource(this.char, this.era.key);
+        return s && s.license_kind ? s.license_kind : '许可';
+      },
+      srcLicenseUrl: function () {
+        var A = this.A;
+        if (!A || !this.era) return '';
+        var s = A.glyphSource(this.char, this.era.key);
+        return s && s.license_ok === true ? (s.license_url || '') : '';
+      },
+
+      /* 授权没落实的，明说；汉典现行条款已公开 CC0，不走此警示分支。 */
       srcWarn: function () {
         var A = this.A;
         if (!A || !this.era) return '';
-        var s = A.eraSource(this.era.key);
-        return (s && s.license_ok === false) ? (s.license || '授权待确认') : '';
+        var s = A.glyphSource(this.char, this.era.key);
+        if (!s || s.license_ok !== false) return '';
+        return s.license || (s.license_stated === false ? '来源未声明授权' : '授权待确认');
       }
     }
   };

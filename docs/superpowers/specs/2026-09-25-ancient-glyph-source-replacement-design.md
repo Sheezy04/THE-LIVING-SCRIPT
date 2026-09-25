@@ -1,3 +1,5 @@
+> Superseded by the user's later 2026-09-25 decision. Current delivery retains authentic CDP 2.4 glyphs and version labels, records the Academia Sinica public release statement as the entrant-confirmed use basis, and does not claim individual authorization or relabel 2.4 as 2.65. See README.md and assets/vendor/LICENSES.md for current status.
+
 # 古文字字形来源替换设计
 
 日期：2026-09-25

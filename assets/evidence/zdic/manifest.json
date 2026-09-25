@@ -1,0 +1,12 @@
+{
+  "provider": "ZDIC",
+  "retrievedAt": "2026-09-25T04:22:42.234Z",
+  "licenseUrl": "https://zdic.net/terms/",
+  "records": [],
+  "missing": [],
+  "checkedChars": [],
+  "blocked": {
+    "char": "日",
+    "reason": "HTTP 403：https://img.zdic.net/zy/jiaguwen/42_ED44.svg"
+  }
+}

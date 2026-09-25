@@ -171,7 +171,8 @@
           .replace('{{s}}', String(this.audit.ancientSlots || 0))
           .replace('{{a}}', String(this.audit.ancientAvailable || 0))
           .replace('{{m}}', String(this.audit.ancientMissing || 0))
-          .replace('{{p}}', String(this.audit.licensePending || 0));
+          .replace('{{p}}', String(this.audit.licensePending || 0))
+          .replace('{{d}}', String(this.audit.licenseDeclared || 0));
       },
       idx: function () {
         var i = MODULES.findIndex(function (m) { return m.id === this.mod; }, this);

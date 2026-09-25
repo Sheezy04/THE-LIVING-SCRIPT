@@ -1,4 +1,4 @@
-/* 由 verify/collect-xiaoxue.mjs 生成；独立实证资料，不改写旧字体授权。 */
+/* 由 verify/collect-xiaoxue.mjs 生成；独立实证资料，不作为 CDP 2.4 的使用依据。 */
 window.XiaoxueEvidence = {
   "provider": "小学堂文字学资料库",
   "retrievedAt": "2026-09-17T06:17:01.825Z",
