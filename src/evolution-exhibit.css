@@ -1,0 +1,76 @@
+/* 02：上方时间轴、宽幅字形展台与阶段展签、横向隶变资料。 */
+.zc-page-evo .zc-evo-exhibit {
+  --exhibit-ink:#153e32;
+  --canvas-edge:clamp(320px,42vh,440px);
+  display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+  gap:28px 48px; width:100%; height:auto; min-height:0; align-items:start;
+}
+.zc-evo-exhibit .zc-evo-heading { grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; gap:20px; }
+.zc-evo-exhibit .zc-evo-title { display:flex; align-items:center; gap:24px; }
+/* 02 的标题不再自带一套字号：改用 .zc-gallery-heading，与 01/03/04/06 逐字同源
+   （clamp(28px,2.7vw,40px)/1.3、#243c2e、letter-spacing:.025em）。
+   上一版这里是 clamp(32px,3.3vw,48px)/1.25 + --exhibit-ink，比别的模块大一号，
+   在展台上显得是另一种标题。只留「在弹性横排里不要下边距」这一条差异。 */
+.zc-evo-exhibit .zc-evo-title .zc-gallery-heading { margin-bottom:0; }
+.zc-evo-exhibit .zc-evo-title p { margin:0; padding-left:24px; border-left:1px solid var(--gallery-line); color:#486252; font:400 17px/1.7 var(--font-reading); }
+.zc-evo-exhibit .zc-evo-pick { display:flex; align-items:center; gap:18px; padding:8px 16px; }
+.zc-evo-exhibit .zc-evo-pick b { font:400 32px/1.2 var(--font-brand); }
+.zc-evo-exhibit .zc-evo-pick span:first-child { font-size:14px; }
+.zc-evo-exhibit .zc-evo-rail { grid-column:1/-1; min-width:0; }
+.zc-evo-exhibit .zc-evostrip { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:0; margin:0; }
+.zc-evo-exhibit .zc-evostage { position:relative; padding:10px 4px 14px; min-height:48px; border:0; border-bottom:2px solid transparent; border-radius:0; background:transparent; color:#536a5c; }
+.zc-evo-exhibit .zc-evostage svg { display:none; }
+.zc-evo-exhibit .zc-evostage-name { font:400 20px/1.5 var(--font-brand); white-space:normal; }
+.zc-evo-exhibit .zc-evostage.is-active { border-color:var(--exhibit-ink); color:var(--exhibit-ink); background:transparent; }
+.zc-evo-exhibit .zc-evostage.is-next { outline:1px dashed #6a806f; outline-offset:-4px; }
+.zc-evo-exhibit .zc-timeline { display:block; width:100%; margin:0; accent-color:var(--exhibit-ink); height:18px; cursor:pointer; }
+.zc-evo-exhibit .zc-evo-picker { grid-column:1/-1; padding:12px 0; border-block:1px solid var(--gallery-line); }
+.zc-evo-exhibit .zc-evo-picker .zc-picker { margin:0; max-width:680px; }
+.zc-page-evo .zc-evo-exhibit .zc-evo-main { position:static; display:grid; grid-template-rows:var(--canvas-edge) auto; width:100%; height:auto; gap:18px; }
+.zc-page-evo .zc-evo-exhibit .zc-evo-main .zc-canvas-wrap { position:static; width:100%; height:var(--canvas-edge); aspect-ratio:auto; padding:0; margin:0; background:transparent; border:0; box-shadow:none; }
+.zc-evo-exhibit .zc-canvas { width:100%; height:100%; color:var(--exhibit-ink); }
+.zc-page-evo .zc-evo-exhibit .zc-evo-playback { width:100%; max-width:none; margin:0; }
+.zc-evo-exhibit .zc-controls { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:0; }
+.zc-page-evo .zc-evo-exhibit .zc-controls .zc-btn { min-height:44px; padding:8px 14px; font-size:16px; }
+.zc-page-evo .zc-evo-exhibit .zc-controls .zc-btn span { display:inline; }
+.zc-page-evo .zc-evo-exhibit .zc-evo-tools { grid-column:2; padding:22px 0 18px 42px; border-left:1px solid var(--gallery-line); min-height:var(--canvas-edge); }
+.zc-page-evo .zc-evo-exhibit .zc-evo-tools > .zc-panel { margin:0; padding:0; border:0; background:transparent; }
+.zc-evo-exhibit .zc-stageinfo-head { display:grid; gap:18px; align-items:start; }
+.zc-evo-exhibit .zc-stageinfo-name { color:var(--exhibit-ink); font:400 clamp(42px,4vw,60px)/1.2 var(--font-brand); }
+.zc-evo-exhibit .zc-stageinfo-period { font:400 24px/1.6 var(--font-brand); }
+.zc-evo-exhibit .zc-stageinfo-note { margin:4px 0 24px; font:400 21px/1.7 var(--font-reading); }
+.zc-evo-exhibit .zc-stageinfo-src { border-top:1px solid var(--gallery-line); padding-top:20px; font:400 15px/1.85 var(--font-reading); color:#405c4c; overflow-wrap:anywhere; }
+.zc-evo-exhibit .zc-evo-boundary { margin:10px 0 18px; font:400 15px/1.7 var(--font-reading); color:#405c4c; }
+.zc-evo-exhibit .zc-evidence-entry { margin:0; }
+.zc-evo-exhibit .zc-evidence-entry > span { display:none; }
+.zc-evo-exhibit .zc-stagecov { display:none; } /* 上方可操作时间轴已包含同一组覆盖信息。 */
+.zc-page-evo .zc-evo-exhibit .zc-evo-compare { position:static; width:100%; height:var(--canvas-edge); }
+.zc-page-evo .zc-evo-exhibit .zc-evo-context { grid-column:1/-1; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; padding-top:24px; margin:0; }
+.zc-evo-exhibit .zc-li-context { display:flex; align-items:center; gap:24px; }
+.zc-page-evo .zc-evo-exhibit .zc-evo-context h3 { flex:none; margin:0; font:400 27px/1.4 var(--font-brand); }
+.zc-page-evo .zc-evo-exhibit .zc-evo-context .zc-stageinfo-note { margin:0; padding-left:24px; border-left:1px solid var(--gallery-line); font-size:14px; line-height:1.8; }
+.zc-evo-exhibit .zc-li-evidence .zc-note { font-size:12px; }
+.zc-page-evo .zc-evo-exhibit .zc-li-chars { margin-top:6px; gap:6px; }
+.zc-page-evo .zc-evo-exhibit .zc-li-chip { min-width:40px; min-height:44px; font-size:20px; }
+.zc-evo-exhibit button:focus-visible { outline:2px solid #416c4b; outline-offset:3px; }
+@media(max-width:1100px) {
+  .zc-page-evo .zc-evo-exhibit { gap:24px; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); }
+  .zc-evo-exhibit .zc-evo-title p { display:none; }
+  .zc-page-evo .zc-evo-exhibit .zc-evo-tools { padding-left:24px; }
+  .zc-page-evo .zc-evo-exhibit .zc-evo-context { grid-template-columns:minmax(0,1fr); gap:16px; }
+}
+@media(max-width:760px) {
+  .zc-page-evo .zc-evo-exhibit { --canvas-edge:clamp(270px,75vw,420px); grid-template-columns:minmax(0,1fr); gap:20px; }
+  .zc-evo-exhibit .zc-evo-heading { flex-wrap:wrap; gap:12px; }
+  .zc-evo-exhibit .zc-evo-pick { padding:4px 12px; gap:14px; }
+  .zc-evo-exhibit .zc-evo-rail { overflow-x:auto; padding:3px; }
+  .zc-evo-exhibit .zc-evostrip,.zc-evo-exhibit .zc-timeline { min-width:540px; }
+  .zc-evo-exhibit .zc-evostage-name { font-size:16px; }
+  .zc-page-evo .zc-evo-exhibit .zc-evo-tools { grid-column:1; padding:22px 0 0; border-left:0; border-top:1px solid var(--gallery-line); min-height:0; }
+  .zc-evo-exhibit .zc-stageinfo-head { display:flex; align-items:baseline; flex-wrap:wrap; gap:12px; }
+  .zc-evo-exhibit .zc-stageinfo-name { font-size:36px; }
+  .zc-evo-exhibit .zc-stageinfo-period { font-size:20px; }
+  .zc-evo-exhibit .zc-stageinfo-note { font-size:18px; margin-bottom:16px; }
+  .zc-evo-exhibit .zc-li-context { display:grid; gap:10px; }
+  .zc-page-evo .zc-evo-exhibit .zc-evo-context .zc-stageinfo-note { border:0; padding:0; }
+}

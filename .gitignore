@@ -5,6 +5,9 @@ archive/
 design-previews/
 参赛准备/
 .trae/
+# 2026-09-26 补：仓库根下的 tmp/ 当时有 2.2 GB（npm-cache、pdfs、生成的核对脚本），
+# 却没被排掉 —— 一次 `git add -A` 就会把整包提交进公开仓库。它和上面几个同类。
+tmp/
 *.pdf
 *.log
 __pycache__/
@@ -32,6 +35,13 @@ node_modules/
 # 公开仓库里出现它，等于把未完成清单和「授权待确认」直接递给评委。
 # 本地文件不动；要看就看本机 D:\item2\交付与待办.md。
 /交付与待办.md
+
+# ── 重点字释形复核清单（2026-09-26）──────────────────────────────────
+# 同一类理由：它是给指导教师/文字学研究者逐项审阅的表，三行复核记录全是
+# 「待核对」「待填写」，开头还写着「目前没有取得专业复核意见」。
+# 公开仓库里出现它，等于把未完成清单递给评委。本地 docs/ 下照旧保留。
+# （和 /交付与待办.md 一样用**根路径锚定**，避免误伤同名文件。）
+/docs/重点字释形复核清单.md
 /assets/fonts/NotoSansSC-Variable.ttf
 /assets/fonts/NotoSerifSC-Variable.ttf
 /assets/fonts/LongCang-Regular.ttf

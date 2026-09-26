@@ -31,7 +31,16 @@
     emits: ['pick'],
 
     template: [
-      '<div class="zc-stage">',
+      '<div class="zc-stage zc-evo-layout zc-evo-exhibit">',
+      '  <header class="zc-evo-heading">',
+      '    <div class="zc-evo-title"><div class="zc-gallery-heading"><span>02 / EVOLUTION</span><h2>{{ tr(\'mod_evo\') }}</h2></div><p>看见汉字，在时间中生长。</p></div>',
+      '    <button class="zc-btn zc-evo-pick" :aria-expanded="panel === \'pick\'" aria-controls="zc-evo-picker" @click="panel = panel === \'pick\' ? \'stage\' : \'pick\'; pauseForEvidence()"><span>当前汉字</span><b>{{ char }}</b><span>{{ panel === \'pick\' ? \'收起选字\' : tr(\'evo_tab_pick\') }}</span></button>',
+      '  </header>',
+      '  <div class="zc-evo-rail">',
+      '    <evo-strip :items="items" :active="floorT" :next="nextIdx" @pick="goTo" />',
+      '    <input class="zc-timeline" type="range" min="0" :max="maxT" step="1" :value="Math.round(t * 1000)" @input="onSlide" aria-label="演变时间轴">',
+      '  </div>',
+      '  <div id="zc-evo-picker" v-show="panel === \'pick\'" class="zc-evo-picker"><char-picker :model-value="char" @update:model-value="$emit(\'pick\', $event)" /></div>',
       '  <div class="zc-evo-main">',
       '    <div v-show="!compare" class="zc-canvas-wrap">',
       // is-overview 只是给画布换个底色（CSS），真正的并览排版在引擎里
@@ -48,8 +57,6 @@
       '      </div>',
       '    </section>',
       '    <div class="zc-evo-playback">',
-      '      <input class="zc-timeline" type="range" min="0" :max="maxT" step="1" :value="Math.round(t * 1000)" @input="onSlide" aria-label="演变时间轴">',
-      '      <evo-strip :items="items" :active="floorT" :next="nextIdx" @pick="goTo" />',
       '      <div class="zc-controls">',
       '        <button class="zc-btn is-primary" @click="togglePlay">{{ playing ? tr(\'evo_pause\') : tr(\'evo_play\') }}</button>',
       '        <button class="zc-btn" :title="tr(\'evo_prev\')" :aria-label="tr(\'evo_prev\')" @click="prev">‹ <span>{{ tr(\'evo_prev\') }}</span></button>',
@@ -61,11 +68,7 @@
       '  </div>',
       '',
       '  <aside class="zc-evo-tools">',
-      '    <div class="zc-gallery-heading"><span>02 / EVOLUTION</span><h2>千年演变</h2></div>',
-      '    <div class="zc-seg zc-evo-tabs" role="group" aria-label="演变内容"><button :aria-pressed="panel === \'stage\'" :class="{ \'is-active\': panel === \'stage\' }" @click="panel = \'stage\'">{{ tr(\'evo_tab_stage\') }}</button><button :aria-pressed="panel === \'pick\'" :class="{ \'is-active\': panel === \'pick\' }" @click="panel = \'pick\'">{{ tr(\'evo_tab_pick\') }}</button></div>',
-      '    <evidence-reader ref="evidence" :char="char" :stage-key="stage.key" @open="pauseForEvidence" />',
-      '    <div v-show="panel === \'stage\'" class="zc-panel">',
-      '      <div class="zc-panel-title">阶段</div>',
+      '    <div class="zc-panel">',
       '      <div class="zc-stageinfo-head">',
       '        <span class="zc-stageinfo-name">{{ stage.label }}</span>',
       '        <span class="zc-stageinfo-period">{{ stage.period }}</span>',
@@ -102,28 +105,28 @@
       '              :title="s.period + (s.available ? \' · 有字形\' : \' · 本素材集未收录此期字形\')"',
       '        >{{ s.label }}</span>',
       '      </div>',
+      '      <p class="zc-evo-boundary">代表字形展示，非完整或唯一的演变链。</p>',
+      '      <evidence-reader ref="evidence" :char="char" :stage-key="stage.key" @open="pauseForEvidence" />',
+      '    </div>',
+      '  </aside>',
       /* 隶变节点。时间轴上**没有**这一期（本地素材集没有隶书字形，不拿小篆或楷书
-       * 冒充），但它的资料其实另有 CC0 采集 —— 所以它落在这里，作为「时间轴之外」
-       * 的一段叙事，而不是往六期里塞一个空期：那样每个字都会多出一格永远画不出
-       * 东西的缩略图，`ERAS` 是六期这件事也是 data/ancient.js 与覆盖统计的基准。
+       * 冒充）。独立参考资料放在两栏下方，避免长文撑高右栏、在左下方形成空洞。
        * 列出的九个字与当前选中的字无关（那批资料是按字采集的），所以点字走
        * openAt 直接点名，见 evidence-reader.js。 */
-      '      <div class="zc-li-node">',
-      '        <div class="zc-panel-title">时间轴之外 · 隶变</div>',
-      '        <p class="zc-stageinfo-note">小篆到楷书之间隔着约四百年。字形在这一段从「用线条描画物象」转向「用笔画记录语素」：圆转的弧线拉直、折出方角，象形意味进一步脱落，今天通行的笔画结构基本在这时定型。本地素材集没有这一期的字形，时间轴便直接从「小篆」跳到「楷书」，不拿相邻阶段顶替。</p>',
-      '        <p class="zc-note">下列 {{ liChars.length }} 个代表字的汉代隶变字样与著录已单独采集（CC0），点字可直接查看该字的隶变资料：</p>',
+      '  <section class="zc-li-node zc-evo-context" aria-labelledby="zc-evo-li-title">',
+      '    <div class="zc-li-context">',
+      '      <h3 id="zc-evo-li-title">时间轴之外 · 隶变</h3>',
+      '      <p class="zc-stageinfo-note">本地时间轴未收录隶书字形，可查看独立采集的汉代隶变资料；不以相邻阶段替代。</p>',
+      '    </div>',
+      '    <div class="zc-li-evidence">',
+      '        <p class="zc-note">{{ liChars.length }} 个代表字 · CC0 · 点字查看著录</p>',
       '        <div class="zc-li-chars">',
       '          <button v-for="ch in liChars" :key="ch" class="zc-li-chip"',
       '                  :class="{ \'is-active\': ch === char }" :aria-pressed="ch === char"',
       '                  :title="\'查看「\' + ch + \'」的汉代隶变资料\'" @click="openLi(ch)">{{ ch }}</button>',
       '        </div>',
-      '      </div>',
       '    </div>',
-      '',
-      '',
-      '    <char-picker v-show="panel === \'pick\'" :model-value="char"',
-      '                 @update:model-value="$emit(\'pick\', $event)" />',
-      '  </aside>',
+      '  </section>',
       '</div>'
     ].join('\n'),
 

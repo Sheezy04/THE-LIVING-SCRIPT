@@ -282,7 +282,10 @@ button,input,select,textarea { font-family:inherit; }
   /* 06：每个工具页仅呈现当前操作，不堆叠长表单或字库。 */
   .zc-page-mine .zc-mine { height:100%; --canvas-edge:min(560px,calc(100dvh - 316px),calc(100vw - 600px)); gap:12px; grid-template-rows:50px minmax(0,1fr); }
   .zc-page-mine .zc-mine-intro { padding:8px 14px; align-items:center; gap:14px; }
-  .zc-page-mine .zc-mine-intro .zc-home-kicker,.zc-page-mine .zc-mine-intro h2 + p { display:none; }
+  /* 这里原本连眉标（当时的 .zc-home-kicker）一起藏掉，于是桌面上的 05 只剩一行
+     「我的造字」。眉标改成与标题同行后不再占额外高度，就放它出来；副标题照旧藏。
+     并排那一条在 gallery.css 的桌面块里（同一个 1050px/600px 门槛）。 */
+  .zc-page-mine .zc-mine-intro h2 + p { display:none; }
   .zc-page-mine .zc-mine-intro h2 { font:500 22px/1.4 var(--font-brand); letter-spacing:.02em; }
   .zc-page-mine .zc-mine-nav { display:flex; gap:10px; align-items:center; }
   .zc-page-mine .zc-mine-work { display:grid; height:100%; grid-template-columns:156px minmax(0,var(--canvas-edge)) 340px; grid-template-rows:32px auto auto auto minmax(0,1fr); gap:8px 18px; justify-content:center; align-items:start; }

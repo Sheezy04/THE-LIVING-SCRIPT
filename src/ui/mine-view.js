@@ -71,7 +71,7 @@
     template: `
       <section class="zc-mine">
         <header class="zc-mine-intro">
-          <div><p class="zc-home-kicker">05 / CREATION · 数字汉字创作</p><h2>我的造字</h2><p>摆放构件，赋予含义，让一次汉字探索成为你的作品。</p></div>
+          <div><span class="zc-gallery-kicker">05 / CREATION</span><h2>我的造字</h2><p>摆放构件，赋予含义，让一次汉字探索成为你的作品。</p></div>
           <div class="zc-mine-nav"><div class="zc-seg" role="tablist" aria-label="创作工作台"><button role="tab" :aria-selected="view === 'create'" :class="{ 'is-active': view === 'create' }" @click="view = 'create'">{{ tr('mine_tab_create') }}</button><button role="tab" :aria-selected="view === 'poster'" :disabled="!posterReady" :class="{ 'is-active': view === 'poster' }" @click="view = 'poster'">{{ tr('mine_tab_poster') }}</button><button role="tab" :aria-selected="view === 'library'" :class="{ 'is-active': view === 'library' }" @click="view = 'library'">{{ tr('mine_tab_library') }} · {{ library.length }}</button><button role="tab" :aria-selected="view === 'backup'" :class="{ 'is-active': view === 'backup' }" @click="view = 'backup'">{{ tr('mine_tab_backup') }}</button></div><span class="zc-note">{{ unlocked.length }} / {{ paletteCount }} {{ tr('mine_unlocked') }}</span></div>
         </header>
         <div v-show="view === 'create'" class="zc-mine-work">
