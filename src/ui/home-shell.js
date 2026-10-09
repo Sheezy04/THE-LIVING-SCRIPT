@@ -47,11 +47,11 @@
         <section class="zc-home-hero">
           <div class="zc-home-copy">
             <p class="zc-home-kicker"><span></span> A JOURNEY THROUGH CHARACTERS</p>
-            <h2 class="zc-home-lead">让汉字，<br><em>不止于看见。</em></h2>
-            <p class="zc-home-sub">从一笔一画走进千年。拆开一个字，读懂它的构形，<br class="zc-desktop-break">再用自己的想象，写下一个新的故事。</p>
+            <h2 class="zc-home-lead">{{ tr('home_lead_1') }}<br><em>{{ tr('home_lead_2') }}</em></h2>
+            <p class="zc-home-sub">{{ tr('home_intro') }}</p>
             <div class="zc-home-start">
-              <button class="zc-btn is-primary zc-home-cta" @click="$emit('go', 'origin')"><span>{{ tr('home_start') }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg></button>
-              <button class="zc-tour-link" @click="$emit('tour')">{{ tr('home_tour') }} <span aria-hidden="true">↗</span></button>
+              <button class="zc-btn is-primary zc-home-cta" @click="$emit('tour')"><span>{{ tr('home_tour') }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg></button>
+              <button class="zc-tour-link" @click="$emit('go', 'origin')">{{ tr('home_start') }} <span aria-hidden="true">↗</span></button>
               <div class="zc-home-progress" v-if="total > 0">
                 <span class="zc-home-progress-text">{{ tr('home_progress') }} <strong>{{ explored }}</strong><span> / {{ total }}</span></span>
                 <span class="zc-home-bar" role="progressbar" :aria-label="tr('home_progress')" :aria-valuenow="explored" :aria-valuemin="0" :aria-valuemax="total"><i :style="{ width: pct + '%' }"></i></span>

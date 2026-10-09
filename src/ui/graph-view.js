@@ -140,7 +140,7 @@
       '    </section>',
       '',
       '    <section class="zc-panel zc-graph-nb">',
-      '      <div class="zc-panel-title">本字的关系（{{ neighborTotal }}）</div>',
+      '      <div class="zc-panel-title">直接与间接联系（{{ neighborTotal }}）</div>',
       '      <p v-if="!neighborTotal" class="zc-note">此字暂无关联。</p>',
       '      <div v-if="componentNeighbors.length" class="zc-graph-group">',
       '        <span class="zc-graph-group-label">构形关系 · 实线</span>',
@@ -154,6 +154,10 @@
       '          <b>{{ n.ch }}</b><small>{{ n.reason }}</small>',
       '        </button>',
       '      </div>',
+      '      <div v-if="indirectNeighbors.length" class="zc-graph-group">',
+      '        <span class="zc-graph-group-label">间接联系 · 经一字相连</span>',
+      '        <button v-for="n in indirectNeighbors" :key="n.ch" class="zc-graph-link" @click="focus(n.ch)"><b>{{ n.ch }}</b><small>{{ n.reason }}</small></button>',
+      '      </div>',
       '    </section>',
       '  </aside>',
       '</div>'
@@ -166,7 +170,7 @@
          * 两件事混成一个变量的话，走到关联字上就没法再走下去了。 */
         center: this.char,
         history: [],
-        hops: 2,
+        hops: global.matchMedia && global.matchMedia('(max-width: 700px)').matches ? 1 : 2,
         pathId: null
       };
     },
@@ -188,11 +192,12 @@
       },
       /* 邻域里除中心以外的字，按边类型分组 —— 侧栏列表与图上的线是一回事 */
       links: function () {
-        var nb = this.graph, adj = global.ZQ.Graph.adjacency(), out = [];
+        var nb = this.graph, adj = global.ZQ.Graph.adjacency(), out = [], direct = adj[this.center] || [];
         for (var i = 1; i < nb.nodes.length; i++) {
           var n = nb.nodes[i], hit = null, list = adj[n.ch] || [];
           for (var j = 0; j < list.length; j++) if (list[j].ch === this.center) { hit = list[j]; break; }
-          out.push({ ch: n.ch, kind: n.kind, ring: n.ring, from: hit && hit.edge ? hit.edge.from : '' });
+          if (!hit && n.ring > 1) hit = list.find(function (item) { return direct.some(function (d) { return d.ch === item.ch; }); });
+          out.push({ ch: n.ch, kind: hit && hit.edge ? hit.edge.kind : n.kind, ring: n.ring, via: n.ring > 1 && hit ? hit.ch : '', from: hit && hit.edge ? hit.edge.from : '' });
         }
         return out;
       },
@@ -215,6 +220,7 @@
       },
       componentNeighbors: function () { return this.withReason('component'); },
       relatedNeighbors: function () { return this.withReason('related'); },
+      indirectNeighbors: function () { return this.withReason('indirect'); },
       /* 高亮集合：选中一条推荐路径后，属于它的点与边 */
       highlight: function () {
         var p = null, list = this.paths;
@@ -230,11 +236,20 @@
 
     mounted: function () {
       this.render();
+      var self = this;
+      this.compactQuery = global.matchMedia && global.matchMedia('(max-width: 700px)');
+      this.onCompact = function (event) { if (event.matches) self.hops = 1; };
+      if (this.compactQuery && this.compactQuery.addEventListener) this.compactQuery.addEventListener('change', this.onCompact);
+      else if (this.compactQuery && this.compactQuery.addListener) this.compactQuery.addListener(this.onCompact);
       /* 只注册一个监听器、只认 Esc —— 与 01—05 同一个规矩（见 src/ui/keys.js） */
       this.unbind = global.ZQ.bindKeys({ escape: 'back' }, this);
     },
 
-    beforeUnmount: function () { if (this.unbind) this.unbind(); },
+    beforeUnmount: function () {
+      if (this.unbind) this.unbind();
+      if (this.compactQuery && this.compactQuery.removeEventListener) this.compactQuery.removeEventListener('change', this.onCompact);
+      else if (this.compactQuery && this.compactQuery.removeListener) this.compactQuery.removeListener(this.onCompact);
+    },
 
     watch: {
       center: function () { this.render(); },
@@ -247,15 +262,16 @@
        * 边的 from 字段记的是被拆的那个字（休 = 亻 + 木 的 from 是 休）。 */
       withReason: function (kind) {
         var self = this;
-        return this.links.filter(function (l) { return l.kind === kind; }).map(function (l) {
-          var reason;
-          if (kind === 'component') {
-            reason = l.from === self.center ? '「' + self.center + '」由「' + l.ch + '」构成'
-                                           : '「' + l.ch + '」由「' + self.center + '」构成';
+        return this.links.filter(function (l) { return kind === 'indirect' ? l.ring > 1 : l.ring === 1 && l.kind === kind; }).map(function (l) {
+          var reason, source = l.via || self.center;
+          if (l.kind === 'component') {
+            reason = l.from === source ? '「' + source + '」含「' + l.ch + '」构件'
+                                      : '「' + l.ch + '」含「' + source + '」构件';
           } else {
-            reason = '教学目录里与「' + self.center + '」同列的相关字';
+            reason = '教学目录标记「' + source + '」与「' + l.ch + '」相关';
           }
-          return { ch: l.ch, reason: reason, ring: l.ring };
+          if (l.via) reason = '「' + self.center + '」→「' + l.via + '」→「' + l.ch + '」；最后一段：' + reason;
+          return { ch: l.ch, reason: reason, ring: l.ring, via: l.via };
         });
       },
 

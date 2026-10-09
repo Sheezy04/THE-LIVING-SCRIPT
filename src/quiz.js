@@ -199,12 +199,12 @@
 
   /* ── ③ 字义猜构形 ───────────────────────────────────────── */
 
-  function buildMeaning(rnd, avoid) {
+  function buildMeaning(rnd, avoid, focusChar) {
     var D = DEC();
     var keys = buildPool();
     if (keys.length < OPTIONS) return null;
 
-    var answer = draw(keys, rnd, avoid, function (k) { return 'meaning:' + k; });
+    var answer = keys.includes(focusChar) ? focusChar : draw(keys, rnd, avoid, function (k) { return 'meaning:' + k; });
     var want = D[answer].parts.map(function (p) { return p.glyph; });
 
     // 干扰项分两拨，**第一拨是定死的**：把正确次序反过来。
@@ -248,7 +248,7 @@
 
   /* ── ④ 时间线排序 ───────────────────────────────────────── */
 
-  function buildOrder(rnd, avoid) {
+  function buildOrder(rnd, avoid, focusChar) {
     var A = AN();
     if (!A) return null;
 
@@ -261,7 +261,7 @@
     });
     if (!cands.length) return null;
 
-    var ch = draw(cands, rnd, avoid, function (c) { return 'order:' + c; });
+    var ch = cands.includes(focusChar) ? focusChar : draw(cands, rnd, avoid, function (c) { return 'order:' + c; });
 
     // erasOf 已经按 ERAS 的次序给出来了，而 ERAS 是从早到晚排的 —— 那就是答案
     var answer = A.erasOf(ch);
@@ -352,8 +352,10 @@
     { pair:['明','安'], facts:['「明」左右组合，「安」上下组合','两字没有相同的现代构件'], traps:['两字都有月构件','两字的构件都左右并排'], why:'同时检查构件身份与结构，不能只凭一个共同特征下结论。' }
   ];
 
-  function buildEvidence(rnd, avoid) {
+  function buildEvidence(rnd, avoid, focusChar) {
     var cases = EVIDENCE_CASES.filter(function (c) { return c.pair.every(function (ch) { return global.__CHARS__ && global.__CHARS__[ch]; }); });
+    var focused = cases.filter(function (c) { return c.pair.includes(focusChar); });
+    if (focused.length) cases = focused;
     var c = draw(cases, rnd, avoid, function (x) { return 'evidence:' + x.pair.join(':'); });
     if (!c) return null;
     var options = c.facts.map(function (text,i) { return {key:'fact-' + i,text:text}; })
@@ -366,9 +368,9 @@
       explain:c.facts.join('；') + '。' + c.why + ' 本题只讨论所展示的现代字形。' };
   }
 
-  function buildLayout(rnd, avoid) {
+  function buildLayout(rnd, avoid, focusChar) {
     var keys = buildPool();
-    var ch = draw(keys,rnd,avoid,function (x) { return 'layout:' + x; });
+    var ch = keys.includes(focusChar) ? focusChar : draw(keys,rnd,avoid,function (x) { return 'layout:' + x; });
     if (!ch) return null;
     var dec = global.Components.decompose(ch,global.__CHARS__[ch]);
     if (!dec || !dec.valid) return null;
@@ -422,7 +424,8 @@
   function mission(seed, opts) {
     opts=opts || {};
     var rnd=taskRng(seed ^ 0x7b31), avoid=(opts.avoid || []).slice();
-    var questions=[buildLayout(rnd,avoid),buildEvidence(rnd,avoid),buildOrder(rnd,avoid),buildMeaning(rnd,avoid)].filter(Boolean).map(function(q) {
+    var focusChar = buildPool().includes(opts.focusChar) ? opts.focusChar : null;
+    var questions=[buildLayout(rnd,avoid,focusChar),buildEvidence(rnd,avoid,focusChar),buildOrder(rnd,avoid,focusChar),buildMeaning(rnd,avoid,focusChar)].filter(Boolean).map(function(q) {
       if (q.kind==='layout' || q.kind==='evidence') return Object.assign({},q,{difficulty:'reason'});
       var target=q.id.split(':').pop(), recipe=q.kind==='meaning'?DEC()[target].parts.map(function(p) { return p.glyph; }):null;
       return Object.assign({},q,{label:q.kind==='order'?'时间档案':'拼合行动',
@@ -432,7 +435,7 @@
         hints:q.kind==='order'?['结合载体、书写方式和方整程度判断，不只猜图案。','未收录阶段不参与排序；同一大时期的地域字形不强行排先后。']:['先判断构件应当并排还是上下组合，再调整位置。'],
         title:q.kind==='meaning'?'复原现代「' + target + '」：先从四个构件中选出需要的两个，再拖拽恢复布局。':q.title});
     });
-    return {seed:seed,questions:shuffle(questions,rnd)};
+    return {seed:seed,questions:focusChar ? questions : shuffle(questions,rnd)};
   }
 
   /* 轻松探索独立题池：只做单步单选，不混入校勘、取证、排序或拖拽。 */

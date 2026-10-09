@@ -86,9 +86,10 @@
     chars.forEach(function(ch) { eras.forEach(function(era) {
       if(!A.has(ch,era.key)) return;
       available++;
-      /* 必须按**格**取来源，不能按**期**。甲骨文那一期的主来源是 CDP，但其中 3 格
-       * 是汉典补进来的 —— 用 A.eraSource(era.key) 会把那 3 格报成中研院的。
-       * （汉典那 9 格全在甲骨文与楚簡两期内，所以这不是理论上的差别。） */
+      /* 必须按**格**取来源，不能按**期**。甲骨文那一期的主来源是 CDP，但其中 4 格
+       * 是汉典补进来的（从/坐/鸡 填缺 + 五 替换纠错）—— 用 A.eraSource(era.key) 会
+       * 把那 4 格报成中研院的。
+       * （汉典那 10 格全在甲骨文与楚簡两期内，所以这不是理论上的差别。） */
       var source=A.glyphSource(ch,era.key);
       if(source && source.license_ok===true) declared++;
       else if(source && source.license_stated===false) unstated++;

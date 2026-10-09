@@ -24,13 +24,14 @@
     lab: ['know', 'chal']
   };
   var DEEP_LEVELS = ['mission', 'classic'];
+  var STORY = ['origin', 'evo', 'lab', 'quiz', 'mine'];
 
   ZQ.AppShell = {
     name: 'AppShell',
     mixins: [ZQ.i18nMixin],
 
     template: [
-      '<div class="zc-shell" :class="[\'zc-page-\' + mod, { \'is-workbench\': mod !== \'home\', \'is-reading-large\': viewSettings.largeText }]" :lang="lang">',
+      '<div class="zc-shell" :class="[\'zc-page-\' + mod, { \'is-workbench\': mod !== \'home\', \'is-reading-large\': viewSettings.largeText, \'is-story\': tour && storyIndex >= 0 }]" :lang="lang">',
       '  <nav class="zc-modbar" aria-label="作品模块">',
       '    <div ref="moduleTabs" class="zc-seg zc-modtabs" role="tablist" @keydown="navigateTabs">',
       '      <button v-for="m in modules" :key="m.id" role="tab"',
@@ -41,6 +42,10 @@
       '    <button class="zc-lang-toggle" :aria-pressed="lang === \'en\'" @click="toggleLang">{{ lang === \'en\' ? tr(\'lang_toggle_cn\') : tr(\'lang_toggle\') }}</button>',
       '    <button class="zc-help-trigger" @click="openHelp">{{ tr(\'help_open\') }}</button>',
       '  </nav>',
+      '  <section v-if="tour && storyIndex >= 0" class="zc-story-rail" :aria-label="tr(\'story_route_label\')">',
+      '    <div class="zc-story-route-copy"><div class="zc-story-route-title"><span class="zc-story-progress">{{ storyIndex + 1 }} / {{ storyTotal }}</span><h2>{{ storyTitle }}</h2></div><p>{{ storyBody }}</p></div>',
+      '    <div class="zc-story-route-actions"><button class="zc-btn is-primary" :disabled="mod === \'quiz\' && !storyAnswered" @click="advanceStory">{{ tr(mod === \'quiz\' && !storyAnswered ? \'story_try_first\' : \'story_next_\' + mod) }}</button><button class="zc-text-btn" @click="tour = false">{{ tr(\'story_free\') }}</button></div>',
+      '  </section>',
       '  <div class="zc-module-content" :key="lang">',
       '  <home-shell v-if="mod === \'home\'" :key="\'home-\' + char"',
       '    :char="char" :explored="explored" :total="totalChars"',
@@ -49,7 +54,7 @@
       '    :char="char" :initial-panel="deepView" @pick="char = $event" @go="mod = $event" />',
       '  <mode-evolution v-else-if="mod === \'evo\'" :key="\'evo-\' + char" :char="char" :initial-panel="deepView" @pick="char = $event" />',
       '  <lab-shell v-else-if="mod === \'lab\'" :char="char" :initial-tab="deepView" @pick="char = $event" @create="createFromLab" />',
-      '  <mode-quiz v-else-if="mod === \'quiz\'" :initial-level="deepLevel" @learn="learnChar" @go="mod = $event" />',
+      '  <mode-quiz v-else-if="mod === \'quiz\'" :initial-level="deepLevel" :focus-char="tour ? char : \'\'" @learn="learnChar" @go="goFromQuiz" @free="tour = false" @attempted="noteStoryAttempt" />',
       // 06 故意**不给 :key** —— 别的模块按 char 重建是为了换掉引擎，
       // 关系网没有引擎（渲染是纯函数），而重建会把「返回上一个字」的历史清掉。
       '  <graph-view v-else-if="mod === \'graph\'" :char="char" @pick="char = $event" />',
@@ -64,17 +69,45 @@
       '  <dialog ref="helpDialog" class="zc-help-dialog" aria-labelledby="zc-help-title"><header><div><span class="zc-status-eyebrow">FIELD GUIDE</span><h2 id="zc-help-title">{{ currentGuide.title }}</h2></div><button class="zc-btn" autofocus @click="$refs.helpDialog.close()">{{ tr(\'help_close\') }}</button></header><ol><li v-for="step in currentGuide.steps" :key="step">{{ step }}</li></ol><p class="zc-note">{{ tr(\'help_note_keys\') }}</p><section class="zc-help-settings"><h3>{{ tr(\'help_read_setting\') }}</h3><button class="zc-btn" :aria-pressed="viewSettings.largeText" @click="setLargeText(!viewSettings.largeText)">{{ viewSettings.largeText ? tr(\'help_std_text\') : tr(\'help_large_text\') }}</button><p class="zc-note">{{ tr(\'help_read_note\') }} {{ viewSettings.savedLocally ? tr(\'help_saved_local\') : tr(\'help_session_only\') }}</p></section><details class="zc-help-health"><summary>{{ tr(\'help_health\') }}</summary><p>{{ auditLine }}</p><ul><li>{{ tr(\'help_storage\') }}：{{ audit.storage ? tr(\'help_ok\') : tr(\'help_session\') }}</li><li>{{ tr(\'help_svg\') }}：{{ audit.svg ? tr(\'help_loaded\') : tr(\'help_missing\') }}；{{ tr(\'help_canvas\') }}：{{ audit.canvas ? tr(\'help_ok\') : tr(\'help_session\') }}</li><li>{{ tr(\'help_ptr\') }}：{{ audit.pointer ? tr(\'help_ok\') : tr(\'help_no_ptr\') }}</li><li>{{ tr(\'help_li\') }}：{{ audit.liAvailable ? tr(\'help_ok\') : tr(\'help_li_no\') }}</li></ul><p class="zc-note">{{ tr(\'help_health_note\') }}</p></details></dialog>',
       '</div>'
     ].join('\n'),
-    data: function () { return { modules: MODULES, mod: 'home', char: '休', tour:false, lang:(global.ZQ.workspace && global.ZQ.workspace.lang) || 'zh', deepView:null, deepLevel:null, deepShare:null, viewSettings:global.ZQ.workspace || {largeText:false,savedLocally:false}, audit:{}, creationRequest:null }; },
-    mounted: function () { this.applyDeepLink(); this.mark(this.mod); if (global.document) global.document.documentElement.lang = this.lang; },
+    data: function () { return { modules: MODULES, mod: 'home', char: '休', tour:false, storyAnswered:false, lang:(global.ZQ.workspace && global.ZQ.workspace.lang) || 'zh', deepView:null, deepLevel:null, deepShare:null, viewSettings:global.ZQ.workspace || {largeText:false,savedLocally:false}, audit:{}, creationRequest:null }; },
+    mounted: function () {
+      this.applyDeepLink(); this.mark(this.mod);
+      if (global.document) global.document.documentElement.lang = this.lang;
+      if (global.addEventListener) global.addEventListener('resize', this.keepActiveTab);
+      this.$nextTick(this.keepActiveTab);
+    },
+    beforeUnmount: function () { if (global.removeEventListener) global.removeEventListener('resize', this.keepActiveTab); },
     watch: {
       mod: function (v) {
         this.mark(v);
-        this.$nextTick(function () { if (global.scrollTo) global.scrollTo({ top:0, left:0, behavior:'auto' }); });
+        this.$nextTick(function () { this.keepActiveTab(); if (global.scrollTo) global.scrollTo({ top:0, left:0, behavior:'auto' }); });
       },
       lang: function (v) { if (global.document) global.document.documentElement.lang = v; },
-      char: function () { this.mark(this.mod); }
+      char: function () { if (this.tour && this.char !== '休') this.tour = false; this.mark(this.mod); }
     },
     methods: {
+      keepActiveTab: function () {
+        var tabs = this.$refs.moduleTabs;
+        if (!tabs) return;
+        var active = tabs.querySelector('[aria-selected="true"]');
+        if (!active) return;
+        var frame = tabs.getBoundingClientRect(), item = active.getBoundingClientRect();
+        if (item.left < frame.left) tabs.scrollLeft -= frame.left - item.left;
+        else if (item.right > frame.right) tabs.scrollLeft += item.right - frame.right;
+      },
+      advanceStory: function () {
+        if (!this.tour || this.storyIndex < 0) return;
+        if (this.mod === 'quiz' && !this.storyAnswered) return;
+        var next = STORY[this.storyIndex + 1];
+        if (!next) { this.tour = false; this.mod = 'home'; }
+        else if (next === 'mine') this.createFromLab(this.char);
+        else this.mod = next;
+      },
+      noteStoryAttempt: function () { if (this.tour && this.mod === 'quiz') this.storyAnswered = true; },
+      goFromQuiz: function (mod) {
+        if (this.tour && mod === 'mine') this.createFromLab(this.char);
+        else this.mod = mod;
+      },
       createFromLab: function (ch) {
         var request=global.ZQ.labCreationRequest(ch); if(!request) return;
         this.creationRequest=request; this.mod='mine';
@@ -127,7 +160,7 @@
         var self = this;
         this.$nextTick(function () { self.deepView = null; self.deepLevel = null; self.deepShare = null; });
       },
-      startTour: function () { this.tour = true; this.char = '休'; this.mod = 'origin'; },
+      startTour: function () { this.tour = true; this.storyAnswered = false; this.char = '休'; this.mod = 'origin'; },
       mark: function (mod) {
         // 挑战由实际答对的题目记目标字，不把进入挑战页误计为当前选字的学习。
         // graph 要记：在关系网上点着走过去，本来就是「探索了这些字」。
@@ -141,7 +174,7 @@
       currentGuide: function () {
         var t = this.tr;
         var guides={
-          home:{key:'guide_home_title',title:t('guide_home_title'),steps:['点击开始探索，或选择休、明、森作为起点。','首页故事可以切换；代表字形不意味着完整演变链。','三分钟体验路线会在底栏提示下一步。']},
+          home:{key:'guide_home_title',title:t('guide_home_title'),steps:['跟随休的一字故事，从观察、比较到亲手创作；也可自由选择汉字探索。','首页故事可以切换；代表字形不意味着完整演变链。','故事路线在页首提示当前目标与下一步，随时可以转为自由探索。']},
           origin:{key:'guide_origin_title',title:t('guide_origin_title'),steps:['切换字义、字源、书写页签，避免把现代拆字当作完整历史。','书写可暂停、拖动进度或点笔画；读音依赖本机中文语音。','选字面板支持汉字、拼音和字义搜索，也可收藏后筛选。']},
           evo:{key:'guide_evo_title',title:t('guide_evo_title'),steps:['拖时间轴或点缩略图，观察字体演示中的某一枚代表字形。','并览展示多个阶段；点击单期会回到单期视图。','用对比模式观察两期的结构与笔画，缺资料时保留缺失提示。','出处与实证另有小学堂 CC0 查询图、著录与汉代隶变资料，可并排对照和选中复制引用；不算作主时间轴已补齐。']},
           lab:{key:'guide_lab_title',title:t('guide_lab_title'),steps:['在认识构形中拆开休、明等例字，拖动并查看构件。','在目标拼合中把构件拖回合理位置，自动吸附；卡住可开启底纹提示。','点击用这些构件去创作，转到我的造字；确认后追加构件，不覆盖已有草稿。']},
@@ -150,6 +183,10 @@
           graph:{key:'guide_graph_title',title:t('guide_graph_title'),steps:['图只画当前字周围一到两层，点任意一个字就换成以它为中心。','画布下方写着实线与虚线各是什么，那是读懂这张图的第一步。','选一条推荐路径会高亮它经过的边；按 Esc 或「返回上一个字」可以退回。','这一页的连线都整理自已收录的字形与释义，不是按相似度算出来的。']}
         }; return guides[this.mod] || guides.home;
       },
+      storyIndex: function () { return STORY.indexOf(this.mod); },
+      storyTotal: function () { return STORY.length; },
+      storyTitle: function () { return this.tr('story_title_' + this.mod).replace('{{char}}', this.char); },
+      storyBody: function () { return this.tr('story_body_' + this.mod).replace('{{char}}', this.char); },
       nextModule: function () {
         var i = MODULES.findIndex(function (m) { return m.id === this.mod; }, this);
         var next = MODULES[(i + 1) % MODULES.length];

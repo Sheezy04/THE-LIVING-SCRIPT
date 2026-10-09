@@ -9,7 +9,7 @@
 | `LongCang-Subset.woff2` | 1.49 MB | `--font-title` → 「ZQ Long Cang」，左上角「字启千年」 | OFL 1.1 |
 
 `@font-face` 声明在 `src/workbench.css`（前两个）与 `src/gallery.css`（龙藏）。
-加起来 **3.91 MB**。许可原文是同目录的 `OFL-NotoSansSC.txt` / `OFL-NotoSerifSC.txt` /
+2026-10-09 随新界面文案重新生成，三个子集合计 **4,106,984 字节（约 3.92 MiB）**。许可原文是同目录的 `OFL-NotoSansSC.txt` / `OFL-NotoSerifSC.txt` /
 `OFL-LongCang.txt` —— 子集是 OFL 允许的「修改版本」，这些声明必须跟着走，不要删。
 
 ## 为什么要子集化
@@ -24,7 +24,7 @@
 
 ## 字符集是什么
 
-`charset.txt`（4010 个字符）= 下面两部分的并集，由脚本推导，不手工维护：
+`charset.txt`（本次 4019 个字符）= 下面两部分的并集，由脚本推导，不手工维护：
 
 1. **站点自己用到的字** —— 扫 `index.html` 与 `src/`、`data/` 下的 js/css。
    加新的界面文案后**必须重跑构建脚本**，否则新字会掉回后备字形。

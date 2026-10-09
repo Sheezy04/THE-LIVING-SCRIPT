@@ -20,11 +20,11 @@
   ZQ.ModeQuiz = {
     name: 'ModeQuiz',
     mixins: [ZQ.i18nMixin],
-    props: { initialLevel: { type: String, default: '' } },
-    emits: ['learn', 'go'],
+    props: { initialLevel: { type: String, default: '' }, focusChar: { type: String, default: '' } },
+    emits: ['learn', 'go', 'free', 'attempted'],
 
     template: [
-      '<div class="zc-quiz">',
+      '<div class="zc-quiz" :class="{ \'is-story-quiz\': focusChar && level === \'mission\' }">',
       '  <header class="zc-gallery-heading"><span>04 / CHARACTER CHALLENGE</span><h2>汉字挑战</h2></header>',
       '  <div class="zc-quiz-modes"><div><span class="zc-status-eyebrow">CHARACTER CASE FILES · 字形任务</span><p>{{ modeDescription }}</p></div><div class="zc-seg" role="group" aria-label="挑战模式"><button :aria-pressed="level === \'mission\'" :class="{ \'is-active\': level === \'mission\' }" @click="changeLevel(\'mission\')">{{ tr(\'quiz_level_mission\') }}</button><button :aria-pressed="level === \'classic\'" :class="{ \'is-active\': level === \'classic\' }" @click="changeLevel(\'classic\')">{{ tr(\'quiz_level_classic\') }}</button></div><button class="zc-text-btn" :aria-expanded="notebookOpen" @click="notebookOpen = !notebookOpen">练习笔记 · {{ notebook.length }}</button><small>两套独立题池 · 切换开启新一轮，已解锁构件保留。</small><section v-if="notebookOpen" class="zc-notebook"><h3>把卡住的地方，变成下一条线索</h3><p v-if="!notebook.length">暂时没有待巩固的任务。答错或跳过后会自动记录在这里。</p><article v-for="item in notebook.slice(0, notebookLimit)" :key="item.id"><div><span>{{ item.level === \'classic\' ? tr(\'quiz_level_classic\') : tr(\'quiz_level_mission\') }} · {{ item.label }} · {{ item.char }} · {{ item.resolved ? \'已巩固\' : \'待巩固\' }}</span><h4>{{ item.title }}</h4><p>上次作答：{{ item.response }}</p><p>参考：{{ item.answer }}</p><details><summary>回看解析</summary><p>{{ item.explain }}</p></details></div><div class="zc-controls"><button class="zc-btn" @click="practice(item)">同类再练</button><button class="zc-btn" @click="$emit(\'learn\', item.char)">探索这个字</button></div></article><button v-if="notebookLimit < notebook.length" class="zc-text-btn" @click="notebookLimit += 20">展开更多</button><small>{{ notebookSaved ? \'笔记保存于本机，最多 120 条，不包含在造字备份码中。\' : \'笔记仅存于本次会话，本机存储不可用。\' }} 同类再练可能换字；旧题型会迁移到所属模式的新题池。</small></section></div>',
 
@@ -183,7 +183,10 @@
     },
 
     computed: {
-      modeDescription: function () { return this.level === 'classic' ? '轻松探索 · 古今相认与字义入境，四题均为单步单选，不含排序或拼字。' : '推理挑战 · 校勘、取证、排序、拖拽各一题，考察证据与空间关系。'; },
+      modeDescription: function () {
+        if (this.focusChar && this.level === 'mission') return '接续「' + this.focusChar + '」的故事：先校勘布局，再比较、排序和复原；用字形证据说明你的发现。';
+        return this.level === 'classic' ? '轻松探索 · 古今相认与字义入境，四题均为单步单选，不含排序或拼字。' : '推理挑战 · 校勘、取证、排序、拖拽各一题，考察证据与空间关系。';
+      },
       scoreLabel: function () { return this.level==='classic'?'探索分':'推理分'; },
       notebook: function () { return global.ZQ.learning?global.ZQ.learning.mistakes:[]; },
       notebookSaved: function () { return !global.ZQ.learning || global.ZQ.learning.savedLocally; },
@@ -284,7 +287,7 @@
 
       start: function (seed, practiceKind) {
         this.seed = seed;
-        var r = practiceKind?global.Quiz.practice(practiceKind,seed,{level:this.level}):global.Quiz[this.level === 'mission' ? 'mission' : 'explore'](seed, { avoid: this.seen });
+        var r = practiceKind?global.Quiz.practice(practiceKind,seed,{level:this.level}):global.Quiz[this.level === 'mission' ? 'mission' : 'explore'](seed, { avoid: this.seen, focusChar:this.focusChar });
         var rnd = global.Quiz.rng(seed ^ 0x51e7);
         this.questions = r.questions.map(function (q) {
           if (q.kind === 'order') {
@@ -329,10 +332,12 @@
       /** 换到下一题时要把作答状态清干净 —— 漏一个就会出现「上一题的绿勾留在这一题上」 */
       changeLevel: function (level) {
         if (!['mission','classic'].includes(level) || this.level === level) return;
+        if (this.focusChar) this.$emit('free');
         this.level=level; this.restart();
       },
       practice: function (item) {
         if (!item || !['glyph','parts','build','order','evidence','layout','context'].includes(item.kind)) return;
+        if (this.focusChar) this.$emit('free');
         this.level=item.level==='classic'?'classic':'mission'; this.notebookOpen=false;
         var seed=this.nextSeed(); this.writeSeed(seed); this.start(seed,item.kind);
       },
@@ -478,6 +483,7 @@
           correct:r.correct, response:response, answer:q.kind === 'order' ? q.answer.join(' → ') : this.answerText, explain:r.explain,
           points:r.correct?(this.assisted?60:100):0,assisted:this.assisted });
         if (global.ZQ.logQuizAttempt) global.ZQ.logQuizAttempt(q,this.history[this.history.length-1],this.level);
+        if (this.$emit) this.$emit('attempted', this.history[this.history.length-1]);
         if (r.correct) {
           this.points+=this.assisted?60:100;
           this.score++; this.streak++; this.bestStreak = Math.max(this.bestStreak, this.streak);

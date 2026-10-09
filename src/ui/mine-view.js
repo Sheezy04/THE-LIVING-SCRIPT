@@ -71,7 +71,7 @@
     template: `
       <section class="zc-mine">
         <header class="zc-mine-intro">
-          <div><span class="zc-gallery-kicker">05 / CREATION</span><h2>我的造字</h2><p>摆放构件，赋予含义，让一次汉字探索成为你的作品。</p></div>
+          <div><span class="zc-gallery-kicker">05 / CREATION</span><h2>我的造字</h2><p>故事在你手中继续：选择构件，表达一段自己的生活。</p></div>
           <div class="zc-mine-nav"><div class="zc-seg" role="tablist" aria-label="创作工作台"><button role="tab" :aria-selected="view === 'create'" :class="{ 'is-active': view === 'create' }" @click="view = 'create'">{{ tr('mine_tab_create') }}</button><button role="tab" :aria-selected="view === 'poster'" :disabled="!posterReady" :class="{ 'is-active': view === 'poster' }" @click="view = 'poster'">{{ tr('mine_tab_poster') }}</button><button role="tab" :aria-selected="view === 'library'" :class="{ 'is-active': view === 'library' }" @click="view = 'library'">{{ tr('mine_tab_library') }} · {{ library.length }}</button><button role="tab" :aria-selected="view === 'backup'" :class="{ 'is-active': view === 'backup' }" @click="view = 'backup'">{{ tr('mine_tab_backup') }}</button></div><span class="zc-note">{{ unlocked.length }} / {{ paletteCount }} {{ tr('mine_unlocked') }}</span></div>
         </header>
         <div v-show="view === 'create'" class="zc-mine-work">
@@ -82,7 +82,8 @@
           </div>
           <aside v-show="toolTab !== 'edit'" class="zc-mine-form zc-panel">
             <div class="zc-panel-title">{{ toolTab === 'style' ? '名称与海报风格' : '给作品赋义' }}</div>
-            <label v-show="toolTab === 'meaning'">我的字代表什么？<input v-model="meaning" maxlength="40" placeholder="例如：快乐、勇气、相遇" /></label>
+            <label v-show="toolTab === 'meaning'">我的字想讲什么故事？<input v-model="meaning" maxlength="40" placeholder="例如：日与心表达向阳，愿每天心怀希望" aria-describedby="zc-creation-reason" /></label>
+            <p v-show="toolTab === 'meaning'" id="zc-creation-reason" class="zc-note">用一句话说明：我选择了哪些构件，它们的组合为什么能表达我的想法？最多 40 字，会随海报保存。</p>
             <div v-show="toolTab === 'style'" class="zc-creation-options">
             <div class="zc-mine-quick"><button v-for="word in quickWords" :key="word" @click="meaning = word">{{ word }}</button></div>
             <label>创作名（可选）<input v-model="name" maxlength="12" placeholder="例如：向阳" /></label>

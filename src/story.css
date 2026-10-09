@@ -1,0 +1,39 @@
+/* 故事路线沿用现有展廊的纸色、墨色和字体，只补学习目标与跨模块动作。 */
+.zc-story-rail {
+  position:sticky; top:8px; z-index:15;
+  display:flex; align-items:center; justify-content:space-between; gap:24px;
+  padding:14px 18px; margin:0 auto 24px;
+  background:#f5f4ef; border-block:1px solid var(--gallery-line);
+  color:#243c2e; min-width:0;
+}
+.zc-story-route-copy { min-width:0; max-width:740px; }
+.zc-story-route-title { display:flex; align-items:baseline; gap:14px; }
+.zc-story-progress { flex-shrink:0; font:500 14px/1.5 var(--font-reading); font-variant-numeric:tabular-nums; color:#486252; }
+.zc-story-route-title h2 { margin:0; font:500 22px/1.4 var(--font-reading); text-wrap:balance; }
+.zc-story-route-copy p { margin:6px 0 0; color:#405c4c; font:400 15px/1.7 var(--font-reading); }
+.zc-story-route-actions { display:flex; align-items:center; flex-shrink:0; gap:14px; }
+.zc-story-route-actions .zc-btn { min-height:44px; }
+.zc-story-route-actions .zc-text-btn { min-height:44px; white-space:nowrap; color:#405c4c; }
+.zc-evo-parallel { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px; margin:10px 0 8px; color:#405c4c; font:400 14px/1.7 var(--font-reading); }
+.zc-evo-parallel span { grid-column:3/5; text-align:center; padding-bottom:4px; border-bottom:1px solid #486252; font-weight:600; color:#243c2e; }
+.zc-evo-parallel small { grid-column:1/-1; font-size:14px; text-align:center; }
+.zc-story-rail :focus-visible { outline:2px solid #285640; outline-offset:4px; }
+.zc-quiz-card .zc-quiz-submit { position:sticky; bottom:12px; z-index:2; padding:10px 0; background:#f5f4ef; }
+.zc-quiz-feedback > .zc-controls { position:sticky; bottom:12px; z-index:2; padding-block:10px; background:#f5f4ef; }
+.is-story-quiz .zc-quiz-modes { margin-bottom:14px; }
+.is-story-quiz .zc-quiz-modes > div:first-child { display:none; }
+.is-story-quiz .zc-gallery-heading { margin-bottom:18px; }
+@media (max-width:900px) {
+  .zc-story-rail { flex-wrap:wrap; gap:10px; padding:12px 14px; }
+  .zc-story-route-copy { max-width:none; }
+  .zc-story-route-actions { width:100%; justify-content:space-between; }
+}
+@media (max-width:700px) {
+  .zc-story-rail { position:static; padding:12px 0; margin-bottom:18px; }
+  .zc-story-route-title { gap:10px; }
+  .zc-story-route-title h2 { font-size:20px; }
+  .zc-story-route-copy p { font-size:15px; }
+  .zc-modtabs { scroll-padding-inline:8px; }
+  .zc-page-graph .zc-graph-link small { font-size:14px; line-height:1.65; color:#405c4c; }
+  .zc-quiz-card .zc-quiz-submit { bottom:0; padding-block:12px; }
+}
