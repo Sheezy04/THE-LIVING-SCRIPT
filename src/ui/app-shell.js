@@ -66,7 +66,7 @@
       '    <span v-if="!storageAvailable" class="zc-status-session" role="status">{{ tr(\'session_mode\') }}</span>',
       '    <button class="zc-btn is-primary" :disabled="tour && mod === \'quiz\' && !storyAnswered" @click="advanceJourney">{{ journeyAction }} <span aria-hidden="true">↗</span></button>',
       '  </div>',
-      '  <dialog ref="helpDialog" class="zc-help-dialog" aria-labelledby="zc-help-title"><header><div><span class="zc-status-eyebrow">FIELD GUIDE</span><h2 id="zc-help-title">{{ currentGuide.title }}</h2></div><button class="zc-btn" autofocus @click="$refs.helpDialog.close()">{{ tr(\'help_close\') }}</button></header><ol><li v-for="step in currentGuide.steps" :key="step">{{ step }}</li></ol><p class="zc-note">{{ tr(\'help_note_keys\') }}</p><section class="zc-help-settings"><h3>{{ tr(\'help_read_setting\') }}</h3><button class="zc-btn" :aria-pressed="viewSettings.largeText" @click="setLargeText(!viewSettings.largeText)">{{ viewSettings.largeText ? tr(\'help_std_text\') : tr(\'help_large_text\') }}</button><p class="zc-note">{{ tr(\'help_read_note\') }} {{ viewSettings.savedLocally ? tr(\'help_saved_local\') : tr(\'help_session_only\') }}</p></section><details class="zc-help-health"><summary>{{ tr(\'help_health\') }}</summary><p>{{ auditLine }}</p><ul><li>{{ tr(\'help_storage\') }}：{{ audit.storage ? tr(\'help_ok\') : tr(\'help_session\') }}</li><li>{{ tr(\'help_svg\') }}：{{ audit.svg ? tr(\'help_loaded\') : tr(\'help_missing\') }}；{{ tr(\'help_canvas\') }}：{{ audit.canvas ? tr(\'help_ok\') : tr(\'help_session\') }}</li><li>{{ tr(\'help_ptr\') }}：{{ audit.pointer ? tr(\'help_ok\') : tr(\'help_no_ptr\') }}</li><li>{{ tr(\'help_li\') }}：{{ audit.liAvailable ? tr(\'help_ok\') : tr(\'help_li_no\') }}</li></ul><p class="zc-note">{{ tr(\'help_health_note\') }}</p></details></dialog>',
+      '  <dialog ref="helpDialog" class="zc-help-dialog" aria-labelledby="zc-help-title"><header><div><span class="zc-status-eyebrow">FIELD GUIDE</span><h2 id="zc-help-title">{{ currentGuide.title }}</h2></div><button class="zc-btn" autofocus @click="$refs.helpDialog.close()">{{ tr(\'help_close\') }}</button></header><ol><li v-for="step in currentGuide.steps" :key="step">{{ step }}</li></ol><p class="zc-note">{{ tr(\'help_note_keys\') }}</p><section class="zc-help-settings"><h3>{{ tr(\'help_read_setting\') }}</h3><button class="zc-btn" :aria-pressed="viewSettings.largeText" @click="setLargeText(!viewSettings.largeText)">{{ viewSettings.largeText ? tr(\'help_std_text\') : tr(\'help_large_text\') }}</button><p class="zc-note">{{ tr(\'help_read_note\') }} {{ viewSettings.savedLocally ? tr(\'help_saved_local\') : tr(\'help_session_only\') }}</p></section></dialog>',
       '</div>'
     ].join('\n'),
     data: function () { return { modules: MODULES, mod: 'home', char: '休', tour:false, storyAnswered:false, lang:(global.ZQ.workspace && global.ZQ.workspace.lang) || 'zh', deepView:null, deepLevel:null, deepShare:null, viewSettings:global.ZQ.workspace || {largeText:false,savedLocally:false}, audit:{}, creationRequest:null }; },
@@ -184,13 +184,13 @@
       currentGuide: function () {
         var t = this.tr;
         var guides={
-          home:{key:'guide_home_title',title:t('guide_home_title'),steps:['跟随休的一字故事，从观察、比较到亲手创作；也可自由选择汉字探索。','首页故事可以切换；代表字形不意味着完整演变链。','故事路线在页首提示当前目标与下一步，随时可以转为自由探索。']},
+          home:{key:'guide_home_title',title:t('guide_home_title'),steps:['跟随休的一字故事，从观察、比较到亲手创作；也可自由选择汉字探索。','首页故事可以切换。','故事路线在页首提示当前目标与下一步，随时可以转为自由探索。']},
           origin:{key:'guide_origin_title',title:t('guide_origin_title'),steps:['切换字义、字源、书写页签，避免把现代拆字当作完整历史。','书写可暂停、拖动进度或点笔画；读音依赖本机中文语音。','选字面板支持汉字、拼音和字义搜索，也可收藏后筛选。']},
-          evo:{key:'guide_evo_title',title:t('guide_evo_title'),steps:['拖时间轴或点缩略图，观察字体演示中的某一枚代表字形。','并览展示多个阶段；点击单期会回到单期视图。','用对比模式观察两期的结构与笔画，缺资料时保留缺失提示。','出处与实证另有小学堂 CC0 查询图、著录与汉代隶变资料，可并排对照和选中复制引用；不算作主时间轴已补齐。']},
+          evo:{key:'guide_evo_title',title:t('guide_evo_title'),steps:['拖时间轴或点缩略图，观察字体演示中的某一枚代表字形。','并览展示多个阶段；点击单期会回到单期视图。','用对比模式观察两期的结构与笔画，缺资料时保留缺失提示。','出处与实证另有小学堂 CC0 查询图、著录与汉代隶变资料，可并排对照和选中复制引用。']},
           lab:{key:'guide_lab_title',title:t('guide_lab_title'),steps:['在认识构形中拆开休、明等例字，拖动并查看构件。','在目标拼合中把构件拖回合理位置，自动吸附；卡住可开启底纹提示。','点击用这些构件去创作，转到我的造字；确认后追加构件，不覆盖已有草稿。']},
           quiz:{key:'guide_quiz_title',title:t('guide_quiz_title'),steps:['轻松探索只含古今相认与字义情境单选；推理挑战含校勘、双字取证、排序与拼合。','推理拼合先从四构件选两个，再拖拽复原；选错可修正，但计入辅助。线索主动展开，无倒计时。','答错或跳过进入本机练习笔记；重练遵从原模式，旧题型会迁移到新题池。']},
           mine:{key:'guide_mine_title',title:t('guide_mine_title'),steps:['先选择构件，再点击画布上的构件进行位置、缩放和旋转调整。','切到赋予含义输入创作说明；海报设置可选择名称与风格。','生成后保存 PNG；正式作品保存到字库，并复制备份码。草稿和练习笔记不在字库备份中。']},
-          graph:{key:'guide_graph_title',title:t('guide_graph_title'),steps:['图只画当前字周围一到两层，点任意一个字就换成以它为中心。','画布下方写着实线与虚线各是什么，那是读懂这张图的第一步。','选一条推荐路径会高亮它经过的边；按 Esc 或「返回上一个字」可以退回。','这一页的连线都整理自已收录的字形与释义，不是按相似度算出来的。']}
+          graph:{key:'guide_graph_title',title:t('guide_graph_title'),steps:['图只画当前字周围一到两层，点任意一个字就换成以它为中心。','画布下方写着实线与虚线各是什么，那是读懂这张图的第一步。','选一条推荐路径会高亮它经过的边；按 Esc 或「返回上一个字」可以退回。','这一页的连线都整理自已收录的字形与释义。']}
         }; return guides[this.mod] || guides.home;
       },
       storyIndex: function () { return STORY.indexOf(this.mod); },
@@ -215,15 +215,6 @@
           return this.tr('journey_guided').split('·')[0].trim() + ' ' + Number(this.idx) + '/' + Object.keys(prompts).length + ' · ' + base;
         }
         return this.mod === 'mine' ? this.tr('journey_mine_home') : this.tr('journey_default');
-      },
-      auditLine: function () {
-        return this.tr('help_health_chars')
-          .replace('{{n}}', String(this.audit.chars || 0))
-          .replace('{{s}}', String(this.audit.ancientSlots || 0))
-          .replace('{{a}}', String(this.audit.ancientAvailable || 0))
-          .replace('{{m}}', String(this.audit.ancientMissing || 0))
-          .replace('{{p}}', String(this.audit.licensePending || 0))
-          .replace('{{d}}', String(this.audit.licenseDeclared || 0));
       },
       idx: function () {
         var i = MODULES.findIndex(function (m) { return m.id === this.mod; }, this);

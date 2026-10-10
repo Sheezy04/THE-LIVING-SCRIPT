@@ -41,7 +41,7 @@
       ' <p v-if="message" class="zc-note" role="status">{{ message }}</p>',
       ' <dialog ref="dialog" class="zc-help-dialog zc-evidence-dialog" aria-label="出处与实证阅览">',
       '  <header><div><span class="zc-status-eyebrow">GLYPH ARCHIVE · 字形档案</span><h2>「{{ selectedChar }}」的出处与实证</h2></div><button class="zc-btn" autofocus @click="close">关闭</button></header>',
-      '  <p class="zc-note">独立资料集：{{ characters.length }} 个代表字，{{ recordCount }} 张查询字形图；{{ liCount }} 个字有汉代隶变资料。不会把此数计入旧字体时间轴的完成率。</p>',
+      '  <p class="zc-note">独立资料集：{{ characters.length }} 个代表字，{{ recordCount }} 张查询字形图；{{ liCount }} 个字有汉代隶变资料。</p>',
       '  <div class="zc-evidence-charlist" aria-label="已采集的代表字"><button v-for="ch in characters" :key="ch" :aria-pressed="selectedChar === ch" @click="selectChar(ch)">{{ ch }}</button></div>',
       '  <section v-if="spotlight" class="zc-spotlight" aria-label="重点字解读">',
       '    <h3>{{ spotlight.title }}</h3>',

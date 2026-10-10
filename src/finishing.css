@@ -77,8 +77,6 @@
 .zc-help-dialog ol,.zc-help-dialog ul { padding-left:22px; margin:12px 0; }
 .zc-help-dialog li { padding:5px 0; }
 .zc-help-settings { margin:18px 0; padding:16px; border:1px solid #dce4d0; border-radius:9px; background:#f4f7ee; }
-.zc-help-health summary { color:#566d44; cursor:pointer; }
-.zc-help-health > p { margin-top:12px; font-size:13px; }
 .zc-notebook { flex-basis:100%; padding:18px; border:1px solid #d6dfc9; border-radius:10px; background:#fafbf5; }
 .zc-notebook h3 { font:400 20px/1.6 var(--font-brand); }
 .zc-notebook article { display:flex; gap:18px; align-items:start; justify-content:space-between; border-top:1px solid #e1e7d8; padding:16px 0; margin-top:12px; }

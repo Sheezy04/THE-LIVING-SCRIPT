@@ -11,12 +11,12 @@
  *   小篆       秦          小篆
  *
  * 来源与授权：
- *   中央研究院 漢字構形資料庫 2.4 版 中研院公开释出声明的取用范围参考（参赛者确认）  ✅
+ *   中央研究院 漢字構形資料庫 2.4 版 中研院公开释出声明的取用范围参考  ✅
  *   敬峰中山王篆 JFZSKSealScript V3 SIL Open Font License 1.1  ✅
  *   汉典 zdic.net 字源演变 CC0 1.0（官方条款，2026-09-25 复核）  ✅
  *
  * 中研院四套本地字体来自 2.4 版独立下载包，内部仍保留
- * 「Proprietary for Sinica, all right reserved」历史字符串。参赛者确认按
+ * 「Proprietary for Sinica, all right reserved」历史字符串。本项目按
  * https://cdp.sinica.edu.tw/cdphanzi/declare.htm 的公开取用范围参考使用；
  * 声明标题为 2.65 版，不把本地文件改称新版，也不主张获得个别邮件授权。
  * 敬峰中山王篆是 SIL OFL 1.1。
@@ -85,7 +85,7 @@
   "CDP": {
     "id": "CDP",
     "name": "中央研究院 漢字構形資料庫 2.4 版",
-    "license": "中研院公开释出声明的取用范围参考（参赛者确认）",
+    "license": "中研院公开释出声明的取用范围参考",
     "license_ok": true,
     "license_stated": true,
     "license_kind": "使用依据",

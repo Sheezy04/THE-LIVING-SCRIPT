@@ -40,7 +40,6 @@
 .zc-evo-exhibit .zc-stageinfo-period { font:400 24px/1.6 var(--font-brand); }
 .zc-evo-exhibit .zc-stageinfo-note { margin:4px 0 24px; font:400 21px/1.7 var(--font-reading); }
 .zc-evo-exhibit .zc-stageinfo-src { border-top:1px solid var(--gallery-line); padding-top:20px; font:400 15px/1.85 var(--font-reading); color:#405c4c; overflow-wrap:anywhere; }
-.zc-evo-exhibit .zc-evo-boundary { margin:10px 0 18px; font:400 15px/1.7 var(--font-reading); color:#405c4c; }
 .zc-evo-exhibit .zc-evidence-entry { margin:0; }
 .zc-evo-exhibit .zc-evidence-entry > span { display:none; }
 .zc-evo-exhibit .zc-stagecov { display:none; } /* 上方可操作时间轴已包含同一组覆盖信息。 */

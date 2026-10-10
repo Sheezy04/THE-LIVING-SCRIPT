@@ -9,7 +9,7 @@
 
   var ZQ = global.ZQ = global.ZQ || {};
   // 插槽落在画布下方，说明与创作转交仍使用父层状态，不重建学习引擎。
-  var CANVAS_FOOTER = '<template #canvas-footer><div class="zc-lab-hint"><div class="zc-exhibit-caption"><span>{{ char }} · 现代构形观察</span><span>{{ tab === \'know\' ? \'拖开 · 查看 · 合拢\' : \'观察 · 拼合 · 验证\' }}</span></div><p>{{ hint }}</p><div class="zc-lab-create-link"><span>理解已有构形，再去表达自己的含义。</span><button class="zc-btn" :disabled="!creation" @click="$emit(\'create\', char)">{{ tr(\'lab_to_create\') }} ↗</button><small v-if="creation">带入：{{ creation.glyphs.join(\' + \') }} · 确认后追加，不覆盖草稿</small></div></div></template>';
+  var CANVAS_FOOTER = '<template #canvas-footer><div class="zc-lab-hint"><div class="zc-exhibit-caption"><span>{{ char }} · 现代构形观察</span><span>{{ tab === \'know\' ? \'拖开 · 查看 · 合拢\' : \'观察 · 拼合 · 验证\' }}</span></div><p>{{ hint }}</p><div class="zc-lab-create-link"><span>理解已有构形，再去表达自己的含义。</span><button class="zc-btn" :disabled="!creation" @click="$emit(\'create\', char)">{{ tr(\'lab_to_create\') }} ↗</button><small v-if="creation">带入：{{ creation.glyphs.join(\' + \') }}</small></div></div></template>';
 
   /* 页签整块**并进右栏**，不再留在 .zc-lab 自己的网格里。
    *
