@@ -160,11 +160,9 @@
   function saveLibrary(entry) {
     if (!entry || !entry.id) return null;
     var i = state.library.findIndex(function (e) { return e.id === entry.id; });
+    if (i < 0 && state.library.length >= Mine.LIMITS.library) return null;
     if (i >= 0) state.library.splice(i, 1, entry);
     else state.library.unshift(entry);
-    if (state.library.length > Mine.LIMITS.library) {
-      state.library.splice(Mine.LIMITS.library);      // 超了丢最旧的
-    }
     save();
     return entry;
   }
@@ -204,7 +202,7 @@
     catch (e) { return { ok:false, why:'备份码无法解析', added:{unlocked:0,seen:0,library:0}, dropped:0 }; }
     if (!r.ok) return { ok: false, why: '码的版本前缀不对', added: { unlocked: 0, seen: 0, library: 0 }, dropped: 0 };
     // 先清洗导入数据，再合并；constructor 等继承属性不能进入现有 seen。
-    var s = Mine.migrate(r.state,palette()), added = { unlocked: 0, seen: 0, library: 0 }, i, j, ch, mods;
+    var s = Mine.migrate(r.state,palette()), added = { unlocked: 0, seen: 0, library: 0 }, skipped = {duplicates:0,capacity:0}, i, j, ch, mods;
 
     for (i = 0; i < s.unlocked.length; i++) {
       if (state.unlocked.indexOf(s.unlocked[i]) < 0) { state.unlocked.push(s.unlocked[i]); added.unlocked++; }
@@ -219,11 +217,11 @@
     }
     for (i = 0; i < s.library.length; i++) {
       var e = s.library[i];
-      if (getLibrary(e.id)) continue;
+      if (getLibrary(e.id)) { skipped.duplicates++; continue; }
+      if (state.library.length >= Mine.LIMITS.library) { skipped.capacity++; continue; }
       state.library.push(e);
       added.library++;
     }
-    if (state.library.length > Mine.LIMITS.library) state.library.splice(Mine.LIMITS.library);
 
     /* 导进来的坐标可能不合法 —— 过一遍 migrate 收拾干净 */
     var clean = Mine.migrate({
@@ -234,7 +232,7 @@
     state.library = clean.library;
 
     save();
-    return { ok: true, added: added, dropped: r.dropped };
+    return { ok: true, added: added, dropped: r.dropped, skipped: skipped };
   }
 
   /** 全部重来（留给「清空我的数据」按钮 / 排查用） */

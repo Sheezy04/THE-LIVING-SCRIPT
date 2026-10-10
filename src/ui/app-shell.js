@@ -46,7 +46,7 @@
       '    <div class="zc-story-route-copy"><div class="zc-story-route-title"><span class="zc-story-progress">{{ storyIndex + 1 }} / {{ storyTotal }}</span><h2>{{ storyTitle }}</h2></div><p>{{ storyBody }}</p></div>',
       '    <div class="zc-story-route-actions"><button class="zc-btn is-primary" :disabled="mod === \'quiz\' && !storyAnswered" @click="advanceStory">{{ tr(mod === \'quiz\' && !storyAnswered ? \'story_try_first\' : \'story_next_\' + mod) }}</button><button class="zc-text-btn" @click="tour = false">{{ tr(\'story_free\') }}</button></div>',
       '  </section>',
-      '  <div class="zc-module-content" :key="lang">',
+      '  <div class="zc-module-content">',
       '  <home-shell v-if="mod === \'home\'" :key="\'home-\' + char"',
       '    :char="char" :explored="explored" :total="totalChars"',
       '    @pick="char = $event" @go="mod = $event" @tour="startTour" />',
@@ -64,7 +64,7 @@
       '    <div class="zc-status-story"><span class="zc-status-character" aria-hidden="true">{{ mod === \'mine\' ? \'创\' : (mod === \'quiz\' ? \'辨\' : char) }}</span><div><span class="zc-status-eyebrow">{{ tour ? tr(\'journey_guided\') : tr(\'journey_own\') }}</span><p :title="journeyText">{{ journeyText }}</p></div></div>',
       '    <div class="zc-status-metrics"><span>{{ tr(\'metric_explored\') }} <b>{{ explored }}</b><small> / {{ totalChars }}</small></span><span>{{ tr(\'metric_parts\') }} <b>{{ unlockedCount }}</b><small> / {{ paletteCount }}</small></span><span>{{ tr(\'metric_works\') }} <b>{{ libraryCount }}</b></span></div>',
       '    <span v-if="!storageAvailable" class="zc-status-session" role="status">{{ tr(\'session_mode\') }}</span>',
-      '    <button class="zc-btn is-primary" @click="mod = nextModule.id">{{ nextModule.label }} <span aria-hidden="true">↗</span></button>',
+      '    <button class="zc-btn is-primary" :disabled="tour && mod === \'quiz\' && !storyAnswered" @click="advanceJourney">{{ journeyAction }} <span aria-hidden="true">↗</span></button>',
       '  </div>',
       '  <dialog ref="helpDialog" class="zc-help-dialog" aria-labelledby="zc-help-title"><header><div><span class="zc-status-eyebrow">FIELD GUIDE</span><h2 id="zc-help-title">{{ currentGuide.title }}</h2></div><button class="zc-btn" autofocus @click="$refs.helpDialog.close()">{{ tr(\'help_close\') }}</button></header><ol><li v-for="step in currentGuide.steps" :key="step">{{ step }}</li></ol><p class="zc-note">{{ tr(\'help_note_keys\') }}</p><section class="zc-help-settings"><h3>{{ tr(\'help_read_setting\') }}</h3><button class="zc-btn" :aria-pressed="viewSettings.largeText" @click="setLargeText(!viewSettings.largeText)">{{ viewSettings.largeText ? tr(\'help_std_text\') : tr(\'help_large_text\') }}</button><p class="zc-note">{{ tr(\'help_read_note\') }} {{ viewSettings.savedLocally ? tr(\'help_saved_local\') : tr(\'help_session_only\') }}</p></section><details class="zc-help-health"><summary>{{ tr(\'help_health\') }}</summary><p>{{ auditLine }}</p><ul><li>{{ tr(\'help_storage\') }}：{{ audit.storage ? tr(\'help_ok\') : tr(\'help_session\') }}</li><li>{{ tr(\'help_svg\') }}：{{ audit.svg ? tr(\'help_loaded\') : tr(\'help_missing\') }}；{{ tr(\'help_canvas\') }}：{{ audit.canvas ? tr(\'help_ok\') : tr(\'help_session\') }}</li><li>{{ tr(\'help_ptr\') }}：{{ audit.pointer ? tr(\'help_ok\') : tr(\'help_no_ptr\') }}</li><li>{{ tr(\'help_li\') }}：{{ audit.liAvailable ? tr(\'help_ok\') : tr(\'help_li_no\') }}</li></ul><p class="zc-note">{{ tr(\'help_health_note\') }}</p></details></dialog>',
       '</div>'
@@ -102,6 +102,10 @@
         if (!next) { this.tour = false; this.mod = 'home'; }
         else if (next === 'mine') this.createFromLab(this.char);
         else this.mod = next;
+      },
+      advanceJourney: function () {
+        if (this.tour && this.storyIndex >= 0) this.advanceStory();
+        else this.mod = this.nextModule.id;
       },
       noteStoryAttempt: function () { if (this.tour && this.mod === 'quiz') this.storyAnswered = true; },
       goFromQuiz: function (mod) {
@@ -144,13 +148,19 @@
         var hash = (global.location && global.location.hash) || '';
         var get = function (name) {
           var m = new RegExp('(?:^|[#&])' + name + '=([^&#]*)').exec(hash);
-          return m ? decodeURIComponent(m[1]) : null;
+          if (!m) return null;
+          try { return decodeURIComponent(m[1]); } catch (e) { return null; }
         };
         var ch = get('char');
         if (ch && Object.prototype.hasOwnProperty.call(global.CharCatalog || {}, ch)) this.char = ch;
         var mod = get('mod');
         var okMod = !!mod && MODULES.some(function (m) { return m.id === mod; });
         if (okMod) this.mod = mod;
+        // 兼容旧的种子链接；显式模块参数优先，损坏参数不影响其他可用字段。
+        if (!mod && /^\d{1,10}$/.test(get('q') || '') && Number(get('q')) <= 4294967295) this.mod = 'quiz';
+        if (this.mod === 'quiz' && get('story') === '休' && get('level') !== 'classic') {
+          this.char = '休'; this.tour = true; this.storyAnswered = false;
+        }
         var view = get('view');
         if (okMod && view && DEEP_VIEWS[mod] && DEEP_VIEWS[mod].indexOf(view) !== -1) this.deepView = view;
         var level = get('level');
@@ -191,6 +201,10 @@
         var i = MODULES.findIndex(function (m) { return m.id === this.mod; }, this);
         var next = MODULES[(i + 1) % MODULES.length];
         return { id: next.id, label: next.id === 'home' ? this.tr('next_go_home') : this.tr('next_stop') + this.modLabel(next) };
+      },
+      journeyAction: function () {
+        if (this.tour && this.storyIndex >= 0) return this.tr(this.mod === 'quiz' && !this.storyAnswered ? 'story_try_first' : 'story_next_' + this.mod);
+        return this.nextModule.label;
       },
       journeyText: function () {
         if (this.tour && this.mod !== 'home') {

@@ -140,7 +140,7 @@
           <header><div><span class="zc-status-eyebrow">FROM A SHARED LINK · 来自分享链接</span><h2 id="zc-shared-title">收到的作品</h2></div></header>
           <template v-if="sharedEntry">
             <svg viewBox="0 0 520 520" class="zc-mine-card-glyph" aria-hidden="true"><g :transform="thumbTransform"><g v-for="(glyph, i) in sharedEntry.glyphs" :key="i" :transform="entryTransform(sharedEntry, i)"><path v-for="(d, k) in tile(glyph).d" :key="k" :d="d" fill="currentColor" /></g></g></svg>
-            <p><b>{{ sharedEntry.name || '未命名创作' }}</b><template v-if="sharedEntry.meaning"> · {{ sharedEntry.meaning }}</template></p><p class="zc-note">构件：{{ sharedEntry.glyphs.join(' + ') }}。保存后进入你的本机字库（满 60 件时需先清理）；不会改动已保存的作品。</p><div class="zc-controls"><button class="zc-btn is-primary" @click="saveShared">保存到我的字库</button><button class="zc-btn" autofocus @click="dismissShared">关闭</button></div>
+            <p><b>{{ sharedEntry.name || '未命名创作' }}</b><template v-if="sharedEntry.meaning"> · {{ sharedEntry.meaning }}</template></p><p class="zc-note">构件：{{ sharedEntry.glyphs.join(' + ') }}。保存后进入你的本机字库（满 60 件时需先清理）；不会改动已保存的作品。</p><p v-if="sharedError" role="status">{{ sharedError }}</p><div class="zc-controls"><button class="zc-btn is-primary" @click="saveShared">保存到我的字库</button><button class="zc-btn" autofocus @click="dismissShared">关闭</button></div>
           </template>
           <template v-else><p role="status">{{ sharedError }}</p><div class="zc-controls"><button class="zc-btn" autofocus @click="dismissShared">关闭</button></div></template>
         </dialog>
@@ -287,7 +287,10 @@
       saveDesign: function () {
         if (!this.canGenerate) return;
         var entry = global.Mine.entryFrom(this.design, { id: this.editingId, structure: this.structureText, meaning: clean(this.meaning, 40), name: clean(this.name, 12) });
-        if (entry) { this.store.saveLibrary(entry); this.editingId = entry.id; this.persistDraft(); this.notice = this.store.available ? '作品已保存在本机字库。' : '作品保存在本次会话，请使用备份码带走记录。'; }
+        if (entry) {
+          if (!this.store.saveLibrary(entry)) { this.persistDraft(); this.notice = '字库已满 60 件。请先备份并整理已存作品，再保存；当前草稿已保留。'; return; }
+          this.editingId = entry.id; this.persistDraft(); this.notice = this.store.available ? '作品已保存在本机字库。' : '作品保存在本次会话，请使用备份码带走记录。';
+        }
       },
       tile: function (glyph) { return global.Compose.tile(glyph) || { d: [], bbox: { cx: 0, cy: 0 } }; },
       entryTransform: function (entry, i) {
@@ -307,6 +310,10 @@
       restore: function () {
         var r = this.store.importCode(this.backupCode);
         this.notice = r.ok ? '已合并恢复 ' + r.added.library + ' 件作品。' : '备份码无法识别：' + (r.why || '请检查 MINE1 开头。');
+        if (r.ok && r.skipped) {
+          if (r.skipped.duplicates) this.notice += ' ' + r.skipped.duplicates + ' 件已有作品保持原样。';
+          if (r.skipped.capacity) this.notice += ' 字库已满，另有 ' + r.skipped.capacity + ' 件未恢复；请保留备份码，整理字库后再次恢复。';
+        }
       },
       /* ── 作品墙：海报预览 + 重新导出 ─────────────────────── */
       entryItems: function (entry) {
@@ -356,7 +363,9 @@
         if (!code) { this.notice = '该作品无法编码成分享链接。'; return; }
         /* 相对路径：整包复制到任何一台装有本作品的电脑（或放在任意静态托管）都能打开；
          * 写成绝对 file 路径的话，换设备就失效了。作品数据都在 URL 里，无需后端。 */
-        this.shareLink = 'index.html#share=' + encodeURIComponent(code);
+        var href = (global.location && global.location.href) || '';
+        var base = /^https?:\/\//i.test(href) ? href.replace(/[?#].*$/, '') : 'index.html';
+        this.shareLink = base + '#share=' + encodeURIComponent(code);
         this.shareCopyNote = '';
         var self = this;
         this.$nextTick(function () { var d = self.$refs.shareDialog; if (d && !d.open) d.showModal(); });
@@ -391,7 +400,8 @@
       },
       saveShared: function () {
         if (!this.sharedEntry) return;
-        this.store.saveLibrary(this.sharedEntry);
+        if (this.store.getLibrary(this.sharedEntry.id)) { this.sharedError = '字库已有相同编号的作品，保留本机版本。请关闭预览后查看字库。'; return; }
+        if (!this.store.saveLibrary(this.sharedEntry)) { this.sharedError = '字库已满 60 件。请先关闭预览，备份并整理字库，再打开此链接保存。'; return; }
         this.notice = this.store.available ? '已把分享的作品保存到本机字库。' : '作品保存在本次会话，请使用备份码带走记录。';
         this.dismissShared();
       },

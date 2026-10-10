@@ -230,7 +230,7 @@
 
     mounted: function () {
       // 不在 data 里取种子：data 会被反复求值，种子必须只定一次
-      this.start(this.initialSeed());
+      this.start(this.initialSeed(), this.initialPractice(), this.initialAvoid());
 
       // 数字键四型通吃：选择题里 = 点第 n 个选项（pick 点即判），
       // 排序题里 = 把光标移到第 n 格。两种都读作「选第 n 个」。
@@ -263,16 +263,30 @@
        */
       initialSeed: function () {
         var hash = (global.location && global.location.hash) || '';
-        var m = /(?:^|[#&])q=(\d+)/.exec(hash);
-        var s = m ? Number(m[1]) : (Math.floor(Date.now() / 1000) % 999983) + 1;
-        this.writeSeed(s);
-        return s;
+        var m = /(?:^|[#&])q=(\d{1,10})(?:&|$)/.exec(hash);
+        var seed = m ? Number(m[1]) : -1;
+        return Number.isSafeInteger(seed) && seed >= 0 && seed <= 4294967295 ? seed : (Math.floor(Date.now() / 1000) % 999983) + 1;
       },
-
-      writeSeed: function (s) {
+      initialAvoid: function () {
+        var hash = (global.location && global.location.hash) || '', m = /(?:^|[#&])avoid=([^&#]*)/.exec(hash);
+        if (!m || m[1].length > 10000) return [];
+        try {
+          var value = JSON.parse(decodeURIComponent(m[1]));
+          return Array.isArray(value) ? value.filter(function (id) { return typeof id === 'string' && id.length <= 100; }).slice(-12) : [];
+        } catch (e) { return []; }
+      },
+      initialPractice: function () {
+        var hash = (global.location && global.location.hash) || '', m = /(?:^|[#&])practice=([^&#]*)/.exec(hash);
+        return m && ['glyph','parts','build','order','evidence','layout','context'].includes(m[1]) ? m[1] : '';
+      },
+      writeSeed: function (s, avoid, practiceKind) {
         try {
           if (global.history && global.history.replaceState) {
-            global.history.replaceState(null, '', '#q=' + s);
+            var hash = '#mod=quiz&level=' + this.level + '&q=' + s;
+            if (this.focusChar === '休' && this.level === 'mission' && !practiceKind) hash += '&story=' + encodeURIComponent(this.focusChar);
+            if (avoid && avoid.length) hash += '&avoid=' + encodeURIComponent(JSON.stringify(avoid));
+            if (practiceKind) hash += '&practice=' + practiceKind;
+            global.history.replaceState(null, '', hash);
           }
         } catch (e) {
           // file:// 下个别浏览器会拦 replaceState。拦了只是「刷新会换一套题」，
@@ -285,9 +299,12 @@
         return ((this.seed * 1103515245 + 12345) % 2147483647) || 1;
       },
 
-      start: function (seed, practiceKind) {
+      start: function (seed, practiceKind, initialAvoid) {
         this.seed = seed;
-        var r = practiceKind?global.Quiz.practice(practiceKind,seed,{level:this.level}):global.Quiz[this.level === 'mission' ? 'mission' : 'explore'](seed, { avoid: this.seen, focusChar:this.focusChar });
+        var avoid = Array.isArray(initialAvoid) ? initialAvoid : this.seen;
+        if (Array.isArray(initialAvoid)) this.seen = initialAvoid.slice();
+        var r = practiceKind?global.Quiz.practice(practiceKind,seed,{level:this.level}):global.Quiz[this.level === 'mission' ? 'mission' : 'explore'](seed, { avoid: avoid, focusChar:this.focusChar });
+        this.writeSeed(seed, avoid, practiceKind);
         var rnd = global.Quiz.rng(seed ^ 0x51e7);
         this.questions = r.questions.map(function (q) {
           if (q.kind === 'order') {
@@ -325,7 +342,6 @@
 
       restart: function () {
         var s = this.nextSeed();
-        this.writeSeed(s);
         this.start(s);
       },
 
@@ -339,7 +355,7 @@
         if (!item || !['glyph','parts','build','order','evidence','layout','context'].includes(item.kind)) return;
         if (this.focusChar) this.$emit('free');
         this.level=item.level==='classic'?'classic':'mission'; this.notebookOpen=false;
-        var seed=this.nextSeed(); this.writeSeed(seed); this.start(seed,item.kind);
+        var seed=this.nextSeed(); this.start(seed,item.kind);
       },
       showHint: function () {
         if (this.answered || !this.q || !this.q.hints || this.hintCount >= this.q.hints.length) return;

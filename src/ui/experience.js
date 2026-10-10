@@ -64,7 +64,7 @@
   };
   ZQ.setLargeText=function (value) {
     ZQ.workspace.largeText=value===true;
-    try { var raw=JSON.stringify({largeText:ZQ.workspace.largeText}); global.localStorage.setItem(viewKey,raw); ZQ.workspace.savedLocally=global.localStorage.getItem(viewKey)===raw; }
+    try { var raw=JSON.stringify({largeText:ZQ.workspace.largeText,lang:ZQ.workspace.lang}); global.localStorage.setItem(viewKey,raw); ZQ.workspace.savedLocally=global.localStorage.getItem(viewKey)===raw; }
     catch(e) { ZQ.workspace.savedLocally=false; }
   };
   /* 界面语言（zh/en）：随 workspace 持久化，与 setLargeText 同一套本地存储。 */
