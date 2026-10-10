@@ -75,7 +75,7 @@
           </article>
           <article class="zc-story-family"><div><p class="zc-story-label">构形的另一种可能</p><h4>一个木，是树；重复组合，写出繁茂。</h4><p>「林」表示成片的树木，「森」描述树木繁密。同一个构件，通过数量与位置的变化，可以参与构成不同的字。</p><a href="https://dict.variants.moe.edu.tw/dictView.jsp?ID=20787&la=1" target="_blank" rel="noopener noreferrer">参考：林</a><a href="https://dict.variants.moe.edu.tw/dictView.jsp?ID=21425&la=1" target="_blank" rel="noopener noreferrer">参考：森 ↗</a></div><div class="zc-family-glyphs"><figure v-for="(c, i) in ['木','林','森']" :key="c"><b>{{ c }}</b><figcaption>{{ ['树木','成片的树木','树木繁密'][i] }}</figcaption></figure></div></article>
           <div class="zc-home-collection"><p><b>{{ total }} 个精选汉字</b><span>这些有楷书字形，可写可拆</span></p><p><b>15 个拆解样例</b><span>不只认识，更能亲手操作</span></p><p><b>26 个创作构件</b><span>让学习成为你的数字作品</span></p></div>
-          <p class="zc-background-credit">全站背景：<a href="https://www.metmuseum.org/art/collection/search/51858" target="_blank" rel="noopener noreferrer">Landscape with Autumn Foliage · 传沈周 · 大都会艺术博物馆馆藏 69.131.9 ↗</a> · Public Domain / CC0 开放图像；仅作氛围展示。</p>
+          <p class="zc-background-credit">全站背景：<a href="https://www.metmuseum.org/art/collection/search/51858" target="_blank" rel="noopener noreferrer">Landscape with Autumn Foliage · 传沈周 · 大都会艺术博物馆馆藏 69.131.9 ↗</a> · Public Domain / CC0 开放图像。</p>
         </section>
         <section class="zc-home-themes" aria-labelledby="theme-title">
           <header class="zc-home-section-head"><div><p class="zc-home-kicker">THEME PACKS · 主题字包</p><h3 id="theme-title">{{ tr('home_themes_title') }}</h3></div></header>

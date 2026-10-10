@@ -11,7 +11,7 @@
  *   小篆       秦          小篆
  *
  * 来源与授权：
- *   中央研究院 漢字構形資料庫 2.4 版 中研院公开释出声明的取用范围参考  ✅
+ *   中央研究院 漢字構形資料庫 2.4 版 中研院公开释出声明  ✅
  *   敬峰中山王篆 JFZSKSealScript V3 SIL Open Font License 1.1  ✅
  *   汉典 zdic.net 字源演变 CC0 1.0（官方条款，2026-09-25 复核）  ✅
  *
@@ -85,7 +85,7 @@
   "CDP": {
     "id": "CDP",
     "name": "中央研究院 漢字構形資料庫 2.4 版",
-    "license": "中研院公开释出声明的取用范围参考",
+    "license": "中研院公开释出声明",
     "license_ok": true,
     "license_stated": true,
     "license_kind": "使用依据",

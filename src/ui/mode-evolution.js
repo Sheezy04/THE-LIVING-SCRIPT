@@ -116,7 +116,7 @@
       '  <section class="zc-li-node zc-evo-context" aria-labelledby="zc-evo-li-title">',
       '    <div class="zc-li-context">',
       '      <h3 id="zc-evo-li-title">时间轴之外 · 隶变</h3>',
-      '      <p class="zc-stageinfo-note">隶变在小篆与楷书之间。本地时间轴未收录隶书字形，可查看独立采集的汉代隶变资料；不以相邻阶段替代。</p>',
+      '      <p class="zc-stageinfo-note">隶变在小篆与楷书之间。本地时间轴未收录隶书字形，可查看独立采集的汉代隶变资料。</p>',
       '    </div>',
       '    <div class="zc-li-evidence">',
       '        <p class="zc-note">{{ liChars.length }} 个代表字 · CC0 · 点字查看著录</p>',
