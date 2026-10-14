@@ -12,7 +12,10 @@
     // 追加在末尾，不插队：verify/test-evolution.mjs 的 modtab(n) 是按下标点页签的，
     // 插到前面会让它静默点错模块，失败还出现在很远的下游。
     // label 必须恰好是「06 汉字关系网」—— 模板按 slice(0,2)/slice(3) 拆编号和名字。
-    { id: 'graph', label: '06 汉字关系网', ready: true, blurb: '沿构形与相关字走过去。' }
+    { id: 'graph', label: '06 汉字关系网', ready: true, blurb: '沿构形与相关字走过去。' },
+    // 同样追加在末尾，理由同上。07 是只读页：不调 store.touch，也不进 mark() 的白名单，
+    // 所以「看过看板」不会被算成探索了一个字。
+    { id: 'stats', label: '07 语料看板', ready: true, blurb: '看清这套语料的规模、覆盖与缺口。' }
   ];
 
   /* 深链 view/level 白名单：非法值在 applyDeepLink 里直接忽略，
@@ -58,6 +61,9 @@
       // 06 故意**不给 :key** —— 别的模块按 char 重建是为了换掉引擎，
       // 关系网没有引擎（渲染是纯函数），而重建会把「返回上一个字」的历史清掉。
       '  <graph-view v-else-if="mod === \'graph\'" :char="char" @pick="char = $event" />',
+      // 07 与 06 一样不给 :key（看板没有引擎，也无所谓「换字」，重建只会白跑 530 格）。
+      // 它比 06 多一个 @go：点字表里的一行要跳到那个字的演变页 —— 这是看板唯一的出口。
+      '  <stats-view v-else-if="mod === \'stats\'" @pick="char = $event" @go="mod = $event" />',
       '  <mine-view v-else :creation-request="creationRequest" :share-code="deepShare" @consume-create="creationRequest = null" @consume-share="deepShare = null" />',
       '  </div>',
       '  <div v-if="mod !== \'home\'" class="zc-journey-next zc-statusbar">',
@@ -190,7 +196,10 @@
           lab:{key:'guide_lab_title',title:t('guide_lab_title'),steps:['在认识构形中拆开休、明等例字，拖动并查看构件。','在目标拼合中把构件拖回合理位置，自动吸附；卡住可开启底纹提示。','点击用这些构件去创作，转到我的造字；确认后追加构件，不覆盖已有草稿。']},
           quiz:{key:'guide_quiz_title',title:t('guide_quiz_title'),steps:['轻松探索只含古今相认与字义情境单选；推理挑战含校勘、双字取证、排序与拼合。','推理拼合先从四构件选两个，再拖拽复原；选错可修正，但计入辅助。线索主动展开，无倒计时。','答错或跳过进入本机练习笔记；重练遵从原模式，旧题型会迁移到新题池。']},
           mine:{key:'guide_mine_title',title:t('guide_mine_title'),steps:['先选择构件，再点击画布上的构件进行位置、缩放和旋转调整。','切到赋予含义输入创作说明；海报设置可选择名称与风格。','生成后保存 PNG；正式作品保存到字库，并复制备份码。草稿和练习笔记不在字库备份中。']},
-          graph:{key:'guide_graph_title',title:t('guide_graph_title'),steps:['图只画当前字周围一到两层，点任意一个字就换成以它为中心。','画布下方写着实线与虚线各是什么，那是读懂这张图的第一步。','选一条推荐路径会高亮它经过的边；按 Esc 或「返回上一个字」可以退回。','这一页的连线都整理自已收录的字形与释义。']}
+          graph:{key:'guide_graph_title',title:t('guide_graph_title'),steps:['图只画当前字周围一到两层，点任意一个字就换成以它为中心。','画布下方写着实线与虚线各是什么，那是读懂这张图的第一步。','选一条推荐路径会高亮它经过的边；按 Esc 或「返回上一个字」可以退回。','这一页的连线都整理自已收录的字形与释义。']},
+          /* 07 是四个步骤 —— verify/test-finishing.mjs 会按 4 步对 evo/graph/stats 断言的，
+             改步数要连那个用例一起改。*/
+          stats:{key:'guide_stats_title',title:t('guide_stats_title'),steps:['先看最上面那个数：那是这套语料真正收进来的古文字字形格数，下面的每一个数都由它派生。','筛选一行管住下面所有会变的图；最上面的概览是全站常量，不随筛选动，所以它标着「全站」。','点阵里实心是已收录、空心朱环是缺口；悬停任一格看字、期与来源，缺口格另给查证说明。','缺口明细表与字表明细是同一份数据的逐行读法；点字表里的一行进入这个字的千年演变。']}
         }; return guides[this.mod] || guides.home;
       },
       storyIndex: function () { return STORY.indexOf(this.mod); },
@@ -291,6 +300,8 @@
     app.component('mode-quiz', ZQ.ModeQuiz);
     app.component('mine-view', ZQ.MineView);
     app.component('graph-view', ZQ.GraphView);
+    app.component('stats-view', ZQ.StatsView);
+    app.component('ask-panel', ZQ.AskPanel);
     /* 挂载前整个 .zc-app 是藏着的（见 src/styles.css 的 html:not(.zc-ready) 那条）。
        放行放在 finally 里是**故意的** —— 万一挂载真的抛错，页面也得放出来。
        挂在 mountApp 而不是 index.html，是因为全站入口都走这里

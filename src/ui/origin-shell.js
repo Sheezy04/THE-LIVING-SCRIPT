@@ -35,6 +35,10 @@
       '    <p>{{ info.culture }}</p>',
       '    <div class="zc-controls zc-char-extras"><button class="zc-btn" @click="speak">{{ tr(\'origin_speak\') }}</button><button class="zc-btn" :aria-pressed="favorite" @click="toggleFavorite">{{ favorite ? tr(\'origin_fav_remove\') + \' ★\' : tr(\'origin_fav_add\') + \' ☆\' }}</button></div>',
       '    <evidence-reader :char="char" @open="pauseForEvidence" />',
+      /* 可选在线问答。入口按钮**常驻**（没填 Key 也看得见，藏起来的亮点等于没有）；
+         它开的是同一族的 <dialog>，@open 与 evidence-reader 共用 pauseForEvidence，
+         免得对话框底下书写动画还在画。 */
+      '    <ask-panel :char="char" @open="pauseForEvidence" @pick="$emit(\'pick\', $event)" @go="$emit(\'go\', $event)" @source="panel = \'source\'" />',
       '    <p v-if="speechMessage" class="zc-note" role="status">{{ speechMessage }}</p>',
       '    <div class="zc-controls"><button class="zc-btn is-primary" @click="$emit(\'go\', \'lab\')">拆解这个字</button><span class="zc-note" v-if="info.related && info.related.length">关联汉字</span><button class="zc-btn" v-for="c in info.related" :key="c" @click="$emit(\'pick\', c)">{{ c }}</button></div>',
       '  </section>',

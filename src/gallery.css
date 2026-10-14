@@ -186,13 +186,13 @@ body:has(.is-workbench)::after {
   .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab,.zc-page-quiz) .zc-canvas-wrap {
     position:static; inset:auto; transform:none; z-index:auto; align-self:start;
   }
-  .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab,.zc-page-quiz,.zc-page-graph) .zc-journey-next {
+  .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab,.zc-page-quiz,.zc-page-graph,.zc-page-stats) .zc-journey-next {
     position:static; inset:auto; transform:none; width:auto; margin:24px 0 0;
   }
-  .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab,.zc-page-quiz,.zc-page-graph) .zc-module-content { min-height:0; padding-bottom:0; }
+  .is-workbench:is(.zc-page-origin,.zc-page-evo,.zc-page-lab,.zc-page-quiz,.zc-page-graph,.zc-page-stats) .zc-module-content { min-height:0; padding-bottom:0; }
   .zc-page-origin .zc-origin-view,.zc-page-lab .zc-lab { min-height:var(--canvas-edge); }
   .zc-page-quiz .zc-quiz { min-height:0; }
-  body:has(.zc-page-origin,.zc-page-evo,.zc-page-lab,.zc-page-quiz,.zc-page-graph) .zc-footer {
+  body:has(.zc-page-origin,.zc-page-evo,.zc-page-lab,.zc-page-quiz,.zc-page-graph,.zc-page-stats) .zc-footer {
     position:static; inset:auto; margin:18px 0 0; padding:0;
   }
   .zc-page-evo .zc-evo-main {

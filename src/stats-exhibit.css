@@ -1,0 +1,187 @@
+/* 07 语料数据看板的版式与取色。
+ *
+ * ── 颜色：只用现有令牌，零新增 ────────────────────────────────
+ * ⚠️ 这一页上有**四层**:root 在互相覆盖，计划里那张在 --mode dark 量的表整条不成立。
+ *    按加载先后（index.html:10-19）真正活下来的是：
+ *      --cinnabar   #a24533  exhibition.css:7（styles.css:30 的 #b03a2e 被覆盖，
+ *                            --cinnabar-bright 也被改成同一个值 —— 这一页上
+ *                            根本没有「亮朱」可用）
+ *      --glyph-ink  #253a30  gallery.css:15（exhibition 的 #23493c、
+ *                            workbench 的 #2c3930 都被它盖掉）
+ *      --paper-300  #616960  workbench.css:16
+ *      --text / --text-muted / --text-faint / --gold  gallery / exhibition
+ *    所以这里一律写 var(--令牌)，不写死任何 hex —— 写死了要么看不见，
+ *    要么喧宾夺主。**真相是 getComputedStyle，不是这张注释**：
+ *    verify/test-stats-ui.mjs ⑧ 比的是解析出来的令牌值，注释改了不会变红，
+ *    令牌被谁覆盖了会。（这一轮就是注释写着 #b03a2e、页面上跑着 #a24533。）
+ *
+ *    下面这一对是拿**页面上真正生效的值**跑 dataviz 的 validate_palette.js
+ *    （--mode light --surface "#f5f5f0"，工作台浅场的实际底色）量出来的：
+ *
+ *      「有」实心格  var(--glyph-ink) → #253a30   对纸面 11.1:1
+ *      「缺口」朱环  var(--cinnabar)  → #a24533   对纸面  5.6:1
+ *        这一对：CVD ΔE 12.0（protan）· 常视觉 ΔE 23.7 —— 双双过线（8 / 15）。
+ *        ⚠️ 「有」一开始用的是 --paper-300 #616960，看着挺稳，实际和朱 #a24533
+ *           **明度几乎相等**（L 0.44 / 0.48），常视觉 ΔE 只有 13.4 —— 低于 15
+ *           的硬门限，全色觉的人也分不清这两种点。换成更深的 --glyph-ink 之后
+ *           CVD 与常视觉两条线才一起拉开。校验器另报的「亮度带」与「彩度下限」
+ *           两条 FAIL 不管：那是**分类**色板的规矩（校验器的 scope 行也这么写），
+ *           #253a30 本就是中性墨色，被判「reads gray」正是它的用途 ——
+ *           这里不是两个并列序列，是「有/缺口」一组状态。
+ *      条形填充      var(--cinnabar)             对纸面 5.6:1
+ *        ② 的条、③ 的环、④ 的「缺 N」数字**同色**是故意的：②那条就是这一行环
+ *        的合计，页面上「缺口」永远一个颜色，读的人不用再学第二套语义。
+ *        单序列不放图例框，标题说明它是什么。
+ *      正文/数字     var(--text) / var(--text-muted) / var(--text-faint)
+ *        —— 文字不穿数据色（规范硬要求）。
+ *
+ *    「有/缺口」的主通道是**填/不填**（形状），朱环与红底只是冗余强化
+ *    （缺口的底是同色 alpha，不是第二支实色），所以色觉障碍、黑白打印、
+ *    强制颜色模式下都还读得出来。逐格的值在下面两张表里逐行可读 ——
+ *    这是规范要求，不是加分项。
+ *
+ * 本模块只有一个场景（工作台浅场），没有暗色变体可切，所以不写第二套。
+ */
+
+/* ── 页级：单列，与 06 同一个做法（.zc-stage 默认是 1fr + 280px 的两栏）── */
+.zc-page-stats .zc-stats-stage { grid-template-columns:minmax(0,1fr); gap:22px; align-items:start; }
+/* .zc-panel + .zc-panel 是普通流里的外边距，进了 grid 会和 gap 叠成双倍间距 */
+.zc-page-stats .zc-stats-stage > .zc-panel + .zc-panel { margin-top:0; }
+.zc-page-stats .zc-stats-subtitle { margin:22px 0 10px; }
+
+/* ── ① 概览 ──────────────────────────────────────────────── */
+.zc-stats-hero { display:flex; align-items:baseline; gap:20px; flex-wrap:wrap; }
+.zc-stats-hero-figure { font:400 clamp(52px,6.4vw,78px)/1 var(--font-brand); color:var(--text); letter-spacing:.01em; }
+.zc-stats-hero-copy { display:grid; gap:6px; min-width:0; }
+.zc-stats-hero-label { font:400 17px/1.5 var(--font-reading); color:var(--text-muted); }
+.zc-stats-hero-sub { font:400 14px/1.7 var(--font-reading); color:var(--text-faint); }
+.zc-stats-tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:14px 18px; margin:22px 0 0; padding:16px 0 0; list-style:none; border-top:1px solid var(--gallery-line); }
+.zc-stats-tiles li { display:grid; gap:3px; }
+.zc-stats-tiles b { font:400 26px/1.2 var(--font-brand); color:var(--text); }
+.zc-stats-tiles span { font:400 12px/1.5 var(--font-reading); color:var(--text-faint); letter-spacing:.04em; }
+.zc-stats-src { margin-top:18px; }
+.zc-stats-src b { color:var(--text-muted); font-weight:500; }
+
+/* Discovery shares the paper and ink system of the existing corpus view. */
+.zc-stats-heading { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 24px; }
+.zc-stats-heading .zc-gallery-heading { flex:1 1 300px; }
+.zc-stats-stage:fullscreen { box-sizing:border-box; height:100vh; overflow:auto; padding:28px clamp(20px,4vw,64px); background:#f5f5f0; }
+.zc-stats-mining h3 { margin:0 0 12px; font:500 24px/1.5 var(--font-reading); color:var(--text); }
+.zc-stats-mining h4 { margin:0 0 14px; font:500 16px/1.6 var(--font-reading); color:var(--text); }
+.zc-stats-mining > .zc-note { max-width:90ch; }
+.zc-stats-discovery { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:36px; margin-top:26px; }
+.zc-stats-component-bars { display:grid; gap:6px; margin:0; padding:0; list-style:none; }
+.zc-stats-component-bars button { display:grid; grid-template-columns:38px minmax(0,1fr) 50px; align-items:center; gap:12px; width:100%; min-height:42px; padding:4px 8px; background:transparent; border:0; border-radius:4px; color:var(--text); text-align:left; cursor:pointer; }
+.zc-stats-component-bars b { font:400 24px/1.4 var(--font-reading); }
+.zc-stats-component-bars button > span:last-child { text-align:right; font:400 14px/1.5 var(--font-reading); font-variant-numeric:tabular-nums; }
+.zc-stats-component-bars button:hover,.zc-stats-component-bars button[aria-pressed="true"] { background:#e8ede2; }
+.zc-stats-frequency-track { height:10px; background:rgba(44,57,48,.08); }
+.zc-stats-frequency-track i { display:block; height:100%; background:var(--glyph-ink); }
+.zc-stats-family { margin-top:18px; }
+.zc-stats-family p { margin:0 0 12px; font:400 14px/1.8 var(--font-reading); color:var(--text-muted); }
+.zc-stats-family .zc-btn { min-width:40px; min-height:40px; font-size:18px; }
+.zc-stats-similar-list { margin:18px 0 0; padding:0; list-style:none; }
+.zc-stats-similar-list li { border-bottom:1px solid var(--gallery-line); }
+.zc-stats-similar-list button { display:grid; grid-template-columns:40px minmax(0,1fr) 64px; align-items:center; gap:14px; width:100%; min-height:70px; padding:12px 4px; background:transparent; border:0; color:var(--text); text-align:left; cursor:pointer; }
+.zc-stats-similar-list button:hover { background:#e8ede2; }
+.zc-stats-similar-list b { font:400 28px/1.4 var(--font-reading); }
+.zc-stats-similar-list span,.zc-stats-similar-list strong { font:400 14px/1.7 var(--font-reading); }
+.zc-stats-similar-list strong { text-align:right; font-variant-numeric:tabular-nums; }
+.zc-stats-similar-list small { display:block; font-size:14px; color:var(--text-muted); }
+.zc-stats-rule-heading { display:flex; flex-wrap:wrap; align-items:center; gap:18px; margin:32px 0 14px; padding-top:24px; border-top:1px solid var(--gallery-line); }
+.zc-stats-rule-heading h4 { margin:0; }
+.zc-stats-exploratory { font:400 14px/1.8 var(--font-reading); color:var(--cinnabar); }
+.zc-stats-table-scroll { overflow-x:auto; }
+.zc-stats-rule-table td,.zc-stats-rule-table th { white-space:nowrap; font-variant-numeric:tabular-nums; }
+.zc-stats-rule-table .zc-text-btn { margin-inline-end:10px; }
+.zc-stats-mining :focus-visible { outline:2px solid var(--glyph-ink); outline-offset:3px; }
+@media (max-width:850px) { .zc-stats-discovery { grid-template-columns:minmax(0,1fr); gap:28px; } }
+
+/* ── 筛选：一行，在所有会变的图之上 ─────────────────────── */
+.zc-stats-filters { display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px; padding:12px 0; border-block:1px solid var(--gallery-line); }
+.zc-stats-slice { font:400 13px/1.6 var(--font-reading); color:var(--text-faint); }
+.zc-stats-slice b { margin:0 2px; font:400 19px/1 var(--font-brand); color:var(--text); }
+.zc-stats-field { display:inline-flex; align-items:center; gap:7px; font:400 13px/1.6 var(--font-reading); color:var(--text-muted); }
+.zc-stats-field select {
+  font:400 14px/1.5 var(--font-reading); color:var(--text);
+  padding:5px 8px; border:1px solid var(--gallery-line); border-radius:5px;
+  background:rgba(255,255,255,.72); cursor:pointer;
+}
+.zc-stats-check { display:inline-flex; align-items:center; gap:6px; font:400 13px/1.6 var(--font-reading); color:var(--text-muted); cursor:pointer; }
+.zc-stats-check input { accent-color:var(--cinnabar); }
+.zc-page-stats .zc-text-btn { color:var(--gold); text-decoration:underline; }
+
+/* ── ② 每期缺口（条长 = 缺失格数）───────────────────────── */
+.zc-stats-barlist { display:grid; gap:10px; margin:4px 0 0; padding:0; list-style:none; }
+.zc-stats-barlist li { display:grid; grid-template-columns:78px minmax(0,1fr) 62px 62px; align-items:center; gap:12px; }
+.zc-stats-bar-era { font:400 14px/1.5 var(--font-reading); color:var(--text-muted); }
+/* 轨道是墨色的 alpha 底（不是新颜色）：只垫出「分母」，不参与读数 */
+.zc-stats-bar-track { position:relative; height:14px; background:rgba(44,57,48,.10); border-radius:2px; }
+/* 数据端圆角 4px、贴基线起 —— 条从 0 开始长，所以只圆远端 */
+.zc-stats-bar-fill { display:block; height:100%; background:var(--cinnabar); border-radius:2px 4px 4px 2px; }
+.zc-stats-bar-missing { font:400 15px/1.4 var(--font-reading); color:var(--cinnabar); }
+.zc-stats-bar-cover { font:400 13px/1.5 var(--font-reading); color:var(--text-faint); text-align:right; }
+
+/* ── ③ 规模点阵 ──────────────────────────────────────────── */
+.zc-stats-matrix-wrap { position:relative; margin-top:6px; }
+/* 窄屏横向滚动：点阵有 106 列，压到能放下就成了一片糊；宁可让它滚 */
+.zc-stats-matrix-scroll { overflow-x:auto; padding-bottom:4px; }
+.zc-stats-canvas { display:block; width:max(100%,820px); height:auto; }
+.zc-stats-canvas:focus-visible { outline:2px solid var(--cinnabar); outline-offset:4px; }
+/* 实心 = 已收录；空心朱环 = 缺口。填/不填是主通道，颜色只是强化 */
+.zc-stats-cell.is-on { fill:var(--glyph-ink); }
+/* 底是朱的 alpha（不是新颜色），只在纸面上压出一点点暖，真正的信号是那圈环 */
+.zc-stats-cell.is-off { fill:rgba(162,69,51,.10); stroke:var(--cinnabar); stroke-width:1.1; }
+/* 走查光环用**中性墨色**、画在格与格的缝里（格 7 + 缝 3），
+   所以它压在实心格边上时落的是纸面，不会和点糊成一块 */
+.zc-stats-cursor { fill:none; stroke:var(--text); stroke-width:1.4; pointer-events:none; }
+.zc-stats-era { font:400 10px/1 var(--font-reading); fill:var(--text-faint); }
+.zc-stats-key { margin-top:14px; }
+.zc-stats-key-item { display:inline-flex; align-items:center; gap:6px; margin-right:16px; }
+.zc-stats-swatch { display:inline-block; width:10px; height:10px; border-radius:2px; }
+.zc-stats-swatch.is-on { background:var(--glyph-ink); }
+.zc-stats-swatch.is-off { background:rgba(162,69,51,.10); border:1.5px solid var(--cinnabar); }
+.zc-stats-tip {
+  position:absolute; z-index:3; pointer-events:none; transform:translateX(-50%);
+  display:grid; gap:2px; max-width:230px; padding:7px 10px;
+  background:var(--ink-800); border:1px solid var(--gallery-line); border-radius:5px;
+  box-shadow:0 4px 14px rgba(35,60,45,.16);
+  font:400 13px/1.5 var(--font-reading); color:var(--text);
+}
+.zc-stats-tip b { font:400 20px/1.2 var(--font-brand); }
+.zc-stats-tip-meta { font-size:12px; color:var(--text-faint); }
+.zc-stats-tip-note { font-size:12px; color:var(--cinnabar); }
+/* 键盘走查的播报区：只给读屏，不上屏（点阵本身是视觉冗余） */
+.zc-stats-live { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; border:0; }
+
+/* ── ④⑤ 两张表 ──────────────────────────────────────────── */
+.zc-stats-table { width:100%; border-collapse:collapse; font:400 13px/1.65 var(--font-reading); color:var(--text-muted); }
+.zc-stats-table th {
+  position:sticky; top:0; z-index:1; text-align:left; white-space:nowrap;
+  padding:8px 10px; background:var(--ink-900); border-bottom:1px solid var(--gallery-line);
+  font:500 12px/1.5 var(--font-reading); color:var(--text-faint); letter-spacing:.06em;
+}
+.zc-stats-table td { padding:8px 10px; border-bottom:1px solid rgba(44,57,48,.10); vertical-align:top; }
+.zc-stats-table tbody tr:last-child td { border-bottom:0; }
+.zc-stats-ch { font:400 19px/1.35 var(--font-brand); color:var(--text); white-space:nowrap; }
+.zc-stats-note-cell { color:var(--text-muted); }
+/* 134 行会给页面加四千像素；给个自带滚动、表头吸附的窗口，
+   这样这一节还是「一节」，而不是把下面的内容顶到屏幕外。 */
+.zc-stats-rostertable { display:block; max-height:min(52vh,520px); overflow:auto; }
+.zc-stats-rostertable thead, .zc-stats-rostertable tbody { display:table; width:100%; table-layout:fixed; }
+.zc-stats-rostertable td, .zc-stats-rostertable th { overflow-wrap:anywhere; }
+.zc-stats-rostertable tr.is-open { cursor:pointer; }
+.zc-stats-rostertable tr.is-open:hover td { background:rgba(44,57,48,.07); }
+.zc-stats-rostertable tr.is-open:focus-visible { outline:2px solid var(--cinnabar); outline-offset:-2px; }
+.zc-stats-rostertable tr.is-locked td { color:var(--text-faint); }
+.zc-stats-cover-cell.has-gap { color:var(--cinnabar); }
+
+@media (max-width:780px) {
+  .zc-stats-barlist li { grid-template-columns:64px minmax(0,1fr) 54px; }
+  /* 收起「已收录/分母」那一列：窄屏上条本来就短，再被这一列挤掉宽度就只剩个点 */
+  .zc-stats-bar-cover { display:none; }
+  .zc-stats-hero { gap:12px; }
+  /* clamp 的下限是 52px，在 390px 宽的屏幕上 6.4vw 只有 25px —— 不写这一条，
+     主数字会一直顶着下限，在手机上比标题还大。 */
+  .zc-stats-hero-figure { font-size:44px; }
+}

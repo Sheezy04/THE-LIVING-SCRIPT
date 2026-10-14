@@ -1,0 +1,74 @@
+/* 可选在线问答的版式（01 汉字探索的字源卡上那颗按钮 + 它开的对话框）。
+ *
+ * ── 颜色：只用现有令牌 ──────────────────────────────────────
+ * 对话框本体沿用 finishing.css 的 .zc-help-dialog（底色 #fffef9、正文 var(--text)），
+ * 这里只补它没有的那几块。**不写死数据色**，理由与 stats-exhibit.css 文件头一样：
+ * 令牌在这一页上被几层 :root 覆盖着，写死的 hex 迟早是错的。
+ *
+ * ── 两件事和别的模块不一样，别顺手改掉 ──────────────────────
+ *   1. 入口按钮一直在。问答不可用时显示重试提示，资料卡仍然可读。
+ *   2. 「资料卡」永远可见、永远不联网 —— 它是「要发出去的东西就这些」的实物凭据，
+ *      不是问答区的一部分。所以它放在 v-if 外面，任何状态下都渲染。
+ *
+ * 类名一律 zc-ask-*，不碰别的模块的选择器。
+ */
+
+/* 入口：按钮与学习用途说明 */
+.zc-ask-entry { display:flex; align-items:center; flex-wrap:wrap; gap:10px 14px; margin:14px 0; }
+.zc-ask-entry > span { font:400 12px/1.7 var(--font-reading); color:var(--text-faint); }
+
+.zc-ask-dialog { width:min(940px,calc(100% - 32px)); }
+
+/* 边界声明：这块回答不是本作品的结论 —— 用左边一道朱砂线标出来，
+   它是这一页上唯一一处「不是我们说的」的话，值得一条视觉上的分界。 */
+.zc-ask-boundary { margin:0 0 16px; padding:12px 0; border-block:1px solid var(--gallery-line); font:400 14px/1.9 var(--font-reading); color:var(--text-muted); }
+
+/* 问答区 */
+.zc-ask-presets { flex-wrap:wrap; gap:8px; margin:10px 0 0; }
+.zc-ask-input { display:block; margin:14px 0; color:#4e5c50; font:400 12px/1.6 var(--font-reading); }
+.zc-ask-input input { width:100%; box-sizing:border-box; margin-top:5px; padding:8px 10px; border:1px solid #cfd9c2; border-radius:6px; background:#fffef9; color:var(--text); font:400 14px/1.6 var(--font-reading); }
+.zc-ask-input input:focus-visible { outline:2px solid #789562; outline-offset:1px; }
+.zc-ask-message { margin:10px 0; color:var(--text-muted); font:400 13px/1.8 var(--font-reading); }
+.zc-ask-message.is-bad { color:var(--cinnabar); }
+
+/* 回答与可展开的参考资料 */
+.zc-ask-answer { margin:14px 0; padding:14px 16px; border:1px solid #d6dfcb; border-radius:10px; background:#fffef9; }
+.zc-ask-answer h3 { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 10px; margin-bottom:8px; }
+.zc-ask-answer p { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; font:400 14px/1.9 var(--font-reading); }
+
+/* 资料卡：任何时候都在，不联网也算得出来 */
+.zc-ask-card { margin-top:18px; border-top:1px solid #dde3d2; padding-top:12px; }
+.zc-ask-card summary { cursor:pointer; color:var(--gold); font:400 13px/1.8 var(--font-reading); }
+.zc-ask-cardtext { max-height:340px; overflow:auto; margin:12px 0 8px; padding:12px 14px; border:1px solid #dde3d2; border-radius:8px; background:#f6f7f1; color:var(--text); font:400 12.5px/1.8 var(--font-reading); white-space:pre-wrap; overflow-wrap:anywhere; }
+
+.zc-ask-dialog header h2 { margin-bottom:6px; }
+.zc-ask-dialog header .zc-note { margin:0; }
+.zc-ask-entry > span { font-size:14px; color:var(--text-muted); }
+.zc-ask-connection { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:12px 0; color:var(--glyph-ink); font:400 14px/1.7 var(--font-reading); }
+.zc-ask-sources summary { cursor:pointer; color:var(--glyph-ink); font:400 14px/1.8 var(--font-reading); }
+.zc-ask-sources summary:hover { text-decoration:underline; text-underline-offset:4px; }
+.zc-ask-input { font-size:14px; }
+.zc-ask-input input { font-size:16px; }
+.zc-ask-question-heading { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-top:22px; }
+.zc-ask-question-heading h3 { margin:0; }
+.zc-ask-presets .zc-btn { white-space:normal; text-align:left; line-height:1.6; }
+.zc-ask-transcript { margin-top:22px; }
+.zc-ask-turn + .zc-ask-turn { margin-top:28px; }
+.zc-ask-user { margin:0 0 10px; color:var(--text); font:400 16px/1.8 var(--font-reading); overflow-wrap:anywhere; }
+.zc-ask-user > span { display:block; font-size:14px; color:var(--text-muted); }
+.zc-ask-answer { border:0; border-radius:0; padding:16px 0; border-block:1px solid var(--gallery-line); background:transparent; }
+.zc-ask-answer p { font-size:16px; max-width:72ch; }
+.zc-ask-sources { margin-top:16px; }
+.zc-ask-sources h4 { margin:0 0 8px; font:500 14px/1.8 var(--font-reading); color:var(--text-muted); }
+.zc-ask-sources details { padding:7px 0; }
+.zc-ask-sources summary span { margin-inline-start:10px; font-size:14px; color:var(--text-muted); }
+.zc-ask-sources pre { max-height:260px; overflow:auto; margin:10px 0; padding:12px; background:#f6f7f1; font:400 14px/1.8 var(--font-reading); color:var(--text); white-space:pre-wrap; overflow-wrap:anywhere; }
+.zc-ask-dialog .zc-text-btn { color:var(--glyph-ink); text-decoration:underline; text-underline-offset:4px; cursor:pointer; }
+.zc-ask-dialog :focus-visible { outline:2px solid var(--glyph-ink); outline-offset:3px; }
+.zc-ask-dialog input { caret-color:var(--glyph-ink); }
+.zc-ask-dialog ::selection { background:#dce7d4; color:var(--glyph-ink); }
+@media (max-width:600px) {
+  .zc-ask-dialog { width:calc(100% - 16px); padding:20px 16px; }
+  .zc-ask-dialog header { align-items:start; gap:12px; }
+  .zc-ask-presets .zc-btn { width:100%; }
+}

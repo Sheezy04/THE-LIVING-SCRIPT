@@ -134,7 +134,7 @@
         </dialog>
         <dialog ref="shareDialog" class="zc-help-dialog zc-incoming-dialog" aria-labelledby="zc-share-title" @close="dismissShareExport">
           <header><div><span class="zc-status-eyebrow">SHARE · 分享作品</span><h2 id="zc-share-title">分享这份数字汉字创作</h2></div></header>
-          <template v-if="shareLink"><p>链接已生成。打开链接的人会先看到作品预览，确认后才保存到自己字库；作品编码进网址，无需服务器。</p><label>分享链接<input ref="shareLinkInput" readonly :value="shareLink" @focus="$event.target.select()" /></label><div class="zc-controls"><button class="zc-btn is-primary" @click="copyShareLink">复制链接</button><button class="zc-btn" autofocus @click="dismissShareExport">关闭</button></div><p class="zc-note" role="status">{{ shareCopyNote }}</p><p class="zc-note">链接只含该件作品的构件与布局，不含草稿与字库备份。</p></template>
+          <template v-if="shareLink"><p>链接已生成。打开链接可预览作品，确认后可保存到自己的字库。</p><label>分享链接<input ref="shareLinkInput" readonly :value="shareLink" @focus="$event.target.select()" /></label><div class="zc-controls"><button class="zc-btn is-primary" @click="copyShareLink">复制链接</button><button class="zc-btn" autofocus @click="dismissShareExport">关闭</button></div><p class="zc-note" role="status">{{ shareCopyNote }}</p><p class="zc-note">链接只含该件作品的构件与布局，不含草稿与字库备份。</p></template>
         </dialog>
         <dialog ref="sharedDialog" class="zc-help-dialog zc-incoming-dialog" aria-labelledby="zc-shared-title" @close="dismissShared">
           <header><div><span class="zc-status-eyebrow">FROM A SHARED LINK · 来自分享链接</span><h2 id="zc-shared-title">收到的作品</h2></div></header>

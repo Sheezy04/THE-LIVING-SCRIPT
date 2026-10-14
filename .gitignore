@@ -56,3 +56,18 @@ node_modules/
 /assets/fonts/LXGWWenKai-Regular.ttf
 /assets/fonts/JFZSKSealScript_V3.ttf
 /assets/fonts/LXGWSeal-Regular.ttf
+
+# ── 参赛材料与内部规格（2026-10-14）──────────────────────────────────
+# 这一份是交给竞赛系统的申报材料，以及开发过程里的内部规格：
+# superpowers/ 下是逐条勾选的实施计划与设计规格（含「不再使用授权范围尚未核实的
+# 中研院 CDP 2.4」这类内部策略），参赛材料/00 的路径仍写着 `docs/参赛材料/`、
+# 命令仍写着 `npm run dev`（实际是 `npm start`）。公开仓库里出现这些，
+# 等于把未完成项与尚未对齐的路径直接递给评委 —— 与上面三份同一个道理。
+# 本地 D:\item2\competition_docs\ 一字未动；要给评委看就直接发这些文件本身。
+/competition_docs/
+
+# Server credentials and generated deployment output.
+.env
+.env.*
+!.env.example
+/dist/

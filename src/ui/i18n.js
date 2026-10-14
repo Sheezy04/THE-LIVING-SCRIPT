@@ -13,7 +13,7 @@
   var zh = {
     /* 顶部导航 */
     mod_home: '首页', mod_origin: '汉字探索', mod_evo: '千年演变', mod_lab: '构形实验室',
-    mod_quiz: '汉字挑战', mod_mine: '我的造字', mod_graph: '汉字关系网',
+    mod_quiz: '汉字挑战', mod_mine: '我的造字', mod_graph: '汉字关系网', mod_stats: '语料看板',
     help_open: '使用帮助', help_close: '关闭', lang_toggle: 'EN', lang_toggle_cn: '中',
     next_go_home: '回到首页', next_stop: '下一站 · ',
     /* 状态栏 */
@@ -55,6 +55,8 @@
     origin_tab_meaning: '字义与构形', origin_tab_source: '字源展签', origin_tab_writing: '书写操作',
     origin_note_none: '此字暂无古文字字形。', origin_note_glyph: '代表字形展示 · 非完整考古记录',
     origin_speak: '朗读', origin_speak_fallback: '朗读不可用，显示拼音', origin_fav_add: '收藏', origin_fav_remove: '取消收藏',
+    /* 问答入口只说明学习用途；连接与凭据由服务器管理。 */
+    ask_entry: 'AI 汉字问答', ask_hint: '解释含义 · 比较构件 · 带着资料继续问',
     origin_fav_session: '收藏仅在本次会话保留。',
     /* 02 千年演变 */
     evo_tab_stage: '阶段说明', evo_tab_pick: '选择汉字', evo_overview: '并览', evo_compare: '对比',
@@ -83,7 +85,7 @@
     mine_backup_btn: '生成备份码', mine_restore_btn: '恢复备份',
     mine_logo: '个人数字汉字创作', mine_mine_intro: '摆放构件，赋予含义，让一次汉字探索成为你的作品。',
     mine_notice_saved: '作品已保存在本机字库。', mine_notice_session: '作品保存在本次会话，请使用备份码带走记录。',
-    mine_share_title: '分享这份数字汉字创作', mine_share_desc: '链接已生成。打开链接的人会先看到作品预览，确认后才保存到自己字库；作品编码在网址里，无需服务器。',
+    mine_share_title: '分享这份数字汉字创作', mine_share_desc: '链接已生成。打开链接可预览作品，确认后可保存到自己的字库。',
     mine_share_label: '分享链接', mine_share_copy: '复制链接', mine_share_copied: '已复制到剪贴板。',
     mine_share_copy_manual: '复制失败，请手动选中链接复制。', mine_share_copy_manual2: '请手动选中链接复制。',
     mine_share_note: '链接是相对路径 `index.html#share=…`：把整个项目文件夹复制到任何一台电脑，或放到任意静态托管上打开即可；只含该件作品的构件与布局，不含草稿与字库备份。',
@@ -103,12 +105,12 @@
     help_saved_local: '设置保存于本机。', help_session_only: '设置仅在本次会话生效。',
     guide_home_title: '从一个字开始', guide_origin_title: '观察一个字', guide_evo_title: '比较，而不只记顺序',
     guide_lab_title: '理解已有字，再去创作', guide_quiz_title: '两条路线，两种体验', guide_mine_title: '让构件表达你的含义',
-    guide_graph_title: '沿关系走过去'
+    guide_graph_title: '沿关系走过去', guide_stats_title: '先看规模，再看缺口'
   };
 
   var en = {
     mod_home: 'Home', mod_origin: 'Explore', mod_evo: 'Evolution', mod_lab: 'Structure Lab',
-    mod_quiz: 'Challenge', mod_mine: 'Create', mod_graph: 'Character Web',
+    mod_quiz: 'Challenge', mod_mine: 'Create', mod_graph: 'Character Web', mod_stats: 'Corpus',
     help_open: 'Help', help_close: 'Close', lang_toggle: '中', lang_toggle_cn: 'ZH',
     next_go_home: 'Back to Home', next_stop: 'Next · ',
     metric_explored: 'Explored', metric_parts: 'Parts', metric_works: 'Works',
@@ -148,6 +150,7 @@
     origin_tab_meaning: 'Meaning & Structure', origin_tab_source: 'Origin Label', origin_tab_writing: 'Writing',
     origin_note_none: 'No ancient glyph for this character yet.', origin_note_glyph: 'Representative glyph · not a full archaeological record',
     origin_speak: 'Read aloud', origin_speak_fallback: 'Speech unavailable, showing pinyin', origin_fav_add: 'Favorite', origin_fav_remove: 'Unfavorite',
+    ask_entry: 'AI character assistant', ask_hint: 'Explain meanings · compare components · follow up with evidence',
     origin_fav_session: 'Favorites last only for this session.',
     evo_tab_stage: 'Stages', evo_tab_pick: 'Pick Character', evo_overview: 'Overview', evo_compare: 'Compare',
     evo_play: 'Play evolution', evo_pause: 'Pause evolution', evo_prev: 'Previous stage', evo_next: 'Next stage', evo_reset: 'Back to first stage',
@@ -172,7 +175,7 @@
     mine_backup_btn: 'Generate Backup Code', mine_restore_btn: 'Restore',
     mine_logo: 'MY DIGITAL GLYPH · 个人数字汉字创作', mine_mine_intro: 'Arrange parts, give meaning, and turn an exploration into your work.',
     mine_notice_saved: 'Work saved to your local library.', mine_notice_session: 'Work kept for this session — use the backup code to carry it away.',
-    mine_share_title: 'Share This Digital Character', mine_share_desc: 'Link ready. Whoever opens it sees a preview first and only saves it after confirming; the work travels inside the URL — no server needed.',
+    mine_share_title: 'Share This Digital Character', mine_share_desc: 'Link ready. Open it to preview the work and choose whether to save it to your collection.',
     mine_share_label: 'Share link', mine_share_copy: 'Copy Link', mine_share_copied: 'Copied to clipboard.',
     mine_share_copy_manual: 'Copy failed — select the link and copy manually.', mine_share_copy_manual2: 'Select the link and copy manually.',
     mine_share_note: 'The link is a relative path: copy the whole project folder to any machine (or open a hosted copy) and it works. Only this work\'s parts and layout travel in the URL — not drafts or the full library.',
@@ -189,7 +192,7 @@
     help_saved_local: 'Settings saved on this device.', help_session_only: 'Settings last only for this session.',
     guide_home_title: 'Start with one character', guide_origin_title: 'Study one character', guide_evo_title: 'Compare rather than memorize order',
     guide_lab_title: 'Understand existing characters before creating', guide_quiz_title: 'Two routes, two experiences', guide_mine_title: 'Let parts express your meaning',
-    guide_graph_title: 'Walk across the relationships'
+    guide_graph_title: 'Walk across the relationships', guide_stats_title: 'See the scale, then the gaps'
   };
 
   ZQ.I18N = { zh: zh, en: en };
