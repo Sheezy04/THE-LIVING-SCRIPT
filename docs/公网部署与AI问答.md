@@ -69,7 +69,7 @@ location / {
 
 ## Cloudflare Worker（同域）
 
-GitHub Pages 与 Cloudflare 都是静态托管，跑不了 `/api/` —— 只推静态文件时，01 的问答入口在线上会如实显示为暂未开放，七个学习模块不受影响。要让线上也能问答，就把整站与接口放在**同一个域**：仓库里已经带了 Worker 入口。
+GitHub Pages 是纯静态托管，跑不了 `/api/`；Cloudflare 那边若只当静态托管用也是一样 —— 这时 01 的问答入口会如实显示为暂未开放，七个学习模块不受影响。要让线上也能问答，就把整站与接口放在**同一个域**：仓库里已经带了 Worker 入口，线上这个域现在就是在跑它。
 
 | 文件 | 作用 |
 | --- | --- |
@@ -80,7 +80,7 @@ GitHub Pages 与 Cloudflare 都是静态托管，跑不了 `/api/` —— 只推
 
 部署步骤：
 
-1. 在 Cloudflare 后台该 Worker 的 Settings → Variables and Secrets 添加 **Secret** `DEEPSEEK_API_KEY`。密钥不写在仓库里；未配置时 `/api/health` 返回 `available:false`，前端如实显示暂未开放。
+1. 在 Cloudflare 后台该 Worker 的 Settings → Variables and Secrets 添加 **Secret** `DEEPSEEK_API_KEY`，**改完必须再点这一块底下的 `Deploy` 才生效**（只保存配置不会重新部署 —— 这一步漏过，症状就是下面那个 `available:false`）。密钥不写在仓库里；未配置时 `/api/health` 返回 `available:false`，前端如实显示暂未开放。2026-10-14 已配置并核验。
 2. 推到 GitHub `main`（后台的 `Workers Builds: the-living-script` 会自动构建部署），或在本机执行 `npx wrangler deploy`。
 3. 构建命令用 `npm run build`：仓库里这个脚本只打印一行说明，静态资源不需要构建步骤。
 
@@ -145,4 +145,8 @@ GitHub Pages 与 Cloudflare 都是静态托管，跑不了 `/api/` —— 只推
 
 **GitHub Pages 那条线**：`8011dac` 已推送到 `github main`，并按内容核验过 —— `sheezy04.github.io` 上 `wrangler.jsonc` 能取到（这个文件上一版还没有，所以 200 就说明新提交上线了），首页取到的字节数与本机 `index.html` 一致。提交里没有密钥样式字符串，也没有 `.env`／`.dev.vars`。
 
-**线上仍待一件事**：后台给 `the-living-script` 配上 `DEEPSEEK_API_KEY` 密钥。截至 2026-10-14 20:27（北京时间，即 12:27 UTC）密钥尚未在运行时生效：`/api/health` 返回 `available:false`，`/api/ask` 返回 503 `NOT_CONFIGURED`，两者是同一个症状 —— `env.DEEPSEEK_API_KEY` 为空。这时的前端会如实显示暂未开放，七个学习模块与资料卡不受影响。要注意的是**构建和部署本身是成功的**（见上），所以这个症状指向密钥绑定，不要误当成 CI 失败。Docker 镜像构建仍待选定平台后验证。
+**线上问答已通并核验**（2026-10-14 20:27 北京时间首次采到 `available:false`，密钥在后台加上并点过 Deploy 之后翻成 `true`）。核验用的是一次真实的线上提问，不是打桩：`/api/ask` 问「比较「休」和「明」的构件」返回 HTTP 200、3.4 秒，模型 `deepseek-flash`，答案是「「休」的构件是「亻、木」…[S1]；「明」的构件是「日、月」…[S2]」并带上了资料卡里「明」古字存在不同构形、不能把现代拆字视为全部字源那段边界；响应里不含密钥；跨站 `Origin` 返回 403。
+
+这一段之所以记下失败时的样子，是因为那个症状**很容易被误判**：`available:false` 与 503 `NOT_CONFIGURED` 同源，都是 `env.DEEPSEEK_API_KEY` 为空，而同一时刻代码与发布面都已经是新版（`mode:"worker"` 字段与 `/wrangler.jsonc` 的 404 都能作证）。也就是说构建、部署、发布面全是好的，只有绑定没上 —— 看状态码会得出「部署失败」的错误结论，看内容才分得清。
+
+Docker 镜像构建仍待选定平台后验证。
