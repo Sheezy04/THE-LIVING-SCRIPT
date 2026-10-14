@@ -91,9 +91,11 @@ GitHub Pages 与 Cloudflare 都是静态托管，跑不了 `/api/` —— 只推
 - **限流与日配额在 Worker 上是每实例内存计数。** 同一实例以外的请求各记各的，日配额不是全站精确值；Node 单进程那侧才是。要精确只能换 Durable Object，本轮没做。公网使用时请在 DeepSeek 控制台设消费上限 —— 那才是挡刷量的硬闸。
 - **`TRUST_PROXY` 在 Worker 上不适用**：访客地址取 `CF-Connecting-IP`，由 Cloudflare 自己写入，不读 `X-Forwarded-For`。
 
-**核验边界**：`*.workers.dev` 在部分网络（含本开发机所在网络）是 SNI 层不可达，本机 `curl` 走不走代理都超时。这**不能证明部署失败**，只说明核验要在别的网络做（例如手机流量）。核验要看内容而不是状态码：主页的 `?v=` 版本号、`/api/health` 的 `available`，以及 `/server/app.mjs` 应当 404（这才证明 `.assetsignore` 生效）。
+**核验边界**：`*.workers.dev` 在部分网络（含本开发机所在的直连线路）是 SNI 层不可达，直连 `curl` 超时。这**不能证明部署失败**，只说明核验要换线路做 —— 可以是别的网络（手机流量），也可以是本机的 HTTP 代理（`curl -x http://127.0.0.1:7897`；同一天里它时而通时而不通，别把那次的超时当成结论）。核验要看内容而不是状态码：主页的 `?v=` 版本号、`/api/health` 的 `available`，以及 `/server/app.mjs` 应当 404（这才证明 `.assetsignore` 生效）。
 
-同一套路由在本机用 `wrangler dev`（真实 workerd）逐路径探过，结论同样是内容层面的：`/`、`/src/ask.js`、`/data/catalog.js`、`/assets/…` 取得到；`/.env`、`/.dev.vars`、`/server/app.mjs`、`/worker/index.mjs`、`/verify/…`、`/README.md` 都是 404。`/api/health` 在配了密钥时返回 `available:true`，`/api/ask` 用无效密钥时返回 503 `PROVIDER_CONFIG`（说明请求确实走到了上游并被映射回错误码），跨站 `Origin` 返回 403，问题超长／字不在目录／历史含 `system` 分别返回 400 `QUESTION`／`CHARACTER`／`HISTORY` —— 与 Node 侧逐条一致。**这不等于线上已通**：本机这条线仍连不出去，上面的探针只证明代码与发布面在真实运行时里是对的。
+同一套路由在两处逐路径探过。本机 `wrangler dev`（真实 workerd）：`/`、`/src/ask.js`、`/data/catalog.js`、`/assets/…` 取得到；`/.env`、`/.dev.vars`、`/server/app.mjs`、`/worker/index.mjs`、`/verify/…`、`/README.md` 都是 404。`/api/health` 配了密钥返回 `available:true`，`/api/ask` 用无效密钥返回 503 `PROVIDER_CONFIG`（说明请求确实走到上游并被映射回错误码），跨站 `Origin` 返回 403，问题超长／字不在目录／历史含 `system` 分别返回 400 `QUESTION`／`CHARACTER`／`HISTORY` —— 与 Node 侧逐条一致。
+
+线上（走代理核的，`8011dac`）：首页 6543 字节、`?v=20261014d`；`/src/ask.js` 22528 字节，与本机 dev 逐字节同长；`/server/app.mjs`、`/worker/index.mjs`、`/.env`、`/.dev.vars`、`/docs/…`、`/package.json`、`/wrangler.jsonc` **全部 404** —— 其中 `/wrangler.jsonc` 是这一版才补进的规则，它能 404 就反证线上跑的确实是这一版，`.assetsignore` 在真实发布路径上生效。`/api/health` 带上 `mode:"worker"` 这个新字段，说明 Worker 代码也已上线，构建与部署这一环是通的。
 
 ## 请求与费用控制
 
@@ -143,4 +145,4 @@ GitHub Pages 与 Cloudflare 都是静态托管，跑不了 `/api/` —— 只推
 
 **GitHub Pages 那条线**：`8011dac` 已推送到 `github main`，并按内容核验过 —— `sheezy04.github.io` 上 `wrangler.jsonc` 能取到（这个文件上一版还没有，所以 200 就说明新提交上线了），首页取到的字节数与本机 `index.html` 一致。提交里没有密钥样式字符串，也没有 `.env`／`.dev.vars`。
 
-**线上仍待两件事**：后台给 `the-living-script` 配上 `DEEPSEEK_API_KEY` 密钥；以及在能连通 `*.workers.dev` 的网络下按内容核验（本机那条线不可达，见上）。Docker 镜像构建仍待选定平台后验证。
+**线上仍待一件事**：后台给 `the-living-script` 配上 `DEEPSEEK_API_KEY` 密钥。截至 2026-10-14 20:27（北京时间，即 12:27 UTC）密钥尚未在运行时生效：`/api/health` 返回 `available:false`，`/api/ask` 返回 503 `NOT_CONFIGURED`，两者是同一个症状 —— `env.DEEPSEEK_API_KEY` 为空。这时的前端会如实显示暂未开放，七个学习模块与资料卡不受影响。要注意的是**构建和部署本身是成功的**（见上），所以这个症状指向密钥绑定，不要误当成 CI 失败。Docker 镜像构建仍待选定平台后验证。
