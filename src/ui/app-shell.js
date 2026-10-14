@@ -52,20 +52,21 @@
       '  <div class="zc-module-content">',
       '  <home-shell v-if="mod === \'home\'" :key="\'home-\' + char"',
       '    :char="char" :explored="explored" :total="totalChars"',
-      '    @pick="char = $event" @go="mod = $event" @tour="startTour" />',
-      '  <origin-shell v-else-if="mod === \'origin\'" :key="\'origin-\' + char"',
+      '    @pick="char = $event" @go="mod = $event" @tour="startTour" @ask="openAssistant" @practice="practiceFromProfile" @review="reviewFromProfile" />',
+      '  <origin-shell v-else-if="mod === \'origin\'" ref="origin" :key="\'origin-\' + char"',
       '    :char="char" :initial-panel="deepView" @pick="char = $event" @go="mod = $event" />',
       '  <mode-evolution v-else-if="mod === \'evo\'" :key="\'evo-\' + char" :char="char" :initial-panel="deepView" @pick="char = $event" />',
       '  <lab-shell v-else-if="mod === \'lab\'" :char="char" :initial-tab="deepView" @pick="char = $event" @create="createFromLab" />',
-      '  <mode-quiz v-else-if="mod === \'quiz\'" :initial-level="deepLevel" :focus-char="tour ? char : \'\'" @learn="learnChar" @go="goFromQuiz" @free="tour = false" @attempted="noteStoryAttempt" />',
+      '  <mode-quiz v-else-if="mod === \'quiz\'" ref="quiz" :initial-level="deepLevel" :focus-char="tour ? char : \'\'" @learn="learnChar" @go="goFromQuiz" @free="tour = false" @attempted="noteStoryAttempt" @ask="openAssistant" @review="reviewFromProfile" />',
       // 06 故意**不给 :key** —— 别的模块按 char 重建是为了换掉引擎，
       // 关系网没有引擎（渲染是纯函数），而重建会把「返回上一个字」的历史清掉。
       '  <graph-view v-else-if="mod === \'graph\'" :char="char" @pick="char = $event" />',
       // 07 与 06 一样不给 :key（看板没有引擎，也无所谓「换字」，重建只会白跑 530 格）。
       // 它比 06 多一个 @go：点字表里的一行要跳到那个字的演变页 —— 这是看板唯一的出口。
-      '  <stats-view v-else-if="mod === \'stats\'" @pick="char = $event" @go="mod = $event" />',
+      '  <stats-view v-else-if="mod === \'stats\'" @pick="char = $event" @go="mod = $event" @ask="openAssistant" @practice="practiceFromProfile" @review="reviewFromProfile" />',
       '  <mine-view v-else :creation-request="creationRequest" :share-code="deepShare" @consume-create="creationRequest = null" @consume-share="deepShare = null" />',
       '  </div>',
+      '  <ask-panel v-if="mod !== \'origin\'" ref="contextAssistant" :char="assistantChar || char" :entry-visible="false" @pick="char = $event" @go="mod = $event" @source="openAssistantSource" />',
       '  <div v-if="mod !== \'home\'" class="zc-journey-next zc-statusbar">',
       '    <div class="zc-status-story"><span class="zc-status-character" aria-hidden="true">{{ mod === \'mine\' ? \'创\' : (mod === \'quiz\' ? \'辨\' : char) }}</span><div><span class="zc-status-eyebrow">{{ tour ? tr(\'journey_guided\') : tr(\'journey_own\') }}</span><p :title="journeyText">{{ journeyText }}</p></div></div>',
       '    <div class="zc-status-metrics"><span>{{ tr(\'metric_explored\') }} <b>{{ explored }}</b><small> / {{ totalChars }}</small></span><span>{{ tr(\'metric_parts\') }} <b>{{ unlockedCount }}</b><small> / {{ paletteCount }}</small></span><span>{{ tr(\'metric_works\') }} <b>{{ libraryCount }}</b></span></div>',
@@ -75,7 +76,7 @@
       '  <dialog ref="helpDialog" class="zc-help-dialog" aria-labelledby="zc-help-title"><header><div><span class="zc-status-eyebrow">FIELD GUIDE</span><h2 id="zc-help-title">{{ currentGuide.title }}</h2></div><button class="zc-btn" autofocus @click="$refs.helpDialog.close()">{{ tr(\'help_close\') }}</button></header><ol><li v-for="step in currentGuide.steps" :key="step">{{ step }}</li></ol><p class="zc-note">{{ tr(\'help_note_keys\') }}</p><section class="zc-help-settings"><h3>{{ tr(\'help_read_setting\') }}</h3><button class="zc-btn" :aria-pressed="viewSettings.largeText" @click="setLargeText(!viewSettings.largeText)">{{ viewSettings.largeText ? tr(\'help_std_text\') : tr(\'help_large_text\') }}</button><p class="zc-note">{{ tr(\'help_read_note\') }} {{ viewSettings.savedLocally ? tr(\'help_saved_local\') : tr(\'help_session_only\') }}</p></section></dialog>',
       '</div>'
     ].join('\n'),
-    data: function () { return { modules: MODULES, mod: 'home', char: '休', tour:false, storyAnswered:false, lang:(global.ZQ.workspace && global.ZQ.workspace.lang) || 'zh', deepView:null, deepLevel:null, deepShare:null, viewSettings:global.ZQ.workspace || {largeText:false,savedLocally:false}, audit:{}, creationRequest:null }; },
+    data: function () { return { assistantChar: '', modules: MODULES, mod: 'home', char: '休', tour:false, storyAnswered:false, lang:(global.ZQ.workspace && global.ZQ.workspace.lang) || 'zh', deepView:null, deepLevel:null, deepShare:null, viewSettings:global.ZQ.workspace || {largeText:false,savedLocally:false}, audit:{}, creationRequest:null }; },
     mounted: function () {
       this.applyDeepLink(); this.mark(this.mod);
       if (global.document) global.document.documentElement.lang = this.lang;
@@ -92,6 +93,23 @@
       char: function () { if (this.tour && this.char !== '休') this.tour = false; this.mark(this.mod); }
     },
     methods: {
+      openAssistant: function (payload) {
+        if (!payload || !Object.prototype.hasOwnProperty.call(global.CharCatalog || {}, payload.char)) return;
+        this.assistantChar = payload.char;
+        this.$nextTick(function () { if (this.$refs.contextAssistant) this.$refs.contextAssistant.openWithQuestion(payload.question); });
+      },
+      openAssistantSource: function () {
+        this.learnChar(this.assistantChar || this.char);
+        this.$nextTick(function () { if (this.$refs.origin) this.$refs.origin.panel = 'source'; });
+      },
+      practiceFromProfile: function (item) {
+        this.tour = false; this.mod = 'quiz';
+        this.$nextTick(function () { if (item && this.$refs.quiz) this.$refs.quiz.practice(item); });
+      },
+      reviewFromProfile: function (recommendation) {
+        if (!recommendation || !Object.prototype.hasOwnProperty.call(global.__CHARS__ || {}, recommendation.char)) return;
+        this.tour = false; this.char = recommendation.char; this.mod = recommendation.module;
+      },
       keepActiveTab: function () {
         var tabs = this.$refs.moduleTabs;
         if (!tabs) return;
@@ -302,6 +320,7 @@
     app.component('graph-view', ZQ.GraphView);
     app.component('stats-view', ZQ.StatsView);
     app.component('ask-panel', ZQ.AskPanel);
+    app.component('learning-profile', ZQ.LearningProfile);
     /* 挂载前整个 .zc-app 是藏着的（见 src/styles.css 的 html:not(.zc-ready) 那条）。
        放行放在 finally 里是**故意的** —— 万一挂载真的抛错，页面也得放出来。
        挂在 mountApp 而不是 index.html，是因为全站入口都走这里

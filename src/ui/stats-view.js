@@ -33,7 +33,7 @@
   ZQ.StatsView = {
     name: 'StatsView',
     mixins: [ZQ.i18nMixin],
-    emits: ['pick', 'go'],
+    emits: ['pick', 'go', 'ask', 'practice', 'review'],
 
     template: [
       '<div class="zc-stage zc-stats-stage" ref="stage">',
@@ -92,8 +92,10 @@
       '        <p class="zc-note">共同构件次数 / 合并后的构件次数。重复构件保留数量，分数不代表字义相同。</p>',
       '        <ul v-if="similarities.length" class="zc-stats-similar-list"><li v-for="row in similarities" :key="row.ch"><button @click="exploreChar(row.ch)"><b>{{ row.ch }}</b><span>共同构件 {{ row.shared.join(\'、\') }}<small>{{ row.components.join(\' + \') }}</small></span><strong>{{ percent(row.score) }}</strong></button></li></ul>',
       '        <p v-else class="zc-note">当前切片没有共享构件的其他字。</p>',
+      '        <button v-if="similarities.length" class="zc-btn zc-stats-analysis-action" @click="askSimilar">让 AI 解释相似与差异</button>',
       '      </div>',
       '    </div>',
+      '    <div v-if="family" class="zc-controls zc-stats-analysis-action"><button class="zc-btn" @click="askFamily">让 AI 比较「{{ family.component }}」这组字</button><span class="zc-note">先查看问题，再选择是否提问</span></div>',
       '    <div class="zc-stats-rule-heading"><h4>构件共现规则</h4><label class="zc-stats-field">最少共现 <select v-model.number="minCount"><option :value="2">2 字（默认）</option><option :value="3">3 字</option><option :value="1">1 字（探索）</option></select></label></div>',
       '    <p class="zc-note">置信度至少 50%；支持度 = 同现字数 / 合体样本数，置信度 = 同现字数 / 前项字数，提升度 = 置信度 / 后项占比。提升度大于 1 表示本样本中共现更集中。</p>',
       '    <p v-if="minCount === 1" class="zc-stats-exploratory">探索模式包含单字样本，100% 置信度也不能视为普遍规律。</p>',
@@ -102,6 +104,7 @@
       '  </section>',
       '',
       /* ── ② 每期缺口：条长 = 这一期缺的字形格数（值域 1–8，真正在变的量）── */
+      '  <learning-profile @practice="$emit(\'practice\', $event)" @review="$emit(\'review\', $event)" @ask="$emit(\'ask\', $event)" />',
       '  <section class="zc-panel zc-stats-bars">',
       '    <div class="zc-panel-title">每期缺口 · 当前切片 {{ eras.length }} 期</div>',
       '    <p v-if="!barHasRange" class="zc-note">当前切片里每一期都没有缺口。</p>',
@@ -339,6 +342,16 @@
     },
 
     methods: {
+      askFamily: function () {
+        if (!this.family || !this.family.chars.length) return;
+        var chars = this.family.chars.slice(0, 6);
+        this.$emit('ask', { char: chars[0], question: '请比较以下含「' + this.family.component + '」构件的汉字：' + chars.map(function (ch) { return '「' + ch + '」'; }).join('、') + '。解释共同构件与各自含义，区分现代构形和历史字源；仅根据参考资料回答。' });
+      },
+      askSimilar: function () {
+        if (!this.seed || !this.similarities.length) return;
+        var chars = [this.seed].concat(this.similarities.slice(0, 3).map(function (row) { return row.ch; }));
+        this.$emit('ask', { char: this.seed, question: '请比较' + chars.map(function (ch) { return '「' + ch + '」'; }).join('、') + '的现代构件、重复次数与含义。说明构件相似为什么不等于字义相同；不要把现代拆字直接当作历史字源。请引用参考资料。' });
+      },
       percent: function (value) { return (Math.round(value * 1000) / 10) + '%'; },
       exploreChar: function (ch) { this.$emit('pick', ch); this.$emit('go', this.hasGlyph(ch) ? 'origin' : 'graph'); },
       toggleFullscreen: async function () {

@@ -41,7 +41,7 @@
       total: { type: Number, default: 0 }
     },
 
-    emits: ['pick', 'go', 'tour'],
+    emits: ['pick', 'go', 'tour', 'ask', 'practice', 'review'],
     template: `
       <div class="zc-home">
         <section class="zc-home-hero">
@@ -64,6 +64,12 @@
             <div class="zc-home-glyph-frame"><span class="zc-home-orbit"></span><svg ref="svg" :width="size" :height="size" :viewBox="'0 0 ' + size + ' ' + size" class="zc-canvas" aria-hidden="true"></svg></div>
             <figcaption><span>{{ stageLabel || '代表字形' }}</span><small>{{ currentMeaning }}</small></figcaption>
           </figure>
+        </section>
+        <section class="zc-home-intelligence" aria-labelledby="intelligence-title">
+          <h3 id="intelligence-title">看懂一个字，也读懂自己的学习</h3>
+          <p>从练习发现需要巩固的地方，比较一组字，再带着资料向 AI 提问。</p>
+          <learning-profile compact @practice="$emit('practice', $event)" @review="$emit('review', $event)" @ask="askFromProfile" />
+          <div class="zc-home-discovery"><div><h4>沿着一个构件，发现一组字</h4><p>查看高频构件、比较相似汉字，并让 AI 结合资料解释差异。</p></div><button class="zc-btn" @click="$emit('go', 'stats')">打开语料看板</button></div>
         </section>
         <section class="zc-home-stories" aria-labelledby="story-title">
           <header class="zc-home-section-head"><div><p class="zc-home-kicker">ONE CHARACTER, MANY STORIES</p><h3 id="story-title">{{ tr('home_story_title') }}</h3></div><span>{{ tr('home_story_pre') }}</span></header>
@@ -148,6 +154,7 @@
     },
 
     methods: {
+      askFromProfile: function (payload) { if (!this.motionPaused) this.toggleMotion(); this.$emit('ask', payload); },
       exploreStory: function () { this.$emit('pick', this.story.char); this.$emit('go', 'evo'); },
       /* 主题字包点字：先选中，再进入 01 探索（与「继续观察」同一个跨模块跳转模式） */
       pickThemeChar: function (c) { this.$emit('pick', c); this.$emit('go', 'origin'); },

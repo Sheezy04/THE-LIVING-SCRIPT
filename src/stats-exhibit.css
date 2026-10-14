@@ -45,6 +45,9 @@
 
 /* ── 页级：单列，与 06 同一个做法（.zc-stage 默认是 1fr + 280px 的两栏）── */
 .zc-page-stats .zc-stats-stage { grid-template-columns:minmax(0,1fr); gap:22px; align-items:start; }
+.zc-page-stats .zc-stats-stage > .zc-panel { background:rgba(255,254,249,.97); }
+.zc-page-stats .zc-learning-profile { background:rgba(255,254,249,.94); padding:24px 20px; }
+.zc-page-stats .zc-stats-filters { background:rgba(255,254,249,.94); padding:12px 16px; }
 /* .zc-panel + .zc-panel 是普通流里的外边距，进了 grid 会和 gap 叠成双倍间距 */
 .zc-page-stats .zc-stats-stage > .zc-panel + .zc-panel { margin-top:0; }
 .zc-page-stats .zc-stats-subtitle { margin:22px 0 10px; }
@@ -65,7 +68,7 @@
 /* Discovery shares the paper and ink system of the existing corpus view. */
 .zc-stats-heading { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 24px; }
 .zc-stats-heading .zc-gallery-heading { flex:1 1 300px; }
-.zc-stats-stage:fullscreen { box-sizing:border-box; height:100vh; overflow:auto; padding:28px clamp(20px,4vw,64px); background:#f5f5f0; }
+.zc-stats-stage:fullscreen { box-sizing:border-box; height:100vh; overflow:auto; padding:28px clamp(20px,4vw,64px); background:linear-gradient(rgba(247,246,240,.92),rgba(240,243,238,.94)),url("../assets/backgrounds/met-autumn-foliage.jpg") center/cover fixed; }
 .zc-stats-mining h3 { margin:0 0 12px; font:500 24px/1.5 var(--font-reading); color:var(--text); }
 .zc-stats-mining h4 { margin:0 0 14px; font:500 16px/1.6 var(--font-reading); color:var(--text); }
 .zc-stats-mining > .zc-note { max-width:90ch; }

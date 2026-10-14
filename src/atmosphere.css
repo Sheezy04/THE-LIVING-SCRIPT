@@ -98,20 +98,12 @@ body:has(.zc-page-graph) {
     radial-gradient(ellipse at 52% 50%,rgba(255,255,255,.26),transparent 58%),
     linear-gradient(140deg,rgba(244,246,249,.26),rgba(238,242,246,.30));
 }
-/* 07：唯一没有底图的一页。七张馆藏图片各有各的归属（首页秋叶、01 柳岸、02 拓本、
-   03 竹石、04 月色、05 诗册、06 青花），没有第九张可以给语料看板 —— 也不必硬凑：
-   这一页是**量尺**，不是藏品。所以只铺一层极淡的方格与两处暖光晕，
-   让 507 个格子成为页面上唯一密集的东西。
-   ⚠️ 这里故意**不设** --scene-art-image：body:has(.is-workbench)::before 那条
-      background-image:var(--scene-art-image) 会因为变量未定义而退回 none，
-      于是只留下这一层渐变。verify/test-backgrounds.mjs 的图片名单里也没有它。 */
+/* 07：沿用已有授权的秋景山水，采用较浅的墨色与纸色阅读衬层。 */
 body:has(.zc-page-stats) {
+  --scene-art-image:url("../assets/backgrounds/met-autumn-foliage.jpg");
+  --scene-art-position:56% 42%; --scene-art-opacity:.30;
   --scene-background:
-    repeating-linear-gradient(0deg,transparent 0 31px,rgba(95,128,94,.030) 31px 32px),
-    repeating-linear-gradient(90deg,transparent 0 31px,rgba(95,128,94,.030) 31px 32px),
-    radial-gradient(ellipse at 82% 14%,rgba(176,150,105,.10),transparent 52%),
-    radial-gradient(ellipse at 12% 86%,rgba(146,173,126,.10),transparent 55%),
-    linear-gradient(150deg,rgba(247,246,240,.30),rgba(240,243,238,.34));
+    linear-gradient(150deg,rgba(247,246,240,.36),rgba(240,243,238,.42));
 }
 
 /* 工作面的纸白维持可读性，背景只透过周围留白与轻材质。 */
@@ -137,6 +129,7 @@ body:has(.zc-page-stats) {
   body:has(.zc-page-home)::before { background-position:62% center; opacity:.16; }
   body:has(.zc-page-home)::after { background:rgba(248,247,241,.24); }
   body:has(.is-workbench)::before { opacity:.28; }
+  body:has(.zc-page-stats)::before { opacity:.18; background-position:60% center; }
 }
 @media print {
   body::before,body::after { display:none; }

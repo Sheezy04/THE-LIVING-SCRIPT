@@ -48,6 +48,9 @@
   }
   var localOK=!!(ZQ.store && ZQ.store.status.available);
   ZQ.learning=global.Vue.reactive({mistakes:normalizeNotebook(readLocal(notebookKey,[],NB_READ_LIMIT)),savedLocally:localOK});
+  var attemptsKey = 'zq-learning-attempts-v1';
+  ZQ.learning.attempts = ZQ.LearningInsights ? ZQ.LearningInsights.normalizeAttempts(readLocal(attemptsKey, [], ZQ.LearningInsights.READ_LIMIT)) : [];
+  ZQ.learning.attemptsSaved = localOK;
   var view=readLocal(viewKey,{});
   ZQ.workspace=global.Vue.reactive({largeText:!!(view && view.largeText===true),lang:view && view.lang==='en'?'en':'zh',savedLocally:localOK});
   function persistNotebook() {
@@ -56,6 +59,16 @@
   }
   ZQ.logQuizAttempt=function (q,attempt,level) {
     if (!q || !attempt || typeof q.id!=='string' || !taskKinds.includes(q.kind) || typeof attempt.char!=='string' || !Object.prototype.hasOwnProperty.call(global.CharCatalog || {},attempt.char)) return;
+    if (ZQ.LearningInsights && typeof attempt.correct === 'boolean') {
+      ZQ.learning.attempts = ZQ.LearningInsights.normalizeAttempts(ZQ.learning.attempts.concat([{
+        id: q.id, kind: q.kind, char: attempt.char, correct: attempt.correct, assisted: attempt.assisted === true, level: level
+      }]));
+      try {
+        var attemptsRaw = JSON.stringify(ZQ.learning.attempts);
+        global.localStorage.setItem(attemptsKey, attemptsRaw);
+        ZQ.learning.attemptsSaved = global.localStorage.getItem(attemptsKey) === attemptsRaw;
+      } catch (error) { ZQ.learning.attemptsSaved = false; }
+    }
     var list=ZQ.learning.mistakes, index=list.findIndex(function (item) { return item.id===q.id; });
     if (attempt.correct) { if(index>=0) { list[index].resolved=true; persistNotebook(); } return; }
     var prior=index>=0?list.splice(index,1)[0]:null;

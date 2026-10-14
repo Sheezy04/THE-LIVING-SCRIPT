@@ -10,6 +10,7 @@
   "name": "the-living-script",
   "main": "worker/index.mjs",
   "compatibility_date": "2026-10-01",
+  "keep_vars": true,
   // 静态资源就是仓库根：index.html、src/、data/、assets/。
   // 谁不该被发布由根目录的 .assetsignore 决定（server/、worker/、.git 等都在那里排掉）。
   "assets": { "directory": ".", "binding": "ASSETS" },

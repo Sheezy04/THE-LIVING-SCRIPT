@@ -7,23 +7,24 @@
   <meta name="description" content="《字启千年》——从一个汉字走进中国故事，观察古今字形、寻找证据、亲手构形，再用数字字形讲述自己的生活。" />
   <title>字启千年 · 汉字构形与文明演变</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23285640'/%3E%3Cpath d='M16 15h32M32 15v34M19 30h26M18 48h28' stroke='%23eef4e4' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="src/styles.css?v=20261014d" />
-  <link rel="stylesheet" href="src/refinements.css?v=20261014d" />
-  <link rel="stylesheet" href="src/exhibition.css?v=20261014d" />
-  <link rel="stylesheet" href="src/workbench.css?v=20261014d" />
-  <link rel="stylesheet" href="src/atmosphere.css?v=20261014d" />
-  <link rel="stylesheet" href="src/quiz-experience.css?v=20261014d" />
-  <link rel="stylesheet" href="src/finishing.css?v=20261014d" />
-  <link rel="stylesheet" href="src/gallery.css?v=20261014d" />
-  <link rel="stylesheet" href="src/evolution-exhibit.css?v=20261014d" />
-  <link rel="stylesheet" href="src/story.css?v=20261014d" />
+  <link rel="stylesheet" href="src/styles.css?v=20261014f" />
+  <link rel="stylesheet" href="src/refinements.css?v=20261014f" />
+  <link rel="stylesheet" href="src/exhibition.css?v=20261014f" />
+  <link rel="stylesheet" href="src/workbench.css?v=20261014f" />
+  <link rel="stylesheet" href="src/atmosphere.css?v=20261014f" />
+  <link rel="stylesheet" href="src/quiz-experience.css?v=20261014f" />
+  <link rel="stylesheet" href="src/finishing.css?v=20261014f" />
+  <link rel="stylesheet" href="src/gallery.css?v=20261014f" />
+  <link rel="stylesheet" href="src/evolution-exhibit.css?v=20261014f" />
+  <link rel="stylesheet" href="src/story.css?v=20261014f" />
   <!-- 07 的版式与取色放在最后：它的选择器全部以 .zc-page-stats / .zc-stats- 开头，
        覆盖不到别的模块，但要压过 workbench.css 与 gallery.css 里那几条 `.zc-stage`、
        `.zc-panel` 的通则，所以必须在它们之后。取色是对**工作台浅场**量的，
        理由与实测值写在那个文件头上。 -->
-  <link rel="stylesheet" href="src/stats-exhibit.css?v=20261014d" />
+  <link rel="stylesheet" href="src/stats-exhibit.css?v=20261014f" />
   <!-- 可选在线问答的版式。放在最后，选择器全部以 .zc-ask- 开头，只压它自己那几块。 -->
-  <link rel="stylesheet" href="src/ask-panel.css?v=20261014d" />
+  <link rel="stylesheet" href="src/ask-panel.css?v=20261014f" />
+  <link rel="stylesheet" href="src/learning-insights.css?v=20261014f" />
   <!-- 无脚本兜底：styles.css 里 html:not(.zc-ready) 会藏掉整个 .zc-app，而 .zc-ready 是
        脚本加上的。停用脚本时把它放回来 —— 这站本来就靠 JS，但「一片空白」比「没有交互的
        静态页」更糟：至少还能读到授权说明和页眉。 -->
@@ -41,55 +42,57 @@
 
   <!-- 经典脚本加载，双击此文件即可运行，无需安装环境或启动服务。 -->
   <script src="assets/vendor/vue.global.prod.js"></script>
-  <script src="src/positioner.js?v=20261014d"></script>
-  <script src="src/stroke-anim.js?v=20261014d"></script>
-  <script src="src/components.js?v=20261014d"></script>
-  <script src="src/decompose.js?v=20261014d"></script>
-  <script src="src/challenge.js?v=20261014d"></script>
-  <script src="src/compose.js?v=20261014d"></script>
-  <script src="src/evolution.js?v=20261014d"></script>
-  <script src="src/quiz.js?v=20261014d"></script>
-  <script src="src/mine.js?v=20261014d"></script>
+  <script src="src/positioner.js?v=20261014f"></script>
+  <script src="src/stroke-anim.js?v=20261014f"></script>
+  <script src="src/components.js?v=20261014f"></script>
+  <script src="src/decompose.js?v=20261014f"></script>
+  <script src="src/challenge.js?v=20261014f"></script>
+  <script src="src/compose.js?v=20261014f"></script>
+  <script src="src/evolution.js?v=20261014f"></script>
+  <script src="src/quiz.js?v=20261014f"></script>
+  <script src="src/mine.js?v=20261014f"></script>
   <!-- 关系网与语料统计的数据层：顶层不读 __CHARS__/CharCatalog（函数里才碰），
        所以放在数据文件之前是安全的 —— 它们必须在这里，因为 UI 层要用。
        stats.js 同时被 verify/project-summary.mjs 复用：看板上的数与已发布的
        《项目数据摘要》由构造保证同源，不许各自算一遍。 -->
-  <script src="src/graph.js?v=20261014d"></script>
-  <script src="src/stats.js?v=20261014d"></script>
+  <script src="src/graph.js?v=20261014f"></script>
+  <script src="src/stats.js?v=20261014f"></script>
   <!-- 可选在线问答的资料层：把「当前字 + 本作品数据」装配成资料卡与请求体。
        它**不发送**任何请求，也一个网络原语都没有（verify/test-ask.mjs 扫这条）。 -->
-  <script src="src/ask.js?v=20261014d"></script>
-  <script src="data/chars.js?v=20261014d"></script>
-  <script src="data/catalog.js?v=20261014d"></script>
-  <script src="data/ancient.js?v=20261014d"></script>
-  <script src="data/evidence.js?v=20261014d"></script>
-  <script src="data/paths.js?v=20261014d"></script>
-  <script src="data/themes.js?v=20261014d"></script>
-  <script src="data/gap-notes.js?v=20261014d"></script>
-  <script src="data/en.js?v=20261014d"></script>
-  <script src="src/ui/store.js?v=20261014d"></script>
-  <script src="src/ui/experience.js?v=20261014d"></script>
-  <script src="src/ui/i18n.js?v=20261014d"></script>
-  <script src="src/ui/keys.js?v=20261014d"></script>
-  <script src="src/ui/char-picker.js?v=20261014d"></script>
-  <script src="src/ui/home-shell.js?v=20261014d"></script>
-  <script src="src/ui/mode-write.js?v=20261014d"></script>
-  <script src="src/ui/mode-decompose.js?v=20261014d"></script>
-  <script src="src/ui/mode-challenge.js?v=20261014d"></script>
-  <script src="src/ui/compose-canvas.js?v=20261014d"></script>
-  <script src="src/ui/evo-strip.js?v=20261014d"></script>
-  <script src="src/ui/evidence-reader.js?v=20261014d"></script>
-  <script src="src/ui/mode-evolution.js?v=20261014d"></script>
-  <script src="src/ui/mode-quiz.js?v=20261014d"></script>
-  <script src="src/ui/origin-shell.js?v=20261014d"></script>
-  <script src="src/ui/lab-shell.js?v=20261014d"></script>
-  <script src="src/ui/mine-view.js?v=20261014d"></script>
-  <script src="src/ui/graph-view.js?v=20261014d"></script>
-  <script src="src/ui/stats-view.js?v=20261014d"></script>
+  <script src="src/ask.js?v=20261014f"></script>
+  <script src="src/learning-insights.js?v=20261014f"></script>
+  <script src="data/chars.js?v=20261014f"></script>
+  <script src="data/catalog.js?v=20261014f"></script>
+  <script src="data/ancient.js?v=20261014f"></script>
+  <script src="data/evidence.js?v=20261014f"></script>
+  <script src="data/paths.js?v=20261014f"></script>
+  <script src="data/themes.js?v=20261014f"></script>
+  <script src="data/gap-notes.js?v=20261014f"></script>
+  <script src="data/en.js?v=20261014f"></script>
+  <script src="src/ui/store.js?v=20261014f"></script>
+  <script src="src/ui/experience.js?v=20261014f"></script>
+  <script src="src/ui/i18n.js?v=20261014f"></script>
+  <script src="src/ui/keys.js?v=20261014f"></script>
+  <script src="src/ui/char-picker.js?v=20261014f"></script>
+  <script src="src/ui/learning-profile.js?v=20261014f"></script>
+  <script src="src/ui/home-shell.js?v=20261014f"></script>
+  <script src="src/ui/mode-write.js?v=20261014f"></script>
+  <script src="src/ui/mode-decompose.js?v=20261014f"></script>
+  <script src="src/ui/mode-challenge.js?v=20261014f"></script>
+  <script src="src/ui/compose-canvas.js?v=20261014f"></script>
+  <script src="src/ui/evo-strip.js?v=20261014f"></script>
+  <script src="src/ui/evidence-reader.js?v=20261014f"></script>
+  <script src="src/ui/mode-evolution.js?v=20261014f"></script>
+  <script src="src/ui/mode-quiz.js?v=20261014f"></script>
+  <script src="src/ui/origin-shell.js?v=20261014f"></script>
+  <script src="src/ui/lab-shell.js?v=20261014f"></script>
+  <script src="src/ui/mine-view.js?v=20261014f"></script>
+  <script src="src/ui/graph-view.js?v=20261014f"></script>
+  <script src="src/ui/stats-view.js?v=20261014f"></script>
   <!-- 可选在线问答的面板。放在 app-shell.js 之前 —— 组件要先挂上 ZQ 再注册。
        公网模式打开时只检查本站服务状态，主动提问才调用模型；离线直连仍由提问触发。 -->
-  <script src="src/ui/ask-panel.js?v=20261014d"></script>
-  <script src="src/ui/app-shell.js?v=20261014d"></script>
+  <script src="src/ui/ask-panel.js?v=20261014f"></script>
+  <script src="src/ui/app-shell.js?v=20261014f"></script>
   <script>ZQ.mountApp('#app');</script>
 </body>
 </html>

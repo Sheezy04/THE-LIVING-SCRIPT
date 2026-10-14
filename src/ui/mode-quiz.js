@@ -21,7 +21,7 @@
     name: 'ModeQuiz',
     mixins: [ZQ.i18nMixin],
     props: { initialLevel: { type: String, default: '' }, focusChar: { type: String, default: '' } },
-    emits: ['learn', 'go', 'free', 'attempted'],
+    emits: ['learn', 'go', 'free', 'attempted', 'ask', 'review'],
 
     template: [
       '<div class="zc-quiz" :class="{ \'is-story-quiz\': focusChar && level === \'mission\' }">',
@@ -61,6 +61,7 @@
       '      <p class="zc-note">本题 {{ reviewItem.points }} 分 · {{ reviewItem.assisted ? \'使用过线索\' : \'未使用线索\' }}</p>',
       '      <button class="zc-btn" @click="$emit(\'learn\', reviewItem.char)">再探索「{{ reviewItem.char }}」 ↗</button>',
       '    </div>',
+      '    <learning-profile @practice="practiceSuggestion" @review="$emit(\'review\', $event)" @ask="$emit(\'ask\', $event)" />',
       '  </section>',
       '',
       // ── 题目 ─────────────────────────────────────────
@@ -357,6 +358,7 @@
         this.level=item.level==='classic'?'classic':'mission'; this.notebookOpen=false;
         var seed=this.nextSeed(); this.start(seed,item.kind);
       },
+      practiceSuggestion: function (item) { if (item) this.practice(item); else this.restart(); },
       showHint: function () {
         if (this.answered || !this.q || !this.q.hints || this.hintCount >= this.q.hints.length) return;
         this.hintCount++; this.assisted=true;

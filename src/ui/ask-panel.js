@@ -8,11 +8,11 @@
   var TIMEOUT_MS = 45000;
   ZQ.AskPanel = {
     name: 'AskPanel', mixins: [ZQ.i18nMixin],
-    props: { char: { type: String, required: true } },
+    props: { char: { type: String, required: true }, entryVisible: { type: Boolean, default: true } },
     emits: ['open', 'pick', 'go', 'source'],
     template: [
-      "<div class=\"zc-ask-entry\">",
-      " <button class=\"zc-btn\" @click=\"open\">{{ tr('ask_entry') }}</button><span>{{ tr('ask_hint') }}</span>",
+      "<div class=\"zc-ask-entry\" :class=\"{ 'is-contextual': !entryVisible }\">",
+      " <template v-if=\"entryVisible\"><button class=\"zc-btn\" @click=\"open\">{{ tr('ask_entry') }}</button><span>{{ tr('ask_hint') }}</span></template>",
       " <dialog ref=\"dialog\" class=\"zc-help-dialog zc-ask-dialog\" aria-labelledby=\"zc-ask-title\" @cancel=\"abort\" @close=\"onDialogClose\">",
       "  <header><div><h2 id=\"zc-ask-title\">与「{{ char }}」聊一聊</h2><p class=\"zc-note\">从含义到构件，从一个字到一组字</p></div><button class=\"zc-btn\" autofocus @click=\"close\">关闭</button></header>",
       "  <p class=\"zc-ask-boundary\">AI 回答仅供参考，请结合资料核对。</p>",
@@ -65,6 +65,9 @@
       askPlaceholder: function () { return this.turns.length ? '可以接着问，也可以比较另一个字…' : '关于「' + this.char + '」，你想问什么？'; }
     },
     methods: {
+      openWithQuestion: function (question) {
+        this.reset(); this.question = String(question || '').trim().slice(0, 300); this.open();
+      },
       open: function () {
         this.$emit('open');
         var dialog = this.$refs.dialog;
