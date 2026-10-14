@@ -1,6 +1,6 @@
 # 字启千年：公网部署与 AI 问答
 
-本轮把现有汉字学习作品补成“学习互动＋资料检索增强问答＋数据挖掘＋可视化分析”的完整流程。公网版本由一个 Node 服务同时提供网页和问答 API，访客打开网页即可提问。项目仍可双击 `index.html` 离线体验七个学习模块。
+本轮把现有汉字学习作品补成“学习互动＋资料检索增强问答＋数据挖掘＋可视化分析”的完整流程。公网版本由**一个** Node 服务或 **一个** Cloudflare Worker 同时提供网页和问答 API，访客打开网页即可提问。项目仍可双击 `index.html` 离线体验七个学习模块。
 
 ## 这次增加了什么
 
@@ -67,6 +67,34 @@ location / {
 
 只有在应用端口无法被外部直连、且代理会覆盖 `X-Forwarded-For` 时，才设置 `TRUST_PROXY=true`。默认不信任该请求头；此时同一个反向代理后的访问会共享其地址的频率限制。
 
+## Cloudflare Worker（同域）
+
+GitHub Pages 与 Cloudflare 都是静态托管，跑不了 `/api/` —— 只推静态文件时，01 的问答入口在线上会如实显示为暂未开放，七个学习模块不受影响。要让线上也能问答，就把整站与接口放在**同一个域**：仓库里已经带了 Worker 入口。
+
+| 文件 | 作用 |
+| --- | --- |
+| `worker/index.mjs` | `/api/health` 与 `/api/ask`；其余请求原样交给静态资源绑定 |
+| `server/ask-core.mjs` | 校验、限流、日配额、上游调用与错误码 —— Node 侧与 Worker 侧**共用同一份** |
+| `wrangler.jsonc` | Worker 名 `the-living-script`、入口、静态资源绑定与配额变量 |
+| `.assetsignore` | 决定哪些文件可以被网页取到，与 Node 侧 `serveStatic` 的允许清单一致（发布面由这个文件管，不由 Worker 代码管） |
+
+部署步骤：
+
+1. 在 Cloudflare 后台该 Worker 的 Settings → Variables and Secrets 添加 **Secret** `DEEPSEEK_API_KEY`。密钥不写在仓库里；未配置时 `/api/health` 返回 `available:false`，前端如实显示暂未开放。
+2. 推到 GitHub `main`（后台的 `Workers Builds: the-living-script` 会自动构建部署），或在本机执行 `npx wrangler deploy`。
+3. 构建命令用 `npm run build`：仓库里这个脚本只打印一行说明，静态资源不需要构建步骤。
+
+同域之后前端一行都不用改 —— `src/ui/ask-panel.js` 请求的就是相对的 `/api/health` 与 `/api/ask`。
+
+**与 Node 部署的两处真实差别**，不要当成同一件事：
+
+- **限流与日配额在 Worker 上是每实例内存计数。** 同一实例以外的请求各记各的，日配额不是全站精确值；Node 单进程那侧才是。要精确只能换 Durable Object，本轮没做。公网使用时请在 DeepSeek 控制台设消费上限 —— 那才是挡刷量的硬闸。
+- **`TRUST_PROXY` 在 Worker 上不适用**：访客地址取 `CF-Connecting-IP`，由 Cloudflare 自己写入，不读 `X-Forwarded-For`。
+
+**核验边界**：`*.workers.dev` 在部分网络（含本开发机所在网络）是 SNI 层不可达，本机 `curl` 走不走代理都超时。这**不能证明部署失败**，只说明核验要在别的网络做（例如手机流量）。核验要看内容而不是状态码：主页的 `?v=` 版本号、`/api/health` 的 `available`，以及 `/server/app.mjs` 应当 404（这才证明 `.assetsignore` 生效）。
+
+同一套路由在本机用 `wrangler dev`（真实 workerd）逐路径探过，结论同样是内容层面的：`/`、`/src/ask.js`、`/data/catalog.js`、`/assets/…` 取得到；`/.env`、`/.dev.vars`、`/server/app.mjs`、`/worker/index.mjs`、`/verify/…`、`/README.md` 都是 404。`/api/health` 在配了密钥时返回 `available:true`，`/api/ask` 用无效密钥时返回 503 `PROVIDER_CONFIG`（说明请求确实走到了上游并被映射回错误码），跨站 `Origin` 返回 403，问题超长／字不在目录／历史含 `system` 分别返回 400 `QUESTION`／`CHARACTER`／`HISTORY` —— 与 Node 侧逐条一致。**这不等于线上已通**：本机这条线仍连不出去，上面的探针只证明代码与发布面在真实运行时里是对的。
+
 ## 请求与费用控制
 
 | 环境变量 | 默认值 | 用途 |
@@ -103,6 +131,12 @@ location / {
 
 在完整开发工程中运行 `npm test`，精简部署包只包含运行文件，部署包中使用 `npm start`。新增验证覆盖检索、多轮历史、统计与缺格口径、相似度、共现分母、访客无 Key、输入验证、私密文件隔离、限流、超时和取消竞态。
 
-2026-10-14 完整验证：**46 项全部通过**（30 项 Node 层、11 项浏览器层、5 项页内自检）；两个新增测试文件内的 **14 个用例**通过。另在预览中检查了桌面和 390px 手机布局、共现阈值切换与未配置 Key 时的问答入口。界面机械检查未报告问题。首次全套运行有演变测试超时和看板筛选选择器过宽，收窄选择器并使用正常进程权限重跑后全套通过。
+2026-10-14 完整验证：**47 项全部通过**（31 项 Node 层、11 项浏览器层、5 项页内自检）。新增的 `verify/test-worker-api.mjs` 用 Node 自带的 `Request`/`Response` 把 Cloudflare Worker 的入口整条走了一遍（同源判据、各错误码、限流与 `Retry-After`、超时后释放并发占位、非 `/api/` 路径原样交给静态资源绑定），并**逐字对比**两条知识层加载路径 —— Node 的 `node:vm` 与 Worker 的 ESM import 产出的 `ZQ.Ask.prepare()` 必须完全相同。另在预览中检查了桌面和 390px 手机布局、共现阈值切换与未配置 Key 时的问答入口。界面机械检查未报告问题。首次全套运行有演变测试超时和看板筛选选择器过宽，收窄选择器并使用正常进程权限重跑后全套通过。
 
-2026-10-14 已完成一次真实 DeepSeek 问答联调：官方接口返回 HTTP 200，模型 `deepseek-flash` 对「休」返回了带 `[S1]` 资料引用的解释；API 响应不含密钥。联调通过项目后端完成，密钥只保存在本机 `.env`，不进入源码和部署包。真实联调脚本 `verify/check-deepseek-live.mjs` 不纳入自动测试，手动运行才会调用模型。公网发布与 Docker 镜像构建仍待选定平台后验证。
+2026-10-14 已完成一次真实 DeepSeek 问答联调：官方接口返回 HTTP 200，模型 `deepseek-flash` 对「休」返回了带 `[S1]` 资料引用的解释；API 响应不含密钥。联调通过项目后端完成，密钥只保存在本机 `.env`，不进入源码和部署包。真实联调脚本 `verify/check-deepseek-live.mjs` 不纳入自动测试，手动运行才会调用模型。
+
+2026-10-14 Worker 配置已在本机用 `wrangler deploy --dry-run` 校验通过（wrangler 4.151.0：配置可解析、绑定齐全、Worker 包体 1.42 MiB / gzip 514 KiB）。
+
+同日发布面是这样定下来的，值得记一笔，因为它先出过错：起初想靠 `--dry-run` 报的「读取文件数」判断 `.assetsignore` 有没有生效，但本仓库里 `.git`／`tmp` 的体量让那个数字既不像全量也不像滤过的，**判不出来**。改成在本机 `wrangler dev` 里逐个 URL 去取（同一条 assets 发布路径），才拿到确定答案：`.gitignore`、`wrangler.jsonc`、`LICENSE` 当时都是 200 —— 真的能从网页取到，与「服务端源码不通过网页提供」的口径不符。三条都补进了 `.assetsignore`，重跑探针后全部 404 而 `index.html`／`src/`／`data/`／`assets/` 仍正常。**教训**：判断发布面要看能不能取到内容，不要数文件。
+
+**线上仍待两件事**：后台给 `the-living-script` 配上 `DEEPSEEK_API_KEY` 密钥；以及在能连通 `*.workers.dev` 的网络下按内容核验（本机那条线不可达，见上）。Docker 镜像构建仍待选定平台后验证。

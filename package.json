@@ -6,6 +6,7 @@
   "engines": { "node": ">=22.9.0" },
   "scripts": {
     "start": "node --env-file-if-exists=.env server/index.mjs",
+    "build": "node -e \"console.log('静态站点无需构建；Cloudflare Worker 的入口与静态资源见 wrangler.jsonc')\"",
     "test": "node verify/run-all.mjs",
     "test:fast": "node verify/run-all.mjs --fast"
   }

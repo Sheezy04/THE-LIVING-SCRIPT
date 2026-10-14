@@ -71,3 +71,10 @@ node_modules/
 .env.*
 !.env.example
 /dist/
+
+# ── Cloudflare Worker（2026-10-14）────────────────────────────────────
+# .wrangler/ 是 `wrangler dev`／`wrangler deploy` 的本地状态目录；
+# .dev.vars 是本地跑 Worker 时放密钥的文件（对应 Node 侧的 .env）。
+# 两者都只在本机存在，绝不进仓库。
+/.wrangler/
+/worker/.dev.vars

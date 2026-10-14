@@ -1,0 +1,72 @@
+# 上传到 Cloudflare 静态资源时要排掉的东西（语法同 .gitignore，作用于 assets 目录）。
+#
+# 为什么必须有这个文件：Cloudflare **没有**公布的默认忽略清单 ——
+# 没有它，wrangler 会把 assets 目录里找到的东西全传上去，包括 `.git`
+# （本仓库的 .git 本地有 2.3 GB，两个从未推送的悬空 zip；CI 克隆版小得多但也不小）
+# 与 node_modules。官方说明见 developers.cloudflare.com/workers/static-assets/binding/
+#
+# 净效果 = server/app.mjs 里 serveStatic 的允许清单：只给 index.html、assets/、data/、src/。
+
+# ── 版本库与本地产物 ─────────────────────────────────────────────
+.git
+.git/**
+node_modules
+node_modules/**
+.wrangler
+.wrangler/**
+.wrangler*
+dev.vars
+.dev.vars
+tmp
+tmp/**
+dist
+dist/**
+archive
+archive/**
+design-previews
+design-previews/**
+verify
+verify/**
+competition_docs
+competition_docs/**
+
+# ── 凭据：任何情况下都不该出现在网页上 ───────────────────────────
+.env
+.env.*
+.dockerignore
+.assetsignore
+
+# ── 源码与内部文档：服务端代码不该能从网页取到 ───────────────────
+server
+server/**
+worker
+worker/**
+scripts
+scripts/**
+docs
+docs/**
+*.md
+Dockerfile
+package.json
+package-lock.json
+.nojekyll
+参赛准备
+
+# ── 根目录剩下的零碎：serveStatic 的允许清单里没有它们，这里也不给 ──
+# 这几条是 2026-10-14 用 `wrangler dev` 逐路径探出来的：`.gitignore`、`wrangler.jsonc`、
+# `LICENSE` 当时都是 200（也就是说真的能从网页取到），其余根目录文件是 404。
+# 没有密钥，但把内部结构摊在网上跟上面的允许清单对不上，索性一起排掉。
+# 注意：目录本身探出 404 只说明没有 index，不代表里面的文件取不到 —— 所以整目录排。
+.gitignore
+.claude
+.superpowers
+.trae
+wrangler.jsonc
+LICENSE
+
+# ── 明确要发布的 ────────────────────────────────────────────────
+# `!` 取反**必须排在对应的忽略规则之后**，gitignore 语法里是后来的规则胜出。
+!index.html
+!src/**
+!data/**
+!assets/**
