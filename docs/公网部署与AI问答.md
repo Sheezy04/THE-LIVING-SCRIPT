@@ -108,7 +108,9 @@ GitHub Pages 与 Cloudflare 都是静态托管，跑不了 `/api/` —— 只推
 | `PUBLIC_ORIGIN` | 空 | 公网时设置本站 HTTPS origin |
 | `TRUST_PROXY` | `false` | 是否使用可信代理覆盖后的地址 |
 
-问题限制 300 字，历史最多三轮，请求体有大小限制。服务器重新构造系统规约与资料卡，拒绝客户端传入模型、密钥、服务地址或自定义系统消息。静态服务只开放 `index.html`、`assets/`、`data/`、`src/` 的允许格式，`.env`、Git 配置、服务端源码不通过网页提供。
+问题限制 300 字，历史最多三轮，请求体有大小限制。服务器重新构造系统规约与资料卡，拒绝客户端传入模型、密钥、服务地址或自定义系统消息。**Node 服务与 Worker 的**静态服务只开放 `index.html`、`assets/`、`data/`、`src/` 的允许格式，`.env`、Git 配置、服务端源码不通过网页提供。
+
+上面这条只对自带后端的两种部署成立。**GitHub Pages 那条线不受此约束**：它发布的是整个仓库（除 `.gitignore` 排掉的），所以 `server/`、`worker/`、`wrangler.jsonc` 在 `sheezy04.github.io` 上是能直接下载的。里面没有密钥（`DEEPSEEK_API_KEY` 只在后台加密保存，从不进仓库），但这确实是选择公开仓库带来的既有边界，不该被读成"源码不外流"。
 
 限流和日配额是单进程内存计数，按 UTC 日界重置，重启会清空；该部署包适合单实例演示和小流量使用。需要多实例或严格的跨重启费用上限时，应使用托管网关／共享计数器。本站服务不记录提问、回答或 Key；网络请求由 DeepSeek 处理，其数据规则以服务商现行条款为准。
 
@@ -138,5 +140,7 @@ GitHub Pages 与 Cloudflare 都是静态托管，跑不了 `/api/` —— 只推
 2026-10-14 Worker 配置已在本机用 `wrangler deploy --dry-run` 校验通过（wrangler 4.151.0：配置可解析、绑定齐全、Worker 包体 1.42 MiB / gzip 514 KiB）。
 
 同日发布面是这样定下来的，值得记一笔，因为它先出过错：起初想靠 `--dry-run` 报的「读取文件数」判断 `.assetsignore` 有没有生效，但本仓库里 `.git`／`tmp` 的体量让那个数字既不像全量也不像滤过的，**判不出来**。改成在本机 `wrangler dev` 里逐个 URL 去取（同一条 assets 发布路径），才拿到确定答案：`.gitignore`、`wrangler.jsonc`、`LICENSE` 当时都是 200 —— 真的能从网页取到，与「服务端源码不通过网页提供」的口径不符。三条都补进了 `.assetsignore`，重跑探针后全部 404 而 `index.html`／`src/`／`data/`／`assets/` 仍正常。**教训**：判断发布面要看能不能取到内容，不要数文件。
+
+**GitHub Pages 那条线**：`8011dac` 已推送到 `github main`，并按内容核验过 —— `sheezy04.github.io` 上 `wrangler.jsonc` 能取到（这个文件上一版还没有，所以 200 就说明新提交上线了），首页取到的字节数与本机 `index.html` 一致。提交里没有密钥样式字符串，也没有 `.env`／`.dev.vars`。
 
 **线上仍待两件事**：后台给 `the-living-script` 配上 `DEEPSEEK_API_KEY` 密钥；以及在能连通 `*.workers.dev` 的网络下按内容核验（本机那条线不可达，见上）。Docker 镜像构建仍待选定平台后验证。
